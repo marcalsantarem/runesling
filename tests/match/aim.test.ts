@@ -45,4 +45,18 @@ describe('Mira — previsão', () => {
     expect(n2).toBe(4);
     expect(buf[4]).toBeCloseTo(8); // parede esquerda
   });
+
+  it('M2-03: a ponta final fica dentro da margem [8, 352] quando os quiques se esgotam', () => {
+    const buf = new Float32Array(32);
+    for (let a = -Math.PI + 0.14; a <= -0.14; a += 0.01) {
+      for (const mb of [1, 2] as const) {
+        const n = predictTrajectory(180, 468, a, mb, buf);
+        for (let i = 0; i < n; i++) {
+          expect(buf[i * 2]!).toBeGreaterThanOrEqual(8 - 1e-4);
+          expect(buf[i * 2]!).toBeLessThanOrEqual(352 + 1e-4);
+          expect(buf[i * 2 + 1]!).toBeGreaterThanOrEqual(8 - 1e-4);
+        }
+      }
+    }
+  });
 });

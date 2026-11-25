@@ -119,8 +119,8 @@ export function addEnemy(state: RunState, data: GameData, typeId: string, x: num
   return en;
 }
 
-/** Ouro final: round((ouro + bônus de vitória) × multiplicador). */
+/** Ouro final: round(ouro × multiplicador) + bônus de vitória fixo (decisão 17). */
 export function finalGold(state: RunState, data: GameData): number {
   const bonus = state.phase === 'won' ? data.rules.victoryGoldBonus : 0;
-  return Math.round((state.gold + bonus) * state.goldMult);
+  return Math.round(state.gold * state.goldMult) + bonus;
 }

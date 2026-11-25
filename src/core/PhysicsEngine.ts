@@ -244,7 +244,7 @@ export class PhysicsEngine {
       // Chão: quica (GDD/slice), não remove o orbe.
       b.y = H - b.r;
       if (b.vy > 0) b.vy = -b.vy * cfg.floorRestitution;
-      b.bounced = true;
+      // Decisão 16: o chão não ativa a Tabela Letal (não marca `bounced`).
       this.emit('floorHit', b);
     }
 
@@ -366,6 +366,9 @@ export class PhysicsEngine {
       const dy = b.y - en.y;
       const dist = Math.hypot(dx, dy);
       if (dist >= b.r + en.r || dist <= EPS_CIRCLE) continue;
+      // Orbe Fantasma já atravessando este inimigo (cooldown ativo): segue sem empurrão nem
+      // `blocked` falso ao sair pelo lado do escudo (QA M2-02).
+      if (b.pierce && this.pierceActive(b, en.id)) continue;
       const nx = dx / dist;
       const ny = dy / dist;
       const blocked = en.frontShield !== undefined && ny > en.frontShield.minNormalY;
@@ -385,6 +388,13 @@ export class PhysicsEngine {
       e.enemyId = en.id;
       e.blocked = blocked;
     }
+  }
+
+  /** true se o orbe perfurante está em cooldown para este inimigo (não altera estado). */
+  private pierceActive(b: Ball, enemyId: number): boolean {
+    const ids = b.hitCdIds;
+    for (let k = 0; k < PIERCE_SLOTS; k++) if (ids[k] === enemyId) return true;
+    return false;
   }
 
   /** true (e registra o cooldown) se o orbe perfurante pode acertar este inimigo agora. */

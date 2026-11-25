@@ -27,6 +27,28 @@ describe('PhysicsEngine — ghost_ball (pierce)', () => {
     expect(hits.length).toBeLessThanOrEqual(3);
   });
 
+  it('M2-02: entra por cima do Cavaleiro, sai por baixo sem empurrão nem blocked falso', () => {
+    const arena: Arena = {
+      bumpers: [], pillars: [], rings: [],
+      enemies: [{ id: 1, x: 180, y: 200, r: 16, frontShield: { minNormalY: 0.3 } }],
+    };
+    const e = new PhysicsEngine(arena, new Rng(1), PURE);
+    const b = e.spawnBall(180.5, 160, 0, 6)!;
+    b.pierce = true;
+    const ys: number[] = [];
+    const hits: PhysicsEvent[] = [];
+    for (let f = 0; f < 14; f++) {
+      const n = e.step();
+      for (let i = 0; i < n; i++) if (e.getEvent(i).type === 'enemyHit') hits.push({ ...e.getEvent(i) });
+      ys.push(b.y);
+    }
+    expect(hits.length).toBe(1);
+    expect(hits[0]!.blocked).toBe(false);
+    // Sem empurrão: avança 6 px por frame (sem amortecimento).
+    for (let i = 1; i < ys.length; i++) expect(ys[i]! - ys[i - 1]!).toBeCloseTo(6);
+    expect(b.vy).toBeCloseTo(6);
+  });
+
   it('é refletido quando o escudo bloqueia', () => {
     const arena: Arena = {
       bumpers: [], pillars: [], rings: [],

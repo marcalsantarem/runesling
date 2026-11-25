@@ -75,6 +75,18 @@ describe('PhysicsEngine — reflexão', () => {
     expect(b.vy).toBeCloseTo(4);
   });
 
+  it('decisão 16: quique no chão não marca bounced (não ativa a Tabela Letal); teto marca', () => {
+    const e = new PhysicsEngine(emptyArena(), new Rng(1), { ...PURE, floorRestitution: 0.94 });
+    const b = e.spawnBall(100, 505, 0, 10)!;
+    const ev = collect(e, 3);
+    const floor = ev.find((x) => x.type === 'floorHit')!;
+    expect(floor.bounced).toBe(false);
+    expect(b.bounced).toBe(false);
+    const c = e.spawnBall(100, 15, 0, -10)!;
+    collect(e, 2);
+    expect(c.bounced).toBe(true);
+  });
+
   it('quica no chão com restituição 0.94 e recall() remove todos os orbes', () => {
     const e = new PhysicsEngine(emptyArena(), new Rng(1), { ...PURE, floorRestitution: 0.94 });
     const b = e.spawnBall(100, 505, 0, 10)!;

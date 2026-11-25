@@ -251,7 +251,7 @@ describe('Cadeia de mortes', () => {
     expect(s.enemies[0]!.hp).toBe(enemyHp('mini', 6, data));
   });
 
-  it('ouro final com multiplicador e bônus de vitória', () => {
+  it('decisão 17: ouro final = round(ouro × Cobiça) + 60 fixo na vitória', () => {
     const s = createRunState(data, talentBonuses({ gold: 2, atk: 3, hp: 1 }, data));
     expect(s.goldMult).toBeCloseTo(1.3);
     expect(s.atk).toBe(6);
@@ -259,7 +259,7 @@ describe('Cadeia de mortes', () => {
     s.gold = 10;
     expect(finalGold(s, data)).toBe(13);
     s.phase = 'won';
-    expect(finalGold(s, data)).toBe(Math.round(70 * 1.3));
+    expect(finalGold(s, data)).toBe(Math.round(10 * 1.3) + 60);
   });
 });
 

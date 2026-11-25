@@ -122,6 +122,9 @@ export function predictTrajectory(
       n = writePoint(out, n, cap, px, py);
     }
   }
+  // A ponta final respeita a margem mesmo quando o laço sai por excesso de quiques (QA M2-03).
+  px = Math.max(m, Math.min(right, px));
+  if (py < m) py = m;
   n = writePoint(out, n, cap, px, py);
   return n;
 }
