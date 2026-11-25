@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.*
+art-source/raw/
+art-source/cut/
+art-source/.cache.json
+*.log
+.DS_Store
