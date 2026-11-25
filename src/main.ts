@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { BattleScene } from './scenes/BattleScene';
 import { BootScene, WORLD_HEIGHT, WORLD_WIDTH } from './scenes/BootScene';
 
 const BACKGROUND_COLOR = '#0D1020';
@@ -31,5 +32,6 @@ new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene],
+  // Boot é a raiz (fica viva); Battle é lançada por `ui:startRun` (ver BootScene).
+  scene: [BootScene, BattleScene],
 });
