@@ -50,6 +50,19 @@ export interface Ball {
   ringUsed: boolean;
   /** Já tocou o teto. */
   ceilingHit: boolean;
+  /** Orbe Fantasma: atravessa inimigos não bloqueados pelo escudo. */
+  pierce: boolean;
+  /** Cooldown de acerto por inimigo do orbe perfurante (slots fixos, sem alocação). */
+  hitCdIds: Int32Array;
+  hitCdFrames: Int32Array;
+}
+
+/** Eco do Teto (wall_clone): parâmetros do clone criado no 1º quique no teto de cada orbe principal. */
+export interface WallCloneConfig {
+  radius: number;
+  /** vx do clone = vx do orbe (já refletido) × vxMult. */
+  vxMult: number;
+  offsetY: number;
 }
 
 export type PhysicsEventType =
@@ -59,7 +72,7 @@ export type PhysicsEventType =
   | 'pillarHit'
   | 'ringPass'
   | 'enemyHit'
-  | 'ballLost';
+  | 'floorHit';
 
 /**
  * Evento emitido por sub-passo. Objetos vêm de um pool reutilizado a cada step():
@@ -67,9 +80,10 @@ export type PhysicsEventType =
  * - wallHit/ceilingHit: ballId.
  * - bumperHit/pillarHit/ringPass: ballId, index (posição no array da arena).
  * - ringPass: cloneId = id do clone criado, ou -1 se o teto de orbes impediu.
+ * - ceilingHit: cloneId = clone do Eco do Teto, ou -1.
  * - enemyHit: ballId, enemyId, blocked (escudo frontal).
- * - ballLost: ballId (saiu pelo chão).
- * x, y: posição do orbe no momento do evento.
+ * - floorHit: ballId (quique no chão).
+ * x, y, bounced, temp: estado do orbe no momento do evento.
  */
 export interface PhysicsEvent {
   type: PhysicsEventType;
@@ -80,6 +94,8 @@ export interface PhysicsEvent {
   blocked: boolean;
   x: number;
   y: number;
+  bounced: boolean;
+  temp: boolean;
 }
 
 /** Parâmetros numéricos; padrões = GDD §2.3/§3.4 e, onde o GDD é omisso, o vertical slice. */
@@ -91,8 +107,13 @@ export interface PhysicsConfig {
   dampLate: number;
   /** Ticks (frames lógicos) com dampEarly; depois dampLate. */
   dampSwitchTick: number;
-  /** Restituição em paredes/teto (slice: 0.96). */
+  /** Restituição em paredes laterais (slice: 0.96). */
   wallRestitution: number;
+  ceilingRestitution: number;
+  /** Quique no chão (slice: 0.94). */
+  floorRestitution: number;
+  /** Frames de cooldown por inimigo do orbe perfurante (ghost_ball: 14). */
+  pierceCooldownFrames: number;
   bumperBoost: number;
   bumperMaxSpeed: number;
   /** Velocidade mínima após bumper (slice: 7.5). */
@@ -119,6 +140,9 @@ export const DEFAULT_PHYSICS_CONFIG: Readonly<PhysicsConfig> = Object.freeze({
   dampLate: 0.962,
   dampSwitchTick: 340,
   wallRestitution: 0.96,
+  ceilingRestitution: 0.96,
+  floorRestitution: 0.94,
+  pierceCooldownFrames: 14,
   bumperBoost: 1.15,
   bumperMaxSpeed: 15.5,
   bumperMinSpeed: 7.5,

@@ -8,7 +8,7 @@ function emptyArena(): Arena {
 }
 
 /** Sem amortecimento nem anti-loop: isola a colisão. */
-const PURE = { dampEarly: 1, dampLate: 1, antiLoopNudge: 0, wallRestitution: 1 } as const;
+const PURE = { dampEarly: 1, dampLate: 1, antiLoopNudge: 0, wallRestitution: 1, ceilingRestitution: 1 } as const;
 
 function collect(engine: PhysicsEngine, frames: number, speed = 1): PhysicsEvent[] {
   const out: PhysicsEvent[] = [];
@@ -75,11 +75,15 @@ describe('PhysicsEngine — reflexão', () => {
     expect(b.vy).toBeCloseTo(4);
   });
 
-  it('saída pelo chão encerra o orbe', () => {
-    const e = new PhysicsEngine(emptyArena(), new Rng(1), PURE);
-    e.spawnBall(100, 510, 0, 10);
+  it('quica no chão com restituição 0.94 e recall() remove todos os orbes', () => {
+    const e = new PhysicsEngine(emptyArena(), new Rng(1), { ...PURE, floorRestitution: 0.94 });
+    const b = e.spawnBall(100, 505, 0, 10)!;
     const ev = collect(e, 3);
-    expect(types(ev)).toContain('ballLost');
+    expect(types(ev)).toContain('floorHit');
+    expect(b.vy).toBeCloseTo(-9.4);
+    expect(e.activeCount).toBe(1);
+    expect(e.isSettled()).toBe(false);
+    e.recall();
     expect(e.activeCount).toBe(0);
     expect(e.isSettled()).toBe(true);
   });

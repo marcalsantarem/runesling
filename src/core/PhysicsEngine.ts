@@ -11,19 +11,25 @@ import {
   type PhysicsConfig,
   type PhysicsEvent,
   type PhysicsEventType,
+  type WallCloneConfig,
 } from '../match/physicsTypes';
 import type { RandomSource } from '../match/rng';
 
 const EPS_CIRCLE = 0.001;
 const EPS_AABB = 0.0001;
 const INITIAL_EVENT_CAPACITY = 256;
+/** Slots de cooldown por orbe perfurante (inimigos distintos atravessados em 14 frames). */
+export const PIERCE_SLOTS = 16;
 
 function makeBall(): Ball {
-  return { id: -1, x: 0, y: 0, vx: 0, vy: 0, r: 0, bounced: false, temp: false, ringUsed: false, ceilingHit: false };
+  return {
+    id: -1, x: 0, y: 0, vx: 0, vy: 0, r: 0, bounced: false, temp: false, ringUsed: false, ceilingHit: false,
+    pierce: false, hitCdIds: new Int32Array(PIERCE_SLOTS).fill(-1), hitCdFrames: new Int32Array(PIERCE_SLOTS),
+  };
 }
 
 function makeEvent(): PhysicsEvent {
-  return { type: 'wallHit', ballId: -1, index: -1, enemyId: -1, cloneId: -1, blocked: false, x: 0, y: 0 };
+  return { type: 'wallHit', ballId: -1, index: -1, enemyId: -1, cloneId: -1, blocked: false, x: 0, y: 0, bounced: false, temp: false };
 }
 
 export class PhysicsEngine {
@@ -42,6 +48,9 @@ export class PhysicsEngine {
   /** Frames lógicos desde o lançamento (um por ciclo de N sub-passos). */
   flightTicks = 0;
 
+  /** Eco do Teto ativo (null = desligado). */
+  private wallClone: WallCloneConfig | null = null;
+
   constructor(arena: Arena, rng: RandomSource, config: Partial<PhysicsConfig> = {}) {
     this.config = Object.freeze({ ...DEFAULT_PHYSICS_CONFIG, ...config });
     this.arena = arena;
@@ -57,6 +66,11 @@ export class PhysicsEngine {
 
   getArena(): Arena {
     return this.arena;
+  }
+
+  /** Liga/desliga o Eco do Teto (wall_clone). */
+  setWallClone(cfg: WallCloneConfig | null): void {
+    this.wallClone = cfg;
   }
 
   /** Remove um inimigo morto da arena (por id). */
@@ -104,6 +118,9 @@ export class PhysicsEngine {
     b.temp = temp;
     b.ringUsed = temp;
     b.ceilingHit = false;
+    b.pierce = false;
+    b.hitCdIds.fill(-1);
+    b.hitCdFrames.fill(0);
     return b;
   }
 
@@ -119,10 +136,15 @@ export class PhysicsEngine {
     return n;
   }
 
-  /** Remove todos os orbes (botão Recolher / fim de turno). */
+  /** Remove todos os orbes. */
   clear(): void {
     this.ballCount = 0;
     this.eventCount = 0;
+  }
+
+  /** Botão Recolher (GDD §2.1): remove todos os orbes; o voo fica encerrado (isSettled). */
+  recall(): void {
+    this.clear();
   }
 
   /** Verdadeiro quando não há orbes ou todos estão abaixo de stopSpeed. */
@@ -154,23 +176,26 @@ export class PhysicsEngine {
     const subDamp = Math.pow(damp, 1 / N);
     // Clones criados neste ciclo entram no fim do pool e só se movem no próximo ciclo.
     const count = this.ballCount;
-    let lost = false;
 
     for (let i = 0; i < count; i++) {
       const b = this.pool[i]!;
-      for (let s = 0; s < N; s++) {
-        if (this.subStep(b, subDamp, N)) {
-          lost = true;
-          break;
-        }
-      }
+      if (b.pierce) this.tickPierce(b);
+      for (let s = 0; s < N; s++) this.subStep(b, subDamp, N);
     }
-
-    if (lost) this.compact();
   }
 
-  /** Um sub-passo de um orbe. Retorna true se o orbe saiu pelo chão. */
-  private subStep(b: Ball, subDamp: number, N: number): boolean {
+  private tickPierce(b: Ball): void {
+    const ids = b.hitCdIds;
+    const fr = b.hitCdFrames;
+    for (let k = 0; k < PIERCE_SLOTS; k++) {
+      if (ids[k] === -1) continue;
+      if (fr[k]! <= 1) ids[k] = -1;
+      else fr[k] = fr[k]! - 1;
+    }
+  }
+
+  /** Um sub-passo de um orbe. O chão reflete (restituição do chão); orbes só saem por recall(). */
+  private subStep(b: Ball, subDamp: number, N: number): void {
     const cfg = this.config;
     const W = cfg.worldWidth;
     const H = cfg.worldHeight;
@@ -201,24 +226,32 @@ export class PhysicsEngine {
     // Teto
     if (b.y < b.r) {
       b.y = b.r;
-      if (b.vy < 0) b.vy = -b.vy * cfg.wallRestitution;
+      if (b.vy < 0) b.vy = -b.vy * cfg.ceilingRestitution;
       b.bounced = true;
+      let cloneId = -1;
+      const wc = this.wallClone;
+      if (wc && !b.ceilingHit && !b.temp) {
+        const c = this.spawnBall(b.x, b.y + wc.offsetY, b.vx * wc.vxMult, b.vy, wc.radius, true);
+        if (c) {
+          c.bounced = true;
+          c.ceilingHit = true;
+          cloneId = c.id;
+        }
+      }
       b.ceilingHit = true;
-      this.emit('ceilingHit', b);
-    }
-
-    // Chão: saída encerra o orbe
-    if (b.y - b.r > H) {
-      this.emit('ballLost', b);
-      b.id = -1;
-      return true;
+      this.emit('ceilingHit', b).cloneId = cloneId;
+    } else if (b.y > H - b.r) {
+      // Chão: quica (GDD/slice), não remove o orbe.
+      b.y = H - b.r;
+      if (b.vy > 0) b.vy = -b.vy * cfg.floorRestitution;
+      b.bounced = true;
+      this.emit('floorHit', b);
     }
 
     this.collideRings(b);
     this.collideBumpers(b);
     this.collidePillars(b);
     this.collideEnemies(b);
-    return false;
   }
 
   private collideRings(b: Ball): void {
@@ -336,17 +369,40 @@ export class PhysicsEngine {
       const nx = dx / dist;
       const ny = dy / dist;
       const blocked = en.frontShield !== undefined && ny > en.frontShield.minNormalY;
-      const dot = b.vx * nx + b.vy * ny;
-      if (dot < 0) {
-        b.vx -= 2 * dot * nx;
-        b.vy -= 2 * dot * ny;
+      if (b.pierce && !blocked) {
+        // Orbe Fantasma: atravessa; um acerto por inimigo a cada pierceCooldownFrames.
+        if (!this.pierceReady(b, en.id)) continue;
+      } else {
+        const dot = b.vx * nx + b.vy * ny;
+        if (dot < 0) {
+          b.vx -= 2 * dot * nx;
+          b.vy -= 2 * dot * ny;
+        }
+        b.x = en.x + nx * (b.r + en.r + gap);
+        b.y = en.y + ny * (b.r + en.r + gap);
       }
-      b.x = en.x + nx * (b.r + en.r + gap);
-      b.y = en.y + ny * (b.r + en.r + gap);
       const e = this.emit('enemyHit', b);
       e.enemyId = en.id;
       e.blocked = blocked;
     }
+  }
+
+  /** true (e registra o cooldown) se o orbe perfurante pode acertar este inimigo agora. */
+  private pierceReady(b: Ball, enemyId: number): boolean {
+    const ids = b.hitCdIds;
+    const fr = b.hitCdFrames;
+    let free = -1;
+    let oldest = 0;
+    for (let k = 0; k < PIERCE_SLOTS; k++) {
+      if (ids[k] === enemyId) return false;
+      if (ids[k] === -1) {
+        if (free === -1) free = k;
+      } else if (fr[k]! < fr[oldest]!) oldest = k;
+    }
+    const slot = free === -1 ? oldest : free;
+    ids[slot] = enemyId;
+    fr[slot] = this.config.pierceCooldownFrames;
+    return true;
   }
 
   private emit(type: PhysicsEventType, b: Ball): PhysicsEvent {
@@ -364,22 +420,8 @@ export class PhysicsEngine {
     e.blocked = false;
     e.x = b.x;
     e.y = b.y;
+    e.bounced = b.bounced;
+    e.temp = b.temp;
     return e;
-  }
-
-  /** Remove orbes perdidos (id = −1) preservando a ordem; troca referências sem alocar. */
-  private compact(): void {
-    let w = 0;
-    for (let r = 0; r < this.ballCount; r++) {
-      const b = this.pool[r]!;
-      if (b.id === -1) continue;
-      if (w !== r) {
-        const tmp = this.pool[w]!;
-        this.pool[w] = b;
-        this.pool[r] = tmp;
-      }
-      w++;
-    }
-    this.ballCount = w;
   }
 }
