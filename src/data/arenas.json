@@ -1,0 +1,17 @@
+{
+  "arena_crypt_standard": {
+    "id": "arena_crypt_standard",
+    "launch": { "x": 180, "y": 468 },
+    "barrierY": 436,
+    "bumpers": [
+      { "x": 76, "y": 282, "r": 17 },
+      { "x": 284, "y": 282, "r": 17 }
+    ],
+    "pillars": [
+      { "x": 146, "y": 205, "w": 68, "h": 16 }
+    ],
+    "rings": [
+      { "x": 180, "y": 342, "r": 21 }
+    ]
+  }
+}

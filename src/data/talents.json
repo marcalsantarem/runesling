@@ -1,0 +1,22 @@
+{
+  "atk": {
+    "id": "atk", "name": "Forja Arcana", "desc": "+1 ATK inicial por nível.", "iconKey": "icon_power_surge",
+    "maxLevel": 10, "baseCost": 25, "costStep": 20, "effect": { "stat": "atk", "perLevel": 1 }
+  },
+  "hp": {
+    "id": "hp", "name": "Barreira Rúnica", "desc": "+2 HP máximo da base por nível.", "iconKey": "icon_bastion_heal",
+    "maxLevel": 10, "baseCost": 20, "costStep": 18, "effect": { "stat": "maxHp", "perLevel": 2 }
+  },
+  "balls": {
+    "id": "balls", "name": "Maestria de Orbes", "desc": "+1 orbe inicial por nível.", "iconKey": "icon_extra_orb",
+    "maxLevel": 3, "baseCost": 75, "costStep": 90, "effect": { "stat": "orbs", "perLevel": 1 }
+  },
+  "crit": {
+    "id": "crit", "name": "Olho do Ricochete", "desc": "+5% de chance crítica por nível.", "iconKey": "icon_ricochet_crit",
+    "maxLevel": 8, "baseCost": 30, "costStep": 24, "effect": { "stat": "critChance", "perLevel": 0.05 }
+  },
+  "gold": {
+    "id": "gold", "name": "Cobiça da Cripta", "desc": "+15% de ouro por run.", "iconKey": "icon_gold_greed",
+    "maxLevel": 6, "baseCost": 35, "costStep": 28, "effect": { "stat": "goldMult", "perLevel": 0.15 }
+  }
+}
