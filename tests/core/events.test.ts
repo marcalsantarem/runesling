@@ -17,7 +17,7 @@ describe('contrato de eventos (GameEvents)', () => {
     bus.on('run:state', onState);
     bus.on('draft:open', onDraft);
     const state: RunState = {
-      hp: 10, maxHp: 10, atk: 2, orbs: 3, wave: 1, totalWaves: 10, gold: 0, speed: 1, phase: 'aim',
+      hp: 10, maxHp: 10, atk: 2, orbs: 3, crit: 0.05, perks: [], wave: 1, totalWaves: 10, gold: 0, speed: 1, phase: 'aim',
     };
     bus.emit('run:state', state);
     bus.emit('draft:open', { choices: PERK_IDS.slice(0, 3) });

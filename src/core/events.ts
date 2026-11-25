@@ -13,6 +13,10 @@ export interface RunState {
   maxHp: number;
   atk: number;
   orbs: number;
+  /** Chance de crítico (0..1). */
+  crit: number;
+  /** Runas adquiridas na run, na ordem de escolha (repetíveis repetem). */
+  perks: PerkId[];
   wave: number;
   totalWaves: number;
   gold: number;
