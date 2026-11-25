@@ -1,0 +1,21 @@
+# Backlog
+
+Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤1 sessão), M (1–2), G (3+).
+
+## M1 (v0.2.0): Fundação
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-001 | Estrutura do projeto: Vite + TS + Phaser 3, pastas do GDD, Vitest, scripts npm, cena placeholder (tam. M) | M1 | AG07 | em andamento |
+| T-002 | CI no GitHub Actions: `npm ci`, testes e build em push/PR na `dev` (tam. P) | M1 | AG07 | em andamento |
+| T-003 | Deploy por tag no link de teste (depende da decisão 6) (tam. P) | M1 | AG07 | a fazer |
+| T-004 | Validação do M1 e tag v0.2.0 (tam. P) | M1 | AG03 + AG00 | a fazer |
+
+## M2 (v0.3.0): Núcleo puro
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-005 | JSONs de conteúdo do Capítulo 1 (enemies, perks, arenas, chapters, talents) e tipos/schemas (tam. M) | M2 | AG04 | a fazer |
+| T-006 | `PhysicsEngine` puro com sub-stepping, círculo/AABB, escudo frontal, amortecimento e testes (tam. M) | M2 | AG01 | a fazer |
+| T-007 | `CombatResolver`: dano, perks, sinergias, cadeia de mortes, fim de turno, com testes (tam. G) | M2 | AG01 | a fazer |
+| T-008 | Validação do M2 e tag v0.3.0 (tam. P) | M2 | AG03 + AG00 | a fazer |
