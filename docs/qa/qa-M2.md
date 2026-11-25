@@ -67,3 +67,6 @@ Com 28 orbes ativos, cerca de 18 inimigos, a arena padrão e 7 runas de combate 
 2. Decida os pontos marcados como "confirmar": M2-02 (fantasma x escudo), M2-04 (chão na Tabela Letal), M2-05 (+60 com Cobiça) e os números do slice a registrar no GDD.
 3. Confira a "Run simulada": todas as runs terminam e se repetem com a mesma semente.
 4. Para a tag v0.3.0, o AG00 precisa subir a versão para 0.3.0 e ajustar `tests/core/version.test.ts` (M2-01).
+
+## Reteste (AG00, 2026-11-25)
+T-013 (BRF-012) e T-014 (BRF-013): M2-02 e M2-03 corrigidos com testes; decisões 16 e 17 aplicadas; versão 0.3.0. Typecheck limpo, suíte 119/119, build ok. Restante conhecido (menor): Orbe Fantasma lento que fique mais de 14 frames dentro do Cavaleiro ainda pode emitir `blocked` ao sair; decisão 16 coberta só no evento de física.
