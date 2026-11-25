@@ -1,0 +1,38 @@
+{
+  "chapter_1": {
+    "id": "chapter_1",
+    "name": "Cripta Obsidiana",
+    "theme": {
+      "floorTile": "floor_crypt",
+      "torchColor": "#ff8c32",
+      "ambientDustColor": "#00cec9"
+    },
+    "arenaId": "arena_crypt_standard",
+    "totalWaves": 15,
+    "draftWaves": [2, 4, 6, 7, 9, 11, 13],
+    "draftChoices": 3,
+    "perkPool": [
+      "chain_lightning", "bumper_shock", "static_crit", "storm_orb",
+      "fire_splash", "ignite", "supernova", "molten_core",
+      "ghost_ball", "ricochet_crit", "wall_clone", "arcane_sight",
+      "extra_orb", "power_surge", "bastion_heal"
+    ],
+    "fixedSpawns": {
+      "7": ["miniboss_iron"],
+      "15": ["boss_obsidian"]
+    },
+    "poolByWave": [
+      { "fromWave": 1, "weights": { "goblin": 100 } },
+      { "fromWave": 2, "weights": { "goblin": 65, "shield": 35 } },
+      { "fromWave": 4, "weights": { "goblin": 35, "shield": 22, "bomb": 20, "shooter": 23 } },
+      { "fromWave": 6, "weights": { "goblin": 20, "shield": 20, "bomb": 16, "shooter": 16, "splitter": 14, "healer": 14 } }
+    ],
+    "waveSize": { "base": 3, "wavesPerExtra": 3, "maxExtra": 4, "overrides": { "7": 2, "15": 3 } },
+    "spawnLayout": {
+      "minX": 34, "maxX": 326, "minGapPx": 10,
+      "normalY": [52, 96],
+      "fixedWaveY": [124, 148],
+      "fixedSpawnPos": { "miniboss_iron": { "x": 180, "y": 74 }, "boss_obsidian": { "x": 180, "y": 76 } }
+    }
+  }
+}

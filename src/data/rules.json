@@ -1,0 +1,23 @@
+{
+  "world": { "width": 360, "height": 520 },
+  "hpFormula": { "base": 4, "linear": 2.8, "powCoef": 0.55, "powExp": 1.32, "minHp": 2 },
+  "damage": { "minDamage": 1, "ricochetMult": 2.0, "tempCloneMult": 0.7, "critMult": 1.75, "shockMult": 1.35 },
+  "launch": { "minAngleRad": 0.14, "cancelPullPx": 14, "v0Base": 9.5, "v0Bonus": 3.8, "pullForMaxPx": 120, "multishotSpreadRad": 0.085 },
+  "physics": {
+    "subSteps": 4,
+    "dampingEarly": 0.9935,
+    "dampingLate": 0.962,
+    "dampingSwitchTicks": 340,
+    "antiLoop": { "maxAbsVy": 0.25, "minAbsVx": 1.5, "nudge": 0.04 },
+    "orbRadius": 7.5,
+    "wallRestitution": 0.96,
+    "ceilingRestitution": 0.96,
+    "floorRestitution": 0.94,
+    "stopSpeed": 0.85,
+    "bumper": { "speedMult": 1.15, "minSpeed": 7.5, "maxSpeed": 15.5 },
+    "ring": { "clonesPerOrb": 1, "cloneAngleRad": 0.22, "cloneRadius": 6.8 }
+  },
+  "maxActiveOrbs": 28,
+  "victoryGoldBonus": 60,
+  "runStart": { "hp": 12, "atk": 3, "orbs": 2, "critChance": 0.05, "goldMult": 1.0 }
+}

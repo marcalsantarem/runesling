@@ -1,0 +1,58 @@
+{
+  "goblin": {
+    "id": "goblin", "name": "Goblin", "spriteKey": "enemy_goblin",
+    "radius": 17, "hpMult": 1.0, "gold": 2, "advancePx": 36, "barrierDmg": 2,
+    "behaviors": []
+  },
+  "shield": {
+    "id": "shield", "name": "Cavaleiro", "spriteKey": "enemy_shield",
+    "radius": 19, "hpMult": 1.25, "gold": 3, "advancePx": 36, "barrierDmg": 2,
+    "behaviors": ["front_shield"],
+    "shieldArc": { "minNormalY": 0.30 }
+  },
+  "shooter": {
+    "id": "shooter", "name": "Cultista", "spriteKey": "enemy_shooter",
+    "radius": 18, "hpMult": 0.95, "gold": 3, "advancePx": 36, "barrierDmg": 2,
+    "behaviors": ["shooter"],
+    "shoot": { "cooldown": 2, "damage": 1 }
+  },
+  "bomb": {
+    "id": "bomb", "name": "Golem de Magma", "spriteKey": "enemy_bomb",
+    "radius": 18, "hpMult": 0.85, "gold": 3, "advancePx": 36, "barrierDmg": 2,
+    "behaviors": ["explodes"],
+    "explode": { "radiusPx": 92, "atkRatio": 2.5 }
+  },
+  "splitter": {
+    "id": "splitter", "name": "Espectro", "spriteKey": "enemy_splitter",
+    "radius": 19, "hpMult": 1.05, "gold": 3, "advancePx": 36, "barrierDmg": 2,
+    "behaviors": ["splits"],
+    "split": { "spawnId": "mini", "offsetsXPx": [-20, 20], "edgeMarginPx": 24 }
+  },
+  "mini": {
+    "id": "mini", "name": "Fagulha", "spriteKey": "enemy_mini",
+    "radius": 12, "hpMult": 0.45, "gold": 1, "advancePx": 36, "barrierDmg": 2,
+    "behaviors": []
+  },
+  "healer": {
+    "id": "healer", "name": "Clérigo Sombrio", "spriteKey": "enemy_healer",
+    "radius": 18, "hpMult": 1.0, "gold": 4, "advancePx": 36, "barrierDmg": 2,
+    "behaviors": ["heals"],
+    "heal": { "maxHpRatio": 0.22, "rangePx": 130, "targets": 1, "minHeal": 2 }
+  },
+  "miniboss_iron": {
+    "id": "miniboss_iron", "name": "Guardião de Ferro", "spriteKey": "miniboss_iron",
+    "radius": 31, "hpMult": 5.2, "gold": 18, "advancePx": 22, "barrierDmg": 4,
+    "isBoss": true, "barrierRecoilPx": 72,
+    "behaviors": ["front_shield", "summoner"],
+    "shieldArc": { "minNormalY": 0.30 },
+    "summon": { "cooldown": 2, "spawnId": "goblin", "maxArenaCount": 10, "offsetXPx": 52, "offsetYPx": 34 }
+  },
+  "boss_obsidian": {
+    "id": "boss_obsidian", "name": "Senhor Obsidiana", "spriteKey": "boss_obsidian",
+    "radius": 36, "hpMult": 9.5, "gold": 40, "advancePx": 22, "barrierDmg": 4,
+    "isBoss": true, "barrierRecoilPx": 72,
+    "behaviors": ["shooter", "summoner"],
+    "shoot": { "cooldown": 2, "damage": 2 },
+    "summon": { "cooldown": 2, "spawnId": "goblin", "maxArenaCount": 10, "offsetXPx": 52, "offsetYPx": 34 }
+  }
+}

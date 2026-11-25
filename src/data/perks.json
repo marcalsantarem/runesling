@@ -1,0 +1,77 @@
+{
+  "chain_lightning": {
+    "id": "chain_lightning", "name": "Raio em Cadeia", "desc": "45% de chance de eletrocutar outro inimigo (75% ATK).",
+    "synergy": "lightning", "rarity": "rare", "iconKey": "icon_chain_lightning", "repeatable": false, "trigger": "onEnemyHit",
+    "params": { "chance": 0.45, "damageRatio": 0.75, "rangePx": 155, "applyStatus": "shocked" }
+  },
+  "bumper_shock": {
+    "id": "bumper_shock", "name": "Sobrecarga Rúnica", "desc": "Bumper emite onda elétrica (85% ATK) e Choque.",
+    "synergy": "lightning", "iconKey": "icon_bumper_shock", "repeatable": false, "trigger": "onBumperHit",
+    "params": { "radiusPx": 92, "damageRatio": 0.85, "applyStatus": "shocked" }
+  },
+  "static_crit": {
+    "id": "static_crit", "name": "Voltagem Crítica", "desc": "Inimigos em Choque sofrem +35% de dano no turno.",
+    "synergy": "lightning", "iconKey": "icon_static_crit", "repeatable": false, "trigger": "onDamageCalc",
+    "params": { "damageMult": 1.35, "requiresStatus": "shocked" }
+  },
+  "storm_orb": {
+    "id": "storm_orb", "name": "Orbe Tempestuoso", "desc": "+1 orbe na run e +15% de chance de Raio em Cadeia.",
+    "synergy": "lightning", "iconKey": "icon_storm_orb", "repeatable": false, "trigger": "onAcquire",
+    "params": { "orbBonus": 1, "chainChanceBonus": 0.15 }
+  },
+  "fire_splash": {
+    "id": "fire_splash", "name": "Impacto Flamejante", "desc": "Impactos causam 45% ATK em área.",
+    "synergy": "fire", "iconKey": "icon_fire_splash", "repeatable": false, "trigger": "onEnemyHit",
+    "params": { "damageRatio": 0.45, "radiusPx": 60, "radiusPxWithMoltenCore": 76 }
+  },
+  "ignite": {
+    "id": "ignite", "name": "Chama Persistente", "desc": "Inimigos atingidos queimam no fim do turno (100% ATK).",
+    "synergy": "fire", "iconKey": "icon_ignite", "repeatable": false, "trigger": "onTurnEnd",
+    "params": { "damageRatio": 1.0, "applyStatus": "burning" }
+  },
+  "supernova": {
+    "id": "supernova", "name": "Detonação Ígnea", "desc": "Inimigos abatidos explodem (1.5× ATK em área).",
+    "synergy": "fire", "iconKey": "icon_supernova", "repeatable": false, "trigger": "onKill",
+    "params": { "radiusPx": 74, "damageRatio": 1.5 }
+  },
+  "molten_core": {
+    "id": "molten_core", "name": "Núcleo de Magma", "desc": "+3 ATK e explosões ígneas 25% maiores.",
+    "synergy": "fire", "iconKey": "icon_molten_core", "repeatable": false, "trigger": "onAcquire",
+    "params": { "atkBonus": 3, "fireRadiusMult": 1.25 }
+  },
+  "ghost_ball": {
+    "id": "ghost_ball", "name": "Orbe Fantasma", "desc": "O 1º orbe atravessa inimigos sem escudo.",
+    "synergy": "spectral", "iconKey": "icon_ghost_ball", "repeatable": false, "trigger": "onLaunch",
+    "params": { "orbIndex": 0, "hitCooldownFrames": 14 }
+  },
+  "ricochet_crit": {
+    "id": "ricochet_crit", "name": "Tabela Letal", "desc": "Orbes que já quicaram causam 2× de dano.",
+    "synergy": "spectral", "iconKey": "icon_ricochet_crit", "repeatable": false, "trigger": "onDamageCalc",
+    "params": { "damageMult": 2.0 }
+  },
+  "wall_clone": {
+    "id": "wall_clone", "name": "Eco do Teto", "desc": "1º quique no teto cria um orbe espectral temporário.",
+    "synergy": "spectral", "iconKey": "icon_wall_clone", "repeatable": false, "trigger": "onCeilingHit",
+    "params": { "clonesPerOrb": 1, "cloneRadius": 6.5, "cloneVxMult": -0.9, "cloneOffsetYPx": 4 }
+  },
+  "arcane_sight": {
+    "id": "arcane_sight", "name": "Visão Arcana", "desc": "Mira prevê 2 quiques e +20% de Crítico.",
+    "synergy": "spectral", "iconKey": "icon_arcane_sight", "repeatable": false, "trigger": "onAcquire",
+    "params": { "previewBounces": 2, "critChanceBonus": 0.20 }
+  },
+  "extra_orb": {
+    "id": "extra_orb", "name": "Orbe Adicional", "desc": "+1 orbe em toda tacada.",
+    "synergy": "core", "iconKey": "icon_extra_orb", "repeatable": true, "trigger": "onAcquire",
+    "params": { "orbBonus": 1 }
+  },
+  "power_surge": {
+    "id": "power_surge", "name": "Fúria Rúnica", "desc": "+2 ATK nesta expedição.",
+    "synergy": "core", "iconKey": "icon_power_surge", "repeatable": true, "trigger": "onAcquire",
+    "params": { "atkBonus": 2 }
+  },
+  "bastion_heal": {
+    "id": "bastion_heal", "name": "Selo Restaurador", "desc": "Recupera 5 HP da barreira e +2 HP Máx.",
+    "synergy": "core", "iconKey": "icon_bastion_heal", "repeatable": true, "trigger": "onAcquire",
+    "params": { "healHp": 5, "maxHpBonus": 2 }
+  }
+}
