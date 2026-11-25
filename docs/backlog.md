@@ -18,7 +18,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 
 | Id | Descrição | Marco | Agente(s) | Estado |
 |---|---|---|---|---|
-| T-012 | Remover o deploy por tag do `deploy.yml` (decisão 11) (tam. P) | M2 | AG07 | em andamento |
+| T-012 | Remover o deploy por tag do `deploy.yml` (decisão 11) (tam. P) | M2 | AG07 | feita |
 
 ## M2 (v0.3.0): Núcleo puro
 
