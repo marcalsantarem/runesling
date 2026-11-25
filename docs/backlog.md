@@ -37,8 +37,8 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 |---|---|---|---|---|
 | T-015 | Fluxo de cenas, contrato do EventBus partida ↔ UI e fontes .woff2 empacotadas (decisão 24) (tam. P) | M3 | AG07 | feita |
 | T-016 | Save do jogador (ouro, melhor onda, talentos, configurações) e compra de talentos sobre o SaveManager (decisão 26) (tam. P) | M3 | AG04 | feita |
-| T-017 | BattleScene: desenho procedural, mira em qualquer ponto, previsão, partida ligada ao Match, 2× e Recolher (decisão 19) (tam. G) | M3 | AG01 | em andamento |
-| T-018 | UI: strings pt-BR, CSS com variáveis, HUD, barra inferior, Draft, Menu, Talentos, Fim de run, Pausa/configurações (decisões 22, 23, 25) (tam. G) | M3 | AG02 | em andamento |
-| T-019 | Game feel básico: hit-flash, números flutuando, tremida de tela, partículas simples (decisão 21) (tam. P) | M3 | AG01 | a fazer |
+| T-017 | BattleScene: desenho procedural, mira em qualquer ponto, previsão, partida ligada ao Match, 2× e Recolher (decisão 19) (tam. G) | M3 | AG01 | feita |
+| T-018 | UI: strings pt-BR, CSS com variáveis, HUD, barra inferior, Draft, Menu, Talentos, Fim de run, Pausa/configurações (decisões 22, 23, 25) (tam. G) | M3 | AG02 | feita |
+| T-019 | Game feel básico: hit-flash, números flutuando, tremida de tela, partículas simples (decisão 21) (tam. P) | M3 | AG01 | em andamento |
 | T-020 | Versão 0.4.0 (tam. P) | M3 | AG07 | a fazer |
 | T-021 | Validação do M3 e tag v0.4.0 (tam. P) | M3 | AG03 + AG00 | a fazer |

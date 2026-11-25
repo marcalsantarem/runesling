@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BattleScene } from './scenes/BattleScene';
 import { BootScene, WORLD_HEIGHT, WORLD_WIDTH } from './scenes/BootScene';
+import { mountUI } from './ui';
 
 const BACKGROUND_COLOR = '#0D1020';
 /** Nitidez em telas HiDPI, limitada a 2 (vertical slice). */
@@ -18,7 +19,7 @@ function ensureElement(id: string, parent: HTMLElement): HTMLElement {
 const app = ensureElement('app', document.body);
 const gameParent = ensureElement('game', app);
 // Camada HTML sobre o canvas (UI do AG02, via EventBus).
-ensureElement('ui-root', app);
+mountUI(ensureElement('ui-root', app));
 
 new Phaser.Game({
   type: Phaser.AUTO, // WebGL com fallback automático para Canvas
