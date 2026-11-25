@@ -2,12 +2,14 @@ import Phaser from 'phaser';
 import { FONT_UI_STACK } from '../../core/fonts';
 import type { EnemyDef } from '../../data/types';
 import type { EnemyState } from '../../match/RunState';
+import { hitFlashFrames, SQUASH_PEAK, squashScale } from '../fx/fxMath';
 import { ensureCanvasTexture, glowTexture } from './draw';
 import { COLOR, CSS, DEFAULT_ENEMY_PALETTE, ENEMY_PALETTES, type EnemyPalette } from './palette';
 
 /** Fração do caminho até a posição lógica por frame (avanço suave no fim do turno). */
 const FOLLOW = 0.2;
 const DEPTH_ENEMY = 5;
+const FLASH_FRAMES = hitFlashFrames();
 
 type Face = 'slits' | 'eye' | 'cross';
 
@@ -96,6 +98,7 @@ export class EnemyView {
   readonly id: number;
   private readonly root: Phaser.GameObjects.Container;
   private readonly aura: Phaser.GameObjects.Image | null;
+  private readonly body: Phaser.GameObjects.Image;
   private readonly shock: Phaser.GameObjects.Graphics;
   private readonly plate: Phaser.GameObjects.Graphics;
   private readonly hpText: Phaser.GameObjects.Text;
@@ -107,6 +110,10 @@ export class EnemyView {
   private hpDigits = 0;
   private cd = NaN;
   private burning = false;
+  /** Frames de hit-flash restantes e escala do squash (GDD §6.3). */
+  private flash = 0;
+  private tinted = false;
+  private scale = 1;
   /** Marca de varredura usada pela cena para descartar views de inimigos mortos. */
   seen = 0;
 
@@ -124,7 +131,8 @@ export class EnemyView {
     this.root.add(this.aura);
 
     const h = bodyHalfSize(def);
-    this.root.add(scene.add.image(0, 0, enemyBodyTexture(scene, def, res)).setDisplaySize(h * 2, h * 2));
+    this.body = scene.add.image(0, 0, enemyBodyTexture(scene, def, res)).setDisplaySize(h * 2, h * 2);
+    this.root.add(this.body);
 
     this.shock = scene.add.graphics().lineStyle(def.isBoss ? 3 : 2, COLOR.cyan, 1).strokeCircle(0, 0, r).setVisible(false);
     this.root.add(this.shock);
@@ -152,7 +160,18 @@ export class EnemyView {
     this.update(en, 0);
   }
 
+  get radius(): number {
+    return this.def.radius;
+  }
+
+  /** Acerto: hit-flash branco (50 ms) e, com `squash`, escala 1.18× voltando exponencialmente. */
+  hit(squash: boolean): void {
+    this.flash = FLASH_FRAMES;
+    if (squash) this.scale = SQUASH_PEAK;
+  }
+
   update(en: EnemyState, frames: number): void {
+    this.updateFeel(frames);
     const k = frames <= 0 ? 1 : Math.min(1, FOLLOW * frames);
     const dx = en.x - this.root.x;
     const dy = en.y - this.root.y;
@@ -184,6 +203,20 @@ export class EnemyView {
     if (this.cdText && en.shootCd !== this.cd) {
       this.cd = en.shootCd;
       this.cdText.setText(String(en.shootCd));
+    }
+  }
+
+  private updateFeel(frames: number): void {
+    const white = this.flash > 0;
+    if (white !== this.tinted) {
+      this.tinted = white;
+      if (white) this.body.setTintFill(COLOR.white);
+      else this.body.clearTint();
+    }
+    if (white) this.flash = Math.max(0, this.flash - frames);
+    if (this.scale !== 1 || this.root.scale !== 1) {
+      this.scale = squashScale(this.scale, frames);
+      this.root.setScale(this.scale);
     }
   }
 

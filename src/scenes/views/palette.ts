@@ -7,6 +7,8 @@ export const COLOR = {
   violet: 0x7c6cf6,
   gold: 0xfeca57,
   crimson: 0xff5e57,
+  magma: 0xff9f43,
+  emerald: 0x1dd1a1,
   white: 0xffffff,
   plate: 0x0a0c16,
   pillar: 0x1b213b,

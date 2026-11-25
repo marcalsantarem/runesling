@@ -7,12 +7,15 @@ import { Rng } from '../match/rng';
 import { RunController } from '../match/RunController';
 import { talentBonuses } from '../match/RunState';
 import { BATTLE_SCENE, WORLD_HEIGHT, WORLD_WIDTH } from './BootScene';
+import type { FxTargets } from './fx/FxDirector';
+import { FxLayer } from './fx/FxLayer';
 import { AimView } from './views/AimView';
 import { ArenaView } from './views/ArenaView';
 import { BumperView } from './views/BumperView';
 import { EnemyView } from './views/EnemyView';
 import { LauncherView } from './views/LauncherView';
 import { OrbView } from './views/OrbView';
+import { DEFAULT_ENEMY_PALETTE, ENEMY_PALETTES } from './views/palette';
 import { PillarView } from './views/PillarView';
 import { RingView } from './views/RingView';
 
@@ -29,8 +32,8 @@ interface Drag {
   cy: number;
 }
 
-/** Partida: desenha o estado da Match (views em ./views) e repassa a mira. Regras e bus ficam no RunController. */
-export class BattleScene extends Phaser.Scene {
+/** Partida: desenha o estado da Match (views em ./views, efeitos em ./fx) e repassa a mira. Regras e bus ficam no RunController. */
+export class BattleScene extends Phaser.Scene implements FxTargets {
   private gameData!: GameData;
   private aimCfg!: AimConfig;
   private run: RunController | null = null;
@@ -49,6 +52,10 @@ export class BattleScene extends Phaser.Scene {
   private pillars: PillarView[] = [];
   private rings: RingView[] = [];
   private enemies = new Map<number, EnemyView>();
+  private fxLayer!: FxLayer;
+  /** Turno já lido do buffer de combate (detecta o Recolher, que encerra o turno fora do laço). */
+  private lastTurn = 0;
+  private readonly rimCache = new Map<string, number>();
 
   constructor() {
     super(BATTLE_SCENE);
@@ -80,6 +87,7 @@ export class BattleScene extends Phaser.Scene {
     this.launcher = new LauncherView(this, arenaDef.launch, this.res);
     this.aimView = new AimView(this, this.aimCfg);
     this.orbView = new OrbView(this, this.gameData.rules.maxActiveOrbs, this.res);
+    this.fxLayer = new FxLayer(this, new Rng(Date.now() ^ 0x2545f491), this.res);
 
     this.input.on(Phaser.Input.Events.POINTER_DOWN, this.onDown, this);
     this.input.on(Phaser.Input.Events.POINTER_MOVE, this.onMove, this);
@@ -108,6 +116,7 @@ export class BattleScene extends Phaser.Scene {
       recordRun: (r) => (profile ? profile.recordRun(r) : Promise.resolve()),
     });
     this.run = run;
+    this.lastTurn = run.state.turn;
     this.syncEnemies(0);
   }
 
@@ -151,13 +160,19 @@ export class BattleScene extends Phaser.Scene {
   override update(time: number, delta: number): void {
     const run = this.run;
     let frames = 0;
+    if (run && run.state.turn !== this.lastTurn) this.readCombat(); // Recolher (fora do laço)
     if (run && !run.paused) {
       this.acc += delta;
       while (this.acc >= FRAME_MS && frames < MAX_FRAMES_PER_UPDATE) {
         this.acc -= FRAME_MS;
         frames++;
+        // Fora do voo frame() não roda step(): os buffers são do último passo e não podem ser relidos.
+        const flying = run.state.phase === 'flight';
         run.frame();
-        this.readPhysicsHits();
+        if (flying) {
+          this.readPhysicsHits();
+          this.readCombat();
+        }
       }
       if (frames === MAX_FRAMES_PER_UPDATE) this.acc = 0;
     } else {
@@ -168,6 +183,7 @@ export class BattleScene extends Phaser.Scene {
     for (const r of this.rings) r.update(time, frames);
     for (const b of this.bumpers) b.update(frames);
     for (const p of this.pillars) p.update(frames);
+    this.updateFx(frames);
     if (!run) return;
 
     this.syncEnemies(frames);
@@ -198,8 +214,55 @@ export class BattleScene extends Phaser.Scene {
       const ev = engine.getEvent(i);
       if (ev.type === 'bumperHit') this.bumpers[ev.index]?.flash();
       else if (ev.type === 'pillarHit') this.pillars[ev.index]?.flash();
-      else if (ev.type === 'ringPass') this.rings[ev.index]?.flash();
+      else if (ev.type === 'ringPass') {
+        const ring = this.rings[ev.index];
+        if (!ring) continue;
+        ring.flash();
+        const def = this.run!.match.arenaDef.rings[ev.index];
+        if (def) this.fxLayer.fx.onRingPass(def.x, def.y);
+      }
     }
+  }
+
+  /** Eventos de saída do CombatResolver → efeitos (decisão 21). */
+  private readCombat(): void {
+    const run = this.run;
+    if (!run) return;
+    this.lastTurn = run.state.turn;
+    const combat = run.match.combat;
+    const fx = this.fxLayer.fx;
+    for (let i = 0; i < combat.eventsCount; i++) fx.onCombat(combat.getEvent(i), this);
+  }
+
+  /** Avança e desenha os efeitos; a tremida desloca a câmera em torno do centro do mundo. */
+  private updateFx(frames: number): void {
+    const fx = this.fxLayer.fx;
+    const wasShaking = fx.shake.active;
+    fx.step(frames);
+    this.fxLayer.render();
+    if (wasShaking || fx.shake.active) {
+      this.cameras.main.centerOn(WORLD_WIDTH / 2 + fx.shake.ox, WORLD_HEIGHT / 2 + fx.shake.oy);
+    }
+  }
+
+  // ---------- FxTargets ----------
+  radius(enemyId: number): number {
+    return this.enemies.get(enemyId)?.radius ?? 0;
+  }
+
+  hit(enemyId: number, squash: boolean): void {
+    this.enemies.get(enemyId)?.hit(squash);
+  }
+
+  rimColor(typeId: string): number {
+    let c = this.rimCache.get(typeId);
+    if (c === undefined) {
+      const def = this.gameData.enemies[typeId];
+      const pal = (def && ENEMY_PALETTES[def.spriteKey]) || DEFAULT_ENEMY_PALETTE;
+      c = parseInt(pal.rim.slice(1), 16);
+      this.rimCache.set(typeId, c);
+    }
+    return c;
   }
 
   /** Cria/atualiza/descarta as views pelos ids dos inimigos vivos (varredura por marca, sem alocar). */
