@@ -8,7 +8,8 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 |---|---|---|---|---|
 | T-001 | Estrutura do projeto: Vite + TS + Phaser 3, pastas do GDD, Vitest, scripts npm, cena placeholder (tam. M) | M1 | AG07 | feita |
 | T-002 | CI no GitHub Actions: `npm ci`, testes e build em push/PR na `dev` (tam. P) | M1 | AG07 | feita (não rodou no Actions ainda) |
-| T-003 | Deploy por tag no link de teste (depende da decisão 6) (tam. P) | M1 | AG07 | a fazer |
+| T-003 | Deploy por tag no Netlify, endereço por versão (decisão 6) (tam. P) | M1 | AG07 | em andamento |
+| T-009 | PWA: manifest, service worker com cache offline, ícones provisórios, instalável em retrato (decisão 7) (tam. P) | M1 | AG07 | em andamento |
 | T-004 | Validação do M1 e tag v0.2.0 (tam. P) | M1 | AG03 + AG00 | a fazer |
 
 ## M2 (v0.3.0): Núcleo puro
