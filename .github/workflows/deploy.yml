@@ -1,12 +1,20 @@
 name: Deploy
 
-# Toda tag v* publica num alias próprio da versão (nunca em produção).
+# Decisão 8: push na main publica em produção (runesling.netlify.app);
+# tag v* publica num alias próprio da versão (nunca em produção).
 on:
   push:
+    branches: [main]
     tags: ['v*']
 
 permissions:
   contents: read
+
+# Um deploy por ref por vez; não cancela deploy em andamento,
+# e só o push mais recente na fila de cada ref é executado.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   NETLIFY_CLI_VERSION: 27.16.3
@@ -24,12 +32,35 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+
+      # --- push na main: produção ---
+      - name: Deploy no Netlify (--prod)
+        if: github.ref_type == 'branch' && github.ref_name == 'main'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npx --yes "netlify-cli@${NETLIFY_CLI_VERSION}" deploy \
+            --dir dist \
+            --no-build \
+            --prod \
+            --message "main (${GITHUB_SHA::7})"
+      - name: Link de produção
+        if: github.ref_type == 'branch' && github.ref_name == 'main'
+        run: |
+          URL="https://runesling.netlify.app"
+          echo "### RuneSling produção (main ${GITHUB_SHA::7})" >> "$GITHUB_STEP_SUMMARY"
+          echo "Link de produção: $URL" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # --- tag v*: alias da versão, sem --prod ---
       - name: Alias da versão
         id: alias
+        if: github.ref_type == 'tag'
         run: |
           ALIAS=$(echo "$GITHUB_REF_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
           echo "alias=$ALIAS" >> "$GITHUB_OUTPUT"
-      - name: Deploy no Netlify (sem --prod)
+      - name: Deploy no Netlify (alias, sem --prod)
+        if: github.ref_type == 'tag'
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -40,6 +71,7 @@ jobs:
             --alias "${{ steps.alias.outputs.alias }}" \
             --message "${GITHUB_REF_NAME} (${GITHUB_SHA::7})"
       - name: Link da versão
+        if: github.ref_type == 'tag'
         run: |
           URL="https://${{ steps.alias.outputs.alias }}--runesling.netlify.app"
           echo "### RuneSling ${GITHUB_REF_NAME}" >> "$GITHUB_STEP_SUMMARY"
