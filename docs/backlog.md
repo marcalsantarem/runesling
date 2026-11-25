@@ -18,13 +18,13 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 
 | Id | Descrição | Marco | Agente(s) | Estado |
 |---|---|---|---|---|
-| T-012 | Remover o deploy por tag do `deploy.yml` (decisão 11) (tam. P) | M2 | AG07 | a fazer |
+| T-012 | Remover o deploy por tag do `deploy.yml` (decisão 11) (tam. P) | M2 | AG07 | em andamento |
 
 ## M2 (v0.3.0): Núcleo puro
 
 | Id | Descrição | Marco | Agente(s) | Estado |
 |---|---|---|---|---|
-| T-005 | JSONs de conteúdo do Capítulo 1 (enemies, perks, arenas, chapters, talents) e tipos/schemas (tam. M) | M2 | AG04 | a fazer |
-| T-006 | `PhysicsEngine` puro com sub-stepping, círculo/AABB, escudo frontal, amortecimento e testes (tam. M) | M2 | AG01 | a fazer |
+| T-005 | JSONs de conteúdo do Capítulo 1 (enemies, perks, arenas, chapters, talents) e tipos/schemas (tam. M) | M2 | AG04 | em andamento |
+| T-006 | `PhysicsEngine` puro com sub-stepping, círculo/AABB, escudo frontal, amortecimento e testes (tam. M) | M2 | AG01 | em andamento |
 | T-007 | `CombatResolver`: dano, perks, sinergias, cadeia de mortes, fim de turno, com testes (tam. G) | M2 | AG01 | a fazer |
 | T-008 | Validação do M2 e tag v0.3.0 (tam. P) | M2 | AG03 + AG00 | a fazer |
