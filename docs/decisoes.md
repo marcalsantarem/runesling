@@ -21,3 +21,4 @@ Regras em [`modo_trabalho/Decisoes.md`](../modo_trabalho/Decisoes.md).
 | 15 | Spawn das ondas | Decidido | Inimigos de cada onda sorteados pelos pesos de `poolByWave` em `chapters.json` (GDD), não pelas faixas do slice. | Definido pelo dono do projeto em 2026-11-25 |
 | 16 | Tabela Letal e chão | Decidido | O quique no chão não ativa a Tabela Letal; só paredes, teto, bumpers e pilares (GDD §4.3). | Definido pelo dono do projeto em 2026-11-25 |
 | 17 | Bônus de vitória | Decidido | Os +60 de ouro da vitória são somados fixos, sem o multiplicador da Cobiça da Cripta (GDD §5.1). | Definido pelo dono do projeto em 2026-11-25 |
+| 18 | Suíte na validação | Decidido | As tasks de validação de marco rodam a suíte de testes **uma vez** só (antes eram 3 rodadas, por `modo_trabalho/Validacao.md`). | Definido pelo dono do projeto em 2026-11-25 |

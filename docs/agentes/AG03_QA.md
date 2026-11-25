@@ -16,7 +16,7 @@ Testes automatizados, validação de marco, regressão, build no navegador real,
 - **Não toca:** Código de produção (`src/`), dados, configs.
 
 ## Regras da área
-- Rodar a suíte 3 vezes; conferir a contagem de testes.
+- Rodar a suíte **uma vez** (decisão 18); conferir a contagem de testes.
 - Relatório `docs/qa/qa-MN.md` com veredito (passa / passa com ressalvas / não passa), achados com arquivo:linha e passo a passo, e roteiro curto para o dono.
 
 ## Regras de todos os agentes
