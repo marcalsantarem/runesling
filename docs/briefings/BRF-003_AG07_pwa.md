@@ -1,0 +1,7 @@
+# BRF-003 — AG07 — T-009 PWA
+**Leia:** `docs/agentes/AG07_Arquiteto.md`, `vite.config.ts`, `index.html`, `src/main.ts`. **Regra:** respostas curtas; sem commit/push/branches.
+**Decisão do dono:** 7 — o M1 inclui PWA.
+**Fazer:** (1) Web App Manifest: nome "RuneSling", `display: fullscreen` (fallback `standalone`), `orientation: portrait`, `theme_color` e `background_color` `#0D1020`, `start_url` e `scope` relativos. (2) Service worker com precache do build e funcionamento offline (pode usar `vite-plugin-pwa` com versão fixa; `registerType: autoUpdate`). Ele **não** pode interferir no `npm run dev`. (3) Ícones **provisórios** gerados por código (192, 512 e maskable 512, runa ciano `#00CEC9` sobre `#0D1020`) em `public/icons/`; os definitivos virão do AG08. (4) Metas no `index.html`: `theme-color`, `apple-mobile-web-app-capable`, `apple-touch-icon`, viewport sem zoom com `viewport-fit=cover`. (5) Teste que confere os campos do manifest.
+**Permitido:** `vite.config.ts`, `index.html`, `src/main.ts` (só o registro do SW, se precisar), `public/icons/`, `package.json`/lock (só a dependência do PWA), `tests/core/`. **Proibido:** `.github/`, `netlify.toml` (outra task do mesmo agente, já entregue antes), o resto.
+**Pronto quando:** suíte verde e `npm run build` gera `manifest.webmanifest` e `sw.js` em `dist/`; Lighthouse/Playwright confirmando "instalável" se couber.
+**Entrega:** até 6 linhas: arquivos, dependência e versão, tamanho do `dist/`, o que não foi verificado.

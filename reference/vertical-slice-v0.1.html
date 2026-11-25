@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>RuneSling — Vertical Slice v0.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06070f;
+    --arena: #0d1020;
+    --panel: #14182b;
+    --panel-2: #1b213b;
+    --border: #2e385c;
+    --gold: #feca57;
+    --gold-dark: #b87b14;
+    --cyan: #00cec9;
+    --crimson: #ff5e57;
+    --magma: #ff9f43;
+    --arcane: #9c6bff;
+    --ok: #1dd1a1;
+    --text: #f3f5fa;
+    --muted: #8b95b5;
+  }
+  * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    height: 100dvh; overflow: hidden; overscroll-behavior: none; touch-action: manipulation;
+  }
+  .app {
+    width: 100%; max-width: 430px; height: 100dvh; margin: 0 auto;
+    display: flex; flex-direction: column; position: relative;
+    background: radial-gradient(circle at 50% 15%, #161b33 0%, #070912 72%);
+    padding: max(8px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+    overflow: hidden;
+  }
+  .screen { display: none; flex-direction: column; flex: 1; min-height: 0; gap: 8px; position: relative; }
+  .screen.active { display: flex; }
+
+  /* BOTÕES & UTILIDADES */
+  .btn {
+    border: none; border-radius: 12px; padding: 11px 14px; font-weight: 800;
+    font-size: 13px; cursor: pointer; transition: transform .08s, filter .12s;
+    font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn:active { transform: scale(.96); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-primary {
+    background: linear-gradient(135deg, #00cec9, #0984e3); color: #050914;
+    box-shadow: 0 6px 20px rgba(0,206,201,.32), inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .btn-gold {
+    background: linear-gradient(180deg, #ffe082, #e5a93c); color: #1a1004;
+    box-shadow: 0 6px 18px rgba(254,202,87,.28), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .btn-ghost {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+  }
+  .btn-ghost.on { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(0,206,201,.2); }
+  .btn-sm { padding: 6px 10px; font-size: 11px; border-radius: 9px; }
+
+  /* ==================== TELA INICIAL / META ==================== */
+  .menu-header {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(20,24,43,.88); border: 1px solid rgba(254,202,87,.28);
+    border-radius: 14px; padding: 9px 12px;
+  }
+  .gold-pill {
+    display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px; color: var(--gold);
+  }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 10px; background: var(--panel-2);
+    border: 1px solid var(--border); color: var(--text); display: grid; place-items: center; cursor: pointer;
+  }
+  .menu-body { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 2px 0; }
+  .menu-panel { display: none; flex-direction: column; gap: 12px; flex: 1; }
+  .menu-panel.active { display: flex; }
+
+  .hero-banner {
+    background: radial-gradient(circle at 50% 30%, #242b52 0%, #101428 75%);
+    border: 1px solid rgba(254,202,87,.35); border-radius: 18px; padding: 20px 16px;
+    text-align: center; position: relative; overflow: hidden;
+    box-shadow: 0 14px 32px rgba(0,0,0,.55);
+  }
+  .logo-title {
+    font-family: 'Cinzel', serif; font-size: 28px; font-weight: 900; letter-spacing: 2.5px; margin: 6px 0 2px;
+    background: linear-gradient(180deg, #fff6d1 0%, #feca57 60%, #b87b14 100%);
+    -webkit-background-clip: text; color: transparent;
+    filter: drop-shadow(0 3px 8px rgba(0,0,0,.6));
+  }
+  .logo-sub { font-size: 11px; color: var(--cyan); font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; }
+
+  .chapter-card {
+    background: linear-gradient(180deg, #181d36, #111426);
+    border: 1px solid var(--border); border-radius: 16px; padding: 14px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .ch-top { display: flex; justify-content: space-between; align-items: center; }
+  .ch-name { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 900; color: #f6e7c8; }
+  .ch-badge {
+    font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 99px;
+    background: rgba(0,206,201,.14); border: 1px solid rgba(0,206,201,.4); color: var(--cyan);
+  }
+  .ch-badge.cleared { background: rgba(29,209,161,.18); border-color: var(--ok); color: var(--ok); }
+  .ch-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .mini-stat {
+    background: #0d1020; border: 1px solid #222947; border-radius: 10px;
+    padding: 8px 6px; text-align: center;
+  }
+  .mini-stat span { display: block; font-size: 10px; color: var(--muted); font-weight: 700; }
+  .mini-stat b { font-size: 14px; color: #fff; }
+
+  .legend-card {
+    background: rgba(20,24,43,.75); border: 1px solid #242b4a; border-radius: 14px;
+    padding: 11px 12px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .legend-title { font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: .8px; text-transform: uppercase; }
+  .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px; color: #c7d0eb; }
+  .leg-item { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  /* TALENTOS */
+  .talent-list { display: flex; flex-direction: column; gap: 8px; }
+  .talent-card {
+    background: linear-gradient(180deg, #191f38, #121629);
+    border: 1px solid var(--border); border-radius: 14px; padding: 11px 12px;
+    display: flex; align-items: center; gap: 11px;
+  }
+  .talent-ico {
+    width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0;
+    background: radial-gradient(circle at 35% 30%, #2a335c, #101426);
+    border: 1px solid #49568c; display: grid; place-items: center;
+  }
+  .talent-info { flex: 1; min-width: 0; }
+  .talent-name { font-size: 13px; font-weight: 800; display: flex; justify-content: space-between; }
+  .talent-lv { color: var(--cyan); font-size: 11px; }
+  .talent-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .bottom-nav {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  }
+  .nav-btn {
+    background: transparent; color: var(--muted); border: none; border-radius: 10px;
+    padding: 9px; font-weight: 800; font-size: 12px; cursor: pointer; font-family: inherit;
+  }
+  .nav-btn.active { background: var(--panel-2); color: var(--gold); border: 1px solid rgba(254,202,87,.35); }
+
+  /* ==================== TELA DE JOGO ==================== */
+  .game-hud {
+    display: flex; justify-content: space-between; align-items: center; gap: 6px;
+    background: linear-gradient(180deg, rgba(22,26,46,.95), rgba(11,13,26,.95));
+    border: 1px solid rgba(254,202,87,.32); border-radius: 13px; padding: 7px 10px;
+  }
+  .hp-wrap { display: flex; align-items: center; gap: 6px; }
+  .hp-track {
+    width: 68px; height: 10px; background: #140a12; border-radius: 99px;
+    border: 1px solid #63283b; padding: 1px; overflow: hidden;
+  }
+  .hp-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #b8292f, #ff5e57, #ff9f43); transition: width .2s; }
+  .hp-txt { font-size: 11px; font-weight: 800; color: #ffd4d2; }
+  .wave-lbl {
+    font-family: 'Cinzel', serif; font-size: 12px; font-weight: 900; letter-spacing: 1px;
+    background: linear-gradient(180deg, #fff3c4, #e5a93c); -webkit-background-clip: text; color: transparent;
+  }
+  .hud-right { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 800; color: var(--gold); }
+
+  .perk-strip {
+    display: flex; gap: 5px; overflow-x: auto; min-height: 24px; align-items: center;
+    scrollbar-width: none; padding: 0 2px;
+  }
+  .perk-strip::-webkit-scrollbar { display: none; }
+  .perk-tag {
+    font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 7px; white-space: nowrap;
+    background: #171d36; border: 1px solid #35406e; color: #d8e0fa;
+  }
+  .perk-tag.lightning { border-color: rgba(0,206,201,.55); color: var(--cyan); }
+  .perk-tag.fire { border-color: rgba(255,159,67,.55); color: var(--magma); }
+  .perk-tag.spectral { border-color: rgba(156,107,255,.6); color: #c7a6ff; }
+
+  .arena-box {
+    flex: 1; min-height: 0; position: relative; border-radius: 16px;
+    border: 1.5px solid #2b3457; overflow: hidden; background: var(--arena);
+    box-shadow: inset 0 0 25px rgba(0,0,0,.65);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #game-canvas {
+    width: 100%; height: 100%; display: block; touch-action: none;
+  }
+
+  .game-footer {
+    display: flex; justify-content: space-between; align-items: center; gap: 6px;
+    background: linear-gradient(180deg, rgba(18,22,40,.94), rgba(9,11,22,.96));
+    border: 1px solid rgba(0,206,201,.28); border-radius: 13px; padding: 7px 10px;
+  }
+  .foot-stats { display: flex; gap: 11px; font-size: 11px; font-weight: 800; color: var(--muted); }
+  .foot-stats b { color: #fff; font-size: 12.5px; }
+  .foot-btns { display: flex; gap: 6px; }
+
+  /* ==================== MODAIS (DRAFT / FIM) ==================== */
+  .modal {
+    position: absolute; inset: 0; background: rgba(6,7,15,.92); backdrop-filter: blur(6px);
+    display: none; flex-direction: column; justify-content: center; align-items: center;
+    padding: 16px; gap: 11px; z-index: 30; text-align: center;
+  }
+  .modal.show { display: flex; }
+  .modal h2 {
+    margin: 0; font-family: 'Cinzel', serif; font-size: 20px; letter-spacing: 1px;
+    color: var(--gold);
+  }
+  .modal p { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .draft-list { width: 100%; display: flex; flex-direction: column; gap: 9px; }
+  .draft-card {
+    width: 100%; background: linear-gradient(180deg, #1b213d, #121629);
+    border: 1.5px solid var(--border); border-radius: 14px; padding: 12px;
+    display: flex; align-items: center; gap: 12px; cursor: pointer; text-align: left;
+    transition: transform .1s, border-color .15s;
+  }
+  .draft-card:active { transform: scale(.97); }
+  .draft-card.lightning { border-color: rgba(0,206,201,.65); box-shadow: 0 0 16px rgba(0,206,201,.12); }
+  .draft-card.fire { border-color: rgba(255,159,67,.65); box-shadow: 0 0 16px rgba(255,159,67,.12); }
+  .draft-card.spectral { border-color: rgba(156,107,255,.65); box-shadow: 0 0 16px rgba(156,107,255,.12); }
+  .draft-card.core { border-color: rgba(254,202,87,.55); }
+  .draft-ico {
+    width: 42px; height: 42px; border-radius: 11px; flex-shrink: 0;
+    background: #0d1020; border: 1px solid #353f69; display: grid; place-items: center;
+  }
+  .draft-syn {
+    font-size: 9.5px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .draft-name { font-size: 14px; font-weight: 800; color: #fff; }
+  .draft-desc { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+
+  .summary-box {
+    width: 100%; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ==================== TELA INICIAL / TALENTOS ==================== -->
+  <section class="screen active" id="scr-menu">
+    <div class="menu-header">
+      <div class="gold-pill">
+        <svg width="17" height="17" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#feca57" stroke="#b87b14" stroke-width="2"/><circle cx="12" cy="12" r="5.5" fill="none" stroke="#fff3c4" stroke-width="1.5"/></svg>
+        <span id="m-gold">0</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-weight:800">VERTICAL SLICE v0.1</div>
+      <button class="icon-btn" id="btn-mute-1" onclick="SFX.toggle()" aria-label="Som"></button>
+    </div>
+
+    <div class="menu-body">
+      <!-- ABA JOGAR -->
+      <div class="menu-panel active" id="tab-play">
+        <div class="hero-banner">
+          <svg width="50" height="50" viewBox="0 0 64 64" style="filter:drop-shadow(0 0 12px rgba(0,206,201,.55))">
+            <circle cx="32" cy="32" r="26" fill="#10152a" stroke="#feca57" stroke-width="2.5"/>
+            <polygon points="32,12 48,32 32,52 16,32" fill="none" stroke="#00cec9" stroke-width="2.5"/>
+            <circle cx="32" cy="32" r="9" fill="#00cec9"/>
+            <circle cx="29" cy="29" r="3" fill="#ffffff"/>
+          </svg>
+          <div class="logo-title">RUNESLING</div>
+          <div class="logo-sub">Capítulo I • Cripta Obsidiana</div>
+        </div>
+
+        <div class="chapter-card">
+          <div class="ch-top">
+            <span class="ch-name">I. Cripta Obsidiana</span>
+            <span class="ch-badge" id="m-ch-badge">15 ONDAS</span>
+          </div>
+          <div class="ch-stats">
+            <div class="mini-stat"><span>MELHOR ONDA</span><b id="m-best-wave">0 / 15</b></div>
+            <div class="mini-stat"><span>ATK BASE</span><b id="m-stat-atk">3</b></div>
+            <div class="mini-stat"><span>ORBES / HP</span><b id="m-stat-oh">2 / 12</b></div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;padding:14px;font-size:14px" onclick="Game.startRun()">
+            INICIAR EXPEDIÇÃO
+          </button>
+        </div>
+
+        <div class="legend-card">
+          <div class="legend-title">Guia Tático da Arena</div>
+          <div class="legend-grid">
+            <div class="leg-item"><i class="dot" style="background:#00cec9"></i>Escudo: ataque por cima</div>
+            <div class="leg-item"><i class="dot" style="background:#ff9f43"></i>Magma: explode em área</div>
+            <div class="leg-item"><i class="dot" style="background:#9c6bff"></i>Cultista: atira ao zerar</div>
+            <div class="leg-item"><i class="dot" style="background:#1dd1a1"></i>Clérigo: cura aliados</div>
+            <div class="leg-item"><i class="dot" style="background:#e056fd"></i>Espectro: divide em 2</div>
+            <div class="leg-item"><i class="dot" style="background:#feca57"></i>Anel ×2: clona orbes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA TALENTOS -->
+      <div class="menu-panel" id="tab-talents">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:0 4px">
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:15px;font-weight:900;color:var(--gold)">TALENTOS PERMANENTES</div>
+            <div style="font-size:11px;color:var(--muted)">Melhorias mantidas entre todas as partidas</div>
+          </div>
+        </div>
+        <div class="talent-list" id="talent-list"></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn active" id="nav-play" onclick="UI.switchMenuTab('play')">EXPEDIÇÃO</button>
+      <button class="nav-btn" id="nav-talents" onclick="UI.switchMenuTab('talents')">TALENTOS</button>
+    </div>
+  </section>
+
+  <!-- ==================== TELA DE COMBATE ==================== -->
+  <section class="screen" id="scr-game">
+    <div class="game-hud">
+      <div class="hp-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.7-9.5-9.2C1 8.4 3.2 5 6.8 5c2 0 3.7 1.1 5.2 2.8C13.5 6.1 15.2 5 17.2 5 20.8 5 23 8.4 21.5 11.8 19.5 16.3 12 21 12 21z" fill="#ff5e57"/></svg>
+        <div class="hp-track"><div class="hp-fill" id="g-hp-bar" style="width:100%"></div></div>
+        <span class="hp-txt" id="g-hp-txt">12/12</span>
+      </div>
+      <div class="wave-lbl" id="g-wave">ONDA 1/15</div>
+      <div class="hud-right">
+        <svg width="13" height="13" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#feca57" stroke="#b87b14" stroke-width="2"/></svg>
+        <span id="g-gold">0</span>
+        <button class="icon-btn" style="width:28px;height:28px" id="btn-mute-2" onclick="SFX.toggle()"></button>
+        <button class="icon-btn" style="width:28px;height:28px;font-size:12px" onclick="Game.abortToMenu()">✕</button>
+      </div>
+    </div>
+
+    <div class="perk-strip" id="g-perks">
+      <span style="font-size:10.5px;color:var(--muted)">Arraste em qualquer lugar da arena para mirar e solte para lançar</span>
+    </div>
+
+    <div class="arena-box">
+      <canvas id="game-canvas"></canvas>
+
+      <!-- MODAL DRAFT DE PERKS -->
+      <div class="modal" id="modal-draft">
+        <h2 id="draft-title">ESCOLHA UMA RUNA</h2>
+        <p id="draft-sub">Combine sinergias Elétrica, Ígnea ou Espectral.</p>
+        <div class="draft-list" id="draft-list"></div>
+      </div>
+
+      <!-- MODAL FIM DE PARTIDA -->
+      <div class="modal" id="modal-end">
+        <h2 id="end-title">BARREIRA ROMPIDA</h2>
+        <p id="end-sub"></p>
+        <div class="summary-box">
+          <div class="mini-stat"><span>ONDA ALCANÇADA</span><b id="end-wave">1/15</b></div>
+          <div class="mini-stat"><span>INIMIGOS ABATIDOS</span><b id="end-kills">0</b></div>
+          <div class="mini-stat"><span>OURO GANHO</span><b id="end-gold" style="color:var(--gold)">+0</b></div>
+          <div class="mini-stat"><span>MAIOR COMBO</span><b id="end-combo" style="color:var(--cyan)">0×</b></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%">
+          <button class="btn btn-ghost" onclick="UI.showMenu()">TALENTOS</button>
+          <button class="btn btn-primary" onclick="Game.startRun()">JOGAR DE NOVO</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-footer">
+      <div class="foot-stats">
+        <span>ATK <b id="g-atk">3</b></span>
+        <span>ORBES <b id="g-balls">2</b></span>
+        <span>CRIT <b id="g-crit">5%</b></span>
+      </div>
+      <div class="foot-btns">
+        <button class="btn btn-sm btn-ghost" id="btn-recall" onclick="Game.recallBalls()" style="display:none">RECOLHER</button>
+        <button class="btn btn-sm btn-ghost" id="btn-spd" onclick="Game.toggleSpeed()">1×</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =========================================================================
+   1. CAMADA DATA-DRIVEN (FÁCIL DE EXPANDIR PARA NOVOS CAPÍTULOS E CONTEÚDO)
+   ========================================================================= */
+const DATA = {
+  // 6 tipos de inimigos + 2 chefes
+  enemies: {
+    goblin:   { name:'Goblin',   r:17, hpMult:1.0,  gold:2, col1:'#c87d4b', col2:'#4a2511', rim:'#d4a373', eye:'#feca57' },
+    shield:   { name:'Cavaleiro',r:19, hpMult:1.25, gold:3, col1:'#6474a8', col2:'#1e2540', rim:'#9fb0e0', eye:'#00cec9', frontShield:true },
+    shooter:  { name:'Cultista', r:18, hpMult:0.95, gold:3, col1:'#9c6bff', col2:'#2d1459', rim:'#d1b3ff', eye:'#ff5e57', shootCd:2, shootDmg:1 },
+    bomb:     { name:'Magma',    r:18, hpMult:0.85, gold:3, col1:'#ff9f43', col2:'#7a2208', rim:'#ffeaa7', eye:'#fff6cc', explodes:true },
+    splitter: { name:'Espectro', r:19, hpMult:1.05, gold:3, col1:'#e056fd', col2:'#47126b', rim:'#f5b5ff', eye:'#ffffff', splits:true },
+    mini:     { name:'Fagulha',  r:12, hpMult:0.45, gold:1, col1:'#c56cf0', col2:'#381254', rim:'#e9b8ff', eye:'#ffffff' },
+    healer:   { name:'Clérigo',  r:18, hpMult:1.0,  gold:4, col1:'#1dd1a1', col2:'#0b4d3c', rim:'#8ef5d8', eye:'#e8fff8', heals:true },
+    miniboss: { name:'Guardião de Ferro', r:31, hpMult:5.2, gold:18, col1:'#7c8bb8', col2:'#1b223b', rim:'#feca57', eye:'#00cec9', boss:true, frontShield:true, summons:true },
+    boss:     { name:'Senhor Obsidiana',  r:36, hpMult:9.5, gold:40, col1:'#ff5e57', col2:'#450c17', rim:'#feca57', eye:'#fff3b0', boss:true, shootCd:2, shootDmg:2, summons:true }
+  },
+
+  // 15 Perks em 3 sinergias + núcleo
+  perks: [
+    // ELÉTRICA
+    { id:'chain_lightning', syn:'lightning', synLabel:'ELÉTRICA', name:'Raio em Cadeia',    desc:'45% de chance de eletrocutar outro inimigo (75% ATK).', icon:'bolt' },
+    { id:'bumper_shock',    syn:'lightning', synLabel:'ELÉTRICA', name:'Sobrecarga Rúnica', desc:'Quicar num Bumper dispara onda elétrica em área.', icon:'ring' },
+    { id:'static_crit',     syn:'lightning', synLabel:'ELÉTRICA', name:'Voltagem Crítica',  desc:'Inimigos atingidos por raio levam +35% dano no turno.', icon:'spark' },
+    { id:'storm_orb',       syn:'lightning', synLabel:'ELÉTRICA', name:'Orbe Tempestuoso',  desc:'+1 Orbe permanente e +15% chance de Raio em Cadeia.', icon:'orb' },
+    // ÍGNEA
+    { id:'fire_splash',     syn:'fire',      synLabel:'ÍGNEA',    name:'Impacto Flamejante',desc:'Acertos causam 45% de dano ígneo em área ao redor.', icon:'flame' },
+    { id:'ignite',          syn:'fire',      synLabel:'ÍGNEA',    name:'Chama Persistente', desc:'Inimigos acertados queimam no fim do turno (100% ATK).', icon:'burn' },
+    { id:'supernova',       syn:'fire',      synLabel:'ÍGNEA',    name:'Detonação Ígnea',   desc:'Qualquer inimigo abatido explode (1.5× ATK em área).', icon:'nova' },
+    { id:'molten_core',     syn:'fire',      synLabel:'ÍGNEA',    name:'Núcleo de Magma',   desc:'+3 ATK base e explosões 25% maiores.', icon:'core' },
+    // ESPECTRAL
+    { id:'ghost_ball',      syn:'spectral',  synLabel:'ESPECTRAL',name:'Orbe Fantasma',     desc:'Seu 1º orbe atravessa inimigos sem escudo.', icon:'ghost' },
+    { id:'ricochet_crit',   syn:'spectral',  synLabel:'ESPECTRAL',name:'Tabela Letal',      desc:'Orbes causam 2× de dano após quicar na parede/bumper.', icon:'target' },
+    { id:'wall_clone',      syn:'spectral',  synLabel:'ESPECTRAL',name:'Eco do Teto',       desc:'1º quique no teto cria um orbe espectral temporário.', icon:'clone' },
+    { id:'arcane_sight',    syn:'spectral',  synLabel:'ESPECTRAL',name:'Visão Arcana',      desc:'Mira prevê 2 quiques e +20% de chance Crítica.', icon:'eye' },
+    // BASE / UTILIDADE
+    { id:'extra_orb',       syn:'core',      synLabel:'ARCANA',   name:'Orbe Adicional',    desc:'+1 Orbe disparado em toda tacada.', icon:'orb', repeatable:true },
+    { id:'power_surge',     syn:'core',      synLabel:'ARCANA',   name:'Fúria Rúnica',      desc:'+2 ATK permanente nesta expedição.', icon:'sword', repeatable:true },
+    { id:'bastion_heal',    syn:'core',      synLabel:'ARCANA',   name:'Selo Restaurador',  desc:'Recupera +5 HP da barreira e ganha +2 HP Máx.', icon:'heart', repeatable:true }
+  ],
+
+  // Talentos Permanentes (Meta-progressão)
+  talents: [
+    { id:'atk',   name:'Forja Arcana',      desc:'+1 ATK inicial por nível.',          max:10, baseCost:25, step:20, icon:'sword' },
+    { id:'hp',    name:'Barreira Rúnica',   desc:'+2 HP Máximo da base por nível.',    max:10, baseCost:20, step:18, icon:'heart' },
+    { id:'balls', name:'Maestria de Orbes', desc:'+1 Orbe inicial por nível.',         max:3,  baseCost:75, step:90, icon:'orb' },
+    { id:'crit',  name:'Olho do Ricochete', desc:'+5% chance de Crítico (1.75×).',     max:8,  baseCost:30, step:24, icon:'target' },
+    { id:'gold',  name:'Cobiça da Cripta',  desc:'+15% Ouro ganho nas expedições.',    max:6,  baseCost:35, step:28, icon:'coin' }
+  ],
+
+  // Capítulo 1: 15 Ondas (Draft nas ondas 2, 4, 6, 7-MiniBoss, 9, 11, 13)
+  chapter1: {
+    totalWaves: 15,
+    draftWaves: [2, 4, 6, 7, 9, 11, 13],
+    arena: {
+      bumpers: [
+        { x: 76,  y: 282, r: 17 },
+        { x: 284, y: 282, r: 17 }
+      ],
+      pillar: { x: 146, y: 205, w: 68, h: 16 }, // Pilar refletor de pedra
+      ring:   { x: 180, y: 342, r: 21 }         // Anel Multiplicador x2
+    }
+  }
+};
+
+/* =========================================================================
+   2. PERSISTÊNCIA (LOCALSTORAGE)
+   ========================================================================= */
+const Save = (() => {
+  const KEY = 'runesling_v01_save';
+  let data = { gold: 40, bestWave: 0, cleared: false, talents: { atk:0, hp:0, balls:0, crit:0, gold:0 } };
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      data = { ...data, ...parsed, talents: { ...data.talents, ...(parsed.talents || {}) } };
+    }
+  } catch(e){}
+  function write() { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e){} }
+  return {
+    get: () => data,
+    addGold(amt) { data.gold += amt; write(); },
+    recordWave(w, won) {
+      if (w > data.bestWave) data.bestWave = w;
+      if (won) data.cleared = true;
+      write();
+    },
+    buyTalent(t) {
+      const lv = data.talents[t.id] || 0;
+      const cost = t.baseCost + lv * t.step;
+      if (lv >= t.max || data.gold < cost) return false;
+      data.gold -= cost;
+      data.talents[t.id] = lv + 1;
+      write();
+      return true;
+    }
+  };
+})();
+
+/* =========================================================================
+   3. ÁUDIO SINTÉTICO (WEB AUDIO API — ZERO ARQUIVOS EXTERNOS)
+   ========================================================================= */
+const SFX = (() => {
+  let ctx = null, muted = false;
+  function unlock() {
+    try {
+      if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+    } catch(e){}
+  }
+  window.addEventListener('pointerdown', unlock, { passive:true });
+
+  function iconSvg(isMuted) {
+    return isMuted
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/><path d="M19 5a10 10 0 010 14"/></svg>';
+  }
+  function updateIcons() {
+    ['btn-mute-1','btn-mute-2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = iconSvg(muted);
+    });
+  }
+  function toggle() { muted = !muted; updateIcons(); }
+
+  function play(t, pitch = 1) {
+    if (muted) return;
+    try {
+      unlock(); if (!ctx) return;
+      const n = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      if (t === 'hit') {
+        o.type='triangle'; o.frequency.setValueAtTime(200*pitch, n); o.frequency.exponentialRampToValueAtTime(60, n+.08);
+        g.gain.setValueAtTime(.14, n); g.gain.exponentialRampToValueAtTime(.001, n+.08);
+        o.start(n); o.stop(n+.085);
+      } else if (t === 'crit') {
+        o.type='sawtooth'; o.frequency.setValueAtTime(340*pitch, n); o.frequency.exponentialRampToValueAtTime(95, n+.12);
+        g.gain.setValueAtTime(.13, n); g.gain.exponentialRampToValueAtTime(.001, n+.13);
+        o.start(n); o.stop(n+.135);
+      } else if (t === 'bumper') {
+        o.type='sine'; o.frequency.setValueAtTime(520, n); o.frequency.exponentialRampToValueAtTime(880, n+.1);
+        g.gain.setValueAtTime(.12, n); g.gain.exponentialRampToValueAtTime(.001, n+.11);
+        o.start(n); o.stop(n+.11);
+      } else if (t === 'shield') {
+        o.type='square'; o.frequency.setValueAtTime(600, n); o.frequency.exponentialRampToValueAtTime(280, n+.07);
+        g.gain.setValueAtTime(.07, n); g.gain.exponentialRampToValueAtTime(.001, n+.075);
+        o.start(n); o.stop(n+.08);
+      } else if (t === 'zap') {
+        o.type='sawtooth'; o.frequency.setValueAtTime(920, n); o.frequency.exponentialRampToValueAtTime(210, n+.11);
+        g.gain.setValueAtTime(.09, n); g.gain.exponentialRampToValueAtTime(.001, n+.12);
+        o.start(n); o.stop(n+.12);
+      } else if (t === 'boom') {
+        o.type='sawtooth'; o.frequency.setValueAtTime(140, n); o.frequency.exponentialRampToValueAtTime(34, n+.22);
+        g.gain.setValueAtTime(.18, n); g.gain.exponentialRampToValueAtTime(.001, n+.24);
+        o.start(n); o.stop(n+.24);
+      } else if (t === 'clone') {
+        o.type='sine'; o.frequency.setValueAtTime(660, n); o.frequency.exponentialRampToValueAtTime(1120, n+.12);
+        g.gain.setValueAtTime(.1, n); g.gain.exponentialRampToValueAtTime(.001, n+.13);
+        o.start(n); o.stop(n+.13);
+      } else if (t === 'hurt') {
+        o.type='sawtooth'; o.frequency.setValueAtTime(135, n); o.frequency.linearRampToValueAtTime(48, n+.2);
+        g.gain.setValueAtTime(.18, n); g.gain.exponentialRampToValueAtTime(.001, n+.21);
+        o.start(n); o.stop(n+.22);
+      } else if (t === 'lvl') {
+        o.type='triangle'; o.frequency.setValueAtTime(440, n); o.frequency.setValueAtTime(554, n+.08); o.frequency.setValueAtTime(659, n+.16);
+        g.gain.setValueAtTime(.13, n); g.gain.exponentialRampToValueAtTime(.001, n+.32);
+        o.start(n); o.stop(n+.33);
+      }
+    } catch(e){}
+  }
+  return { play, toggle, updateIcons };
+})();
+
+/* =========================================================================
+   4. ÍCONES SVG LIMPOS (ZERO EMOJIS)
+   ========================================================================= */
+function getSvgIcon(name, color = '#00cec9') {
+  const m = {
+    bolt:   `<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="${color}"/>`,
+    ring:   `<circle cx="12" cy="12" r="8" fill="none" stroke="${color}" stroke-width="2.4"/><circle cx="12" cy="12" r="3" fill="${color}"/>`,
+    spark:  `<path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2z" fill="${color}"/>`,
+    orb:    `<circle cx="12" cy="12" r="8" fill="${color}"/><circle cx="9.5" cy="9.5" r="2.5" fill="#fff" opacity=".8"/>`,
+    flame:  `<path d="M12 2c3 4 6 6.8 6 11a6 6 0 11-12 0c0-3.2 2-5.5 3.5-7.2 0 1.8 1 2.7 2 2.7 0-2.5.5-4.7.5-6.5z" fill="${color}"/>`,
+    burn:   `<path d="M12 3c2.5 3.5 5 6 5 9.5a5 5 0 11-10 0C7 9.5 9 7 12 3z" fill="none" stroke="${color}" stroke-width="2.2"/><circle cx="12" cy="14" r="2.5" fill="${color}"/>`,
+    nova:   `<polygon points="12,2 15,9 22,9 16.5,13.5 18.5,21 12,16.5 5.5,21 7.5,13.5 2,9 9,9" fill="${color}"/>`,
+    core:   `<polygon points="12,2 21,12 12,22 3,12" fill="${color}"/><polygon points="12,6 17,12 12,18 7,12" fill="#fff" opacity=".4"/>`,
+    ghost:  `<path d="M12 3a7 7 0 017 7v10l-3-2-2 2-2-2-2 2-2-2-3 2V10a7 7 0 017-7z" fill="${color}"/><circle cx="9.5" cy="10" r="1.5" fill="#0d1020"/><circle cx="14.5" cy="10" r="1.5" fill="#0d1020"/>`,
+    target: `<circle cx="12" cy="12" r="9" fill="none" stroke="${color}" stroke-width="2"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="${color}" stroke-width="2"/><circle cx="12" cy="12" r="1.8" fill="${color}"/>`,
+    clone:  `<circle cx="9" cy="12" r="5.5" fill="none" stroke="${color}" stroke-width="2.2"/><circle cx="15" cy="12" r="5.5" fill="${color}" opacity=".75"/>`,
+    eye:    `<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" fill="none" stroke="${color}" stroke-width="2.2"/><circle cx="12" cy="12" r="3" fill="${color}"/>`,
+    sword:  `<path d="M19 3l2 2-9 9-2-2 9-9zM8 14l2 2-5 5-2-2 5-5zM7 11l6 6" stroke="${color}" stroke-width="2.2" fill="${color}" stroke-linecap="round"/>`,
+    heart:  `<path d="M12 21s-7.5-4.7-9.5-9.2C1 8.4 3.2 5 6.8 5c2 0 3.7 1.1 5.2 2.8C13.5 6.1 15.2 5 17.2 5 20.8 5 23 8.4 21.5 11.8 19.5 16.3 12 21 12 21z" fill="${color}"/>`,
+    coin:   `<circle cx="12" cy="12" r="9" fill="${color}" stroke="#b87b14" stroke-width="2"/><circle cx="12" cy="12" r="5" fill="none" stroke="#fff3c4" stroke-width="1.4"/>`
+  };
+  return `<svg width="22" height="22" viewBox="0 0 24 24">${m[name] || m.orb}</svg>`;
+}
+
+/* =========================================================================
+   5. INTERFACE DE MENU & TALENTOS
+   ========================================================================= */
+const UI = (() => {
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+  }
+  function switchMenuTab(tab) {
+    document.getElementById('tab-play').classList.toggle('active', tab === 'play');
+    document.getElementById('tab-talents').classList.toggle('active', tab === 'talents');
+    document.getElementById('nav-play').classList.toggle('active', tab === 'play');
+    document.getElementById('nav-talents').classList.toggle('active', tab === 'talents');
+    renderMenu();
+  }
+  function renderMenu() {
+    const sv = Save.get();
+    document.getElementById('m-gold').textContent = sv.gold;
+    document.getElementById('m-best-wave').textContent = `${sv.bestWave} / 15`;
+    document.getElementById('m-stat-atk').textContent = 3 + sv.talents.atk;
+    document.getElementById('m-stat-oh').textContent = `${2 + sv.talents.balls} / ${12 + sv.talents.hp * 2}`;
+
+    const badge = document.getElementById('m-ch-badge');
+    if (sv.cleared) { badge.textContent = 'CONQUISTADO'; badge.classList.add('cleared'); }
+    else { badge.textContent = '15 ONDAS'; badge.classList.remove('cleared'); }
+
+    const list = document.getElementById('talent-list');
+    list.innerHTML = '';
+    DATA.talents.forEach(t => {
+      const lv = sv.talents[t.id] || 0;
+      const cost = t.baseCost + lv * t.step;
+      const maxed = lv >= t.max;
+      const canBuy = !maxed && sv.gold >= cost;
+      const col = t.id==='hp' ? '#ff5e57' : t.id==='gold' ? '#feca57' : t.id==='crit' ? '#9c6bff' : '#00cec9';
+      const el = document.createElement('div');
+      el.className = 'talent-card';
+      el.innerHTML = `
+        <div class="talent-ico">${getSvgIcon(t.icon, col)}</div>
+        <div class="talent-info">
+          <div class="talent-name"><span>${t.name}</span><span class="talent-lv">Nv.${lv}/${t.max}</span></div>
+          <div class="talent-desc">${t.desc}</div>
+        </div>
+        <button class="btn btn-sm ${canBuy ? 'btn-gold' : 'btn-ghost'}" ${canBuy ? '' : 'disabled'}>
+          ${maxed ? 'MÁX' : cost + ' G'}
+        </button>
+      `;
+      el.querySelector('button').onclick = () => {
+        if (Save.buyTalent(t)) { SFX.play('lvl'); renderMenu(); }
+      };
+      list.appendChild(el);
+    });
+  }
+  function showMenu() {
+    Game.stop();
+    showScreen('scr-menu');
+    renderMenu();
+  }
+  return { showScreen, switchMenuTab, renderMenu, showMenu };
+})();
+
+/* =========================================================================
+   6. MOTOR DO JOGO (FÍSICA SUB-STEPPING + COMBATE + RENDER HD)
+   ========================================================================= */
+const Game = (() => {
+  const cv = document.getElementById('game-canvas');
+  const ctx = cv.getContext('2d');
+  const LW = 360, LH = 520;
+  const LAUNCH_X = 180, LAUNCH_Y = 468, BARRIER_Y = 436;
+  const MAX_ACTIVE_BALLS = 28;
+
+  let active = false, rafId = null;
+  let state = null;
+  let nextEnemyId = 1;
+  const dust = Array.from({length:24}, () => ({ x:Math.random()*LW, y:Math.random()*LH, r:1+Math.random()*1.8, v:.15+Math.random()*.28 }));
+
+  function resize() {
+    const box = cv.parentElement.getBoundingClientRect();
+    if (!box.width || !box.height) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(LW * dpr);
+    cv.height = Math.round(LH * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+
+  function startRun() {
+    const sv = Save.get();
+    const t = sv.talents;
+    state = {
+      wave: 1,
+      hp: 12 + t.hp * 2,
+      maxHp: 12 + t.hp * 2,
+      atk: 3 + t.atk,
+      ballCount: 2 + t.balls,
+      critChance: 0.05 + t.crit * 0.05,
+      goldMult: 1 + t.gold * 0.15,
+      runGold: 0,
+      kills: 0,
+      turnCombo: 0,
+      bestCombo: 0,
+      perks: [],
+      balls: [],
+      enemies: [],
+      bumpers: DATA.chapter1.arena.bumpers.map(b => ({ ...b, hit: 0 })),
+      pillar: { ...DATA.chapter1.arena.pillar, hit: 0 },
+      ring: { ...DATA.chapter1.arena.ring, hit: 0 },
+      parts: [],
+      floats: [],
+      beams: [],
+      wavesFx: [],
+      moving: false,
+      paused: false,
+      over: false,
+      drag: null,
+      speedMult: 1,
+      flightTicks: 0,
+      shake: 0,
+      bannerText: '',
+      bannerTimer: 0
+    };
+    document.getElementById('modal-draft').classList.remove('show');
+    document.getElementById('modal-end').classList.remove('show');
+    document.getElementById('btn-spd').textContent = '1×';
+    document.getElementById('btn-spd').classList.remove('on');
+    document.getElementById('btn-recall').style.display = 'none';
+
+    UI.showScreen('scr-game');
+    resize();
+    spawnWave(1);
+    updateHUD();
+    active = true;
+    if (!rafId) rafId = requestAnimationFrame(loop);
+  }
+
+  function stop() { active = false; }
+  function abortToMenu() {
+    if (state && state.runGold > 0 && !state.over) {
+      Save.addGold(Math.round(state.runGold * state.goldMult));
+      Save.recordWave(state.wave, false);
+    }
+    UI.showMenu();
+  }
+
+  function hasPerk(id) { return state.perks.includes(id); }
+
+  function toggleSpeed() {
+    if (!state) return;
+    state.speedMult = state.speedMult === 1 ? 2 : 1;
+    const b = document.getElementById('btn-spd');
+    b.textContent = state.speedMult + '×';
+    b.classList.toggle('on', state.speedMult === 2);
+  }
+
+  function recallBalls() {
+    if (!state || !state.moving || state.paused || state.over) return;
+    state.balls = [];
+    endTurn();
+  }
+
+  /* ===== SPAWN DE ONDAS (CAPÍTULO 1: 15 ONDAS) ===== */
+  function makeEnemy(typeKey, x, y, waveNum) {
+    const def = DATA.enemies[typeKey];
+    const baseHp = 4 + waveNum * 2.8 + Math.pow(waveNum, 1.32) * 0.55;
+    const hp = Math.max(2, Math.round(baseHp * def.hpMult));
+    return {
+      id: nextEnemyId++,
+      type: typeKey,
+      x, y,
+      r: def.r,
+      hp, maxHp: hp,
+      shootCd: def.shootCd || 0,
+      summonCd: def.summons ? 2 : 0,
+      burn: false,
+      shocked: false,
+      flash: 0,
+      scale: 1
+    };
+  }
+
+  function findFreeX(y, r) {
+    for (let attempt = 0; attempt < 25; attempt++) {
+      const x = 34 + Math.random() * (LW - 68);
+      if (!state.enemies.some(e => Math.hypot(e.x - x, e.y - y) < e.r + r + 10)) return x;
+    }
+    return 40 + Math.random() * (LW - 80);
+  }
+
+  function spawnWave(w) {
+    if (w === 7) {
+      state.enemies.push(makeEnemy('miniboss', LW / 2, 74, w));
+      showBanner('MINI-CHEFE: GUARDIÃO DE FERRO');
+      SFX.play('lvl');
+    } else if (w === 15) {
+      state.enemies.push(makeEnemy('boss', LW / 2, 76, w));
+      showBanner('CHEFE FINAL: SENHOR OBSIDIANA');
+      SFX.play('lvl');
+    }
+
+    const count = w === 15 ? 3 : w === 7 ? 2 : (3 + Math.min(4, Math.floor(w / 3)));
+    for (let i = 0; i < count; i++) {
+      const r = Math.random();
+      let type = 'goblin';
+      if (w >= 2 && r < 0.24) type = 'shield';
+      else if (w >= 3 && r < 0.42) type = 'bomb';
+      else if (w >= 4 && r < 0.58) type = 'shooter';
+      else if (w >= 5 && r < 0.72) type = 'splitter';
+      else if (w >= 6 && r < 0.84) type = 'healer';
+      const y = (w === 7 || w === 15) ? 124 + Math.random() * 24 : 52 + Math.random() * 44;
+      const x = findFreeX(y, DATA.enemies[type].r);
+      state.enemies.push(makeEnemy(type, x, y, w));
+    }
+  }
+
+  function showBanner(txt) { state.bannerText = txt; state.bannerTimer = 110; }
+
+  /* ===== INPUT DE MIRA (1 MÃO EM QUALQUER PONTO DA ARENA) ===== */
+  function getLogicalPos(e) {
+    const r = cv.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * (LW / r.width), y: (e.clientY - r.top) * (LH / r.height) };
+  }
+
+  function getAimAngle(drag) {
+    const dx = drag.s.x - drag.c.x, dy = drag.s.y - drag.c.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 14) return null;
+    let ang = Math.atan2(dy, dx);
+    // Garante disparo sempre para cima (evita atirar no chão por acidente)
+    if (ang > -0.14 && ang <= Math.PI / 2) ang = -0.14;
+    else if (ang > Math.PI / 2 || ang < -Math.PI + 0.14) ang = -Math.PI + 0.14;
+    const power = 9.5 + Math.min(1, dist / 120) * 3.8;
+    return { ang, power };
+  }
+
+  cv.addEventListener('pointerdown', e => {
+    if (!active || !state || state.moving || state.paused || state.over) return;
+    cv.setPointerCapture(e.pointerId);
+    const p = getLogicalPos(e);
+    state.drag = { s: p, c: p };
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!active || !state || !state.drag) return;
+    state.drag.c = getLogicalPos(e);
+  });
+  cv.addEventListener('pointerup', () => {
+    if (!active || !state || !state.drag) return;
+    const aim = getAimAngle(state.drag);
+    state.drag = null;
+    if (!aim) return;
+
+    state.balls = [];
+    state.turnCombo = 0;
+    state.flightTicks = 0;
+    state.enemies.forEach(e => e.shocked = false);
+
+    for (let i = 0; i < state.ballCount; i++) {
+      const spread = (i - (state.ballCount - 1) / 2) * 0.085;
+      const a = aim.ang + spread;
+      state.balls.push({
+        x: LAUNCH_X, y: LAUNCH_Y,
+        vx: Math.cos(a) * aim.power,
+        vy: Math.sin(a) * aim.power,
+        r: 7.5,
+        bounced: false,
+        pierce: i === 0 && hasPerk('ghost_ball'),
+        cloned: false,
+        wallCloned: false,
+        temp: false,
+        hitCd: new Map(),
+        trail: []
+      });
+    }
+    state.moving = true;
+    document.getElementById('btn-recall').style.display = 'inline-flex';
+    SFX.play('bumper', 0.8);
+  });
+
+  /* ===== COMBATE & EFEITOS ===== */
+  function spawnParticles(x, y, col, count = 6, spd = 5) {
+    for (let i = 0; i < count; i++) {
+      const a = Math.random() * Math.PI * 2, v = 1 + Math.random() * spd;
+      state.parts.push({ x, y, vx: Math.cos(a)*v, vy: Math.sin(a)*v, l: 14 + Math.random()*10, col });
+    }
+  }
+  function addFloat(x, y, txt, col = '#fff', size = 13) {
+    state.floats.push({ x, y, txt, col, size, l: 28 });
+  }
+
+  function applyDamage(en, rawDmg, opts = {}) {
+    if (en.hp <= 0) return;
+    let dmg = rawDmg;
+    let isCrit = !!opts.crit;
+    if (!opts.noCrit && Math.random() < state.critChance) {
+      dmg *= 1.75; isCrit = true;
+    }
+    if (en.shocked && hasPerk('static_crit')) dmg *= 1.35;
+    dmg = Math.max(1, Math.round(dmg));
+
+    en.hp -= dmg;
+    en.flash = 5;
+    en.scale = 1.18;
+    if (opts.fromBall) {
+      state.turnCombo++;
+      if (state.turnCombo > state.bestCombo) state.bestCombo = state.turnCombo;
+    }
+    if (hasPerk('ignite') && opts.fromBall) en.burn = true;
+
+    addFloat(en.x + (Math.random()*14-7), en.y - en.r, isCrit ? `-${dmg}!` : `-${dmg}`, opts.col || (isCrit ? '#feca57' : '#fff'), isCrit ? 15 : 12);
+    spawnParticles(en.x, en.y, opts.col || '#ff5e57', isCrit ? 8 : 5, isCrit ? 6 : 4);
+
+    // Impacto Flamejante (Splash)
+    if (opts.fromBall && hasPerk('fire_splash')) {
+      const rad = hasPerk('molten_core') ? 76 : 60;
+      state.wavesFx.push({ x: en.x, y: en.y, r: 8, maxR: rad, col: '#ff9f43', l: 12 });
+      state.enemies.forEach(o => {
+        if (o !== en && o.hp > 0 && Math.hypot(o.x - en.x, o.y - en.y) < rad + o.r) {
+          applyDamage(o, state.atk * 0.45, { col:'#ff9f43', noCrit:true });
+        }
+      });
+    }
+
+    // Raio em Cadeia
+    const zapChance = (hasPerk('chain_lightning') ? 0.45 : 0) + (hasPerk('storm_orb') ? 0.15 : 0);
+    if (opts.fromBall && zapChance > 0 && Math.random() < zapChance) {
+      const target = state.enemies.find(o => o !== en && o.hp > 0 && Math.hypot(o.x - en.x, o.y - en.y) < 155);
+      if (target) {
+        target.shocked = true;
+        state.beams.push({ x1: en.x, y1: en.y, x2: target.x, y2: target.y, col: '#00cec9', l: 11, zig: true });
+        SFX.play('zap');
+        applyDamage(target, state.atk * 0.75, { col:'#00cec9', noCrit:true });
+      }
+    }
+  }
+
+  function processDeaths() {
+    let changed = true;
+    while (changed) {
+      changed = false;
+      const spawned = [];
+      for (let i = state.enemies.length - 1; i >= 0; i--) {
+        const en = state.enemies[i];
+        if (en.hp <= 0) {
+          changed = true;
+          const def = DATA.enemies[en.type];
+          state.enemies.splice(i, 1);
+          state.kills++;
+          state.runGold += def.gold;
+          spawnParticles(en.x, en.y, def.rim, 12, 6);
+
+          // Explosão (Magma ou Supernova)
+          if (def.explodes || hasPerk('supernova')) {
+            const rad = (def.explodes ? 92 : 74) * (hasPerk('molten_core') ? 1.25 : 1);
+            const expDmg = def.explodes ? state.atk * 2.5 : state.atk * 1.5;
+            state.wavesFx.push({ x: en.x, y: en.y, r: 10, maxR: rad, col: '#ff9f43', l: 16 });
+            state.shake = Math.max(state.shake, 7);
+            SFX.play('boom');
+            state.enemies.forEach(o => {
+              if (o.hp > 0 && Math.hypot(o.x - en.x, o.y - en.y) < rad + o.r) {
+                applyDamage(o, expDmg, { col:'#ff9f43', noCrit:true });
+              }
+            });
+          }
+          // Divisor
+          if (def.splits) {
+            [-20, 20].forEach(ox => {
+              const nx = Math.max(24, Math.min(LW - 24, en.x + ox));
+              spawned.push(makeEnemy('mini', nx, en.y, state.wave));
+            });
+          }
+        }
+      }
+      if (spawned.length) state.enemies.push(...spawned);
+    }
+    updateHUD();
+  }
+
+  /* ===== FÍSICA COM SUB-STEPPING (4 SUB-PASSOS POR FRAME) ===== */
+  function stepPhysics() {
+    state.flightTicks++;
+    const damp = state.flightTicks > 340 ? 0.962 : 0.9935;
+    const SUB = 4;
+    const subDamp = Math.pow(damp, 1 / SUB);
+    const newClones = [];
+    let anyActive = false;
+
+    for (let i = state.balls.length - 1; i >= 0; i--) {
+      const b = state.balls[i];
+      // Atualiza cooldown de pierce
+      b.hitCd.forEach((v, k) => { if (v <= 1) b.hitCd.delete(k); else b.hitCd.set(k, v - 1); });
+
+      for (let s = 0; s < SUB; s++) {
+        b.x += b.vx / SUB;
+        b.y += b.vy / SUB;
+        b.vx *= subDamp;
+        b.vy *= subDamp;
+
+        // Anti-loop horizontal infinito
+        if (Math.abs(b.vy) < 0.25 && Math.abs(b.vx) > 1.5) b.vy += (b.y < LH / 2 ? 0.04 : -0.04);
+
+        // Paredes
+        if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx) * 0.96; b.bounced = true; }
+        else if (b.x > LW - b.r) { b.x = LW - b.r; b.vx = -Math.abs(b.vx) * 0.96; b.bounced = true; }
+        if (b.y < b.r) {
+          b.y = b.r; b.vy = Math.abs(b.vy) * 0.96; b.bounced = true;
+          // Perk Eco do Teto
+          if (hasPerk('wall_clone') && !b.wallCloned && !b.temp && state.balls.length + newClones.length < MAX_ACTIVE_BALLS) {
+            b.wallCloned = true;
+            newClones.push({
+              x: b.x, y: b.y + 4, vx: -b.vx * 0.9, vy: b.vy, r: 6.5,
+              bounced: true, pierce: false, cloned: true, wallCloned: true, temp: true, hitCd: new Map(), trail: []
+            });
+            SFX.play('clone');
+          }
+        } else if (b.y > LH - b.r) {
+          b.y = LH - b.r; b.vy = -Math.abs(b.vy) * 0.94; b.bounced = true;
+        }
+
+        // Anel Multiplicador x2
+        const rg = state.ring;
+        if (!b.cloned && Math.hypot(b.x - rg.x, b.y - rg.y) < rg.r && state.balls.length + newClones.length < MAX_ACTIVE_BALLS) {
+          b.cloned = true;
+          rg.hit = 12;
+          const ang = Math.atan2(b.vy, b.vx) + (Math.random() > 0.5 ? 0.22 : -0.22);
+          const spd = Math.hypot(b.vx, b.vy);
+          newClones.push({
+            x: b.x, y: b.y, vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd, r: 6.8,
+            bounced: b.bounced, pierce: false, cloned: true, wallCloned: true, temp: true, hitCd: new Map(), trail: []
+          });
+          SFX.play('clone');
+          addFloat(rg.x, rg.y - 20, '×2!', '#feca57', 13);
+        }
+
+        // Bumpers Rúnicos (Pinball)
+        for (const bp of state.bumpers) {
+          const dx = b.x - bp.x, dy = b.y - bp.y, dist = Math.hypot(dx, dy);
+          if (dist < b.r + bp.r && dist > 0.001) {
+            const nx = dx / dist, ny = dy / dist;
+            const spd = Math.min(15.5, Math.max(7.5, Math.hypot(b.vx, b.vy) * 1.15));
+            b.vx = nx * spd; b.vy = ny * spd;
+            b.x = bp.x + nx * (b.r + bp.r + 0.5);
+            b.y = bp.y + ny * (b.r + bp.r + 0.5);
+            b.bounced = true; bp.hit = 10;
+            SFX.play('bumper');
+            // Perk Sobrecarga Rúnica
+            if (hasPerk('bumper_shock')) {
+              state.wavesFx.push({ x: bp.x, y: bp.y, r: 16, maxR: 92, col: '#00cec9', l: 14 });
+              state.enemies.forEach(en => {
+                if (en.hp > 0 && Math.hypot(en.x - bp.x, en.y - bp.y) < 92 + en.r) {
+                  en.shocked = true;
+                  applyDamage(en, state.atk * 0.85, { col:'#00cec9', noCrit:true });
+                }
+              });
+            }
+          }
+        }
+
+        // Pilar de Pedra (Circle vs AABB)
+        const pl = state.pillar;
+        const cx = Math.max(pl.x, Math.min(b.x, pl.x + pl.w));
+        const cy = Math.max(pl.y, Math.min(b.y, pl.y + pl.h));
+        const pdx = b.x - cx, pdy = b.y - cy, pdist = Math.hypot(pdx, pdy);
+        if (pdist < b.r && pdist > 0.0001) {
+          const nx = pdx / pdist, ny = pdy / pdist;
+          const dot = b.vx * nx + b.vy * ny;
+          if (dot < 0) {
+            b.vx -= 2 * dot * nx; b.vy -= 2 * dot * ny;
+            b.bounced = true; pl.hit = 7;
+            SFX.play('shield');
+          }
+          b.x = cx + nx * (b.r + 0.5);
+          b.y = cy + ny * (b.r + 0.5);
+        }
+
+        // Inimigos
+        for (let j = state.enemies.length - 1; j >= 0; j--) {
+          const en = state.enemies[j];
+          if (en.hp <= 0) continue;
+          const dx = b.x - en.x, dy = b.y - en.y, dist = Math.hypot(dx, dy);
+          if (dist < b.r + en.r && dist > 0.001) {
+            const nx = dx / dist, ny = dy / dist;
+            const def = DATA.enemies[en.type];
+            const blocked = def.frontShield && ny > 0.30;
+
+            if (!b.pierce || blocked) {
+              const dot = b.vx * nx + b.vy * ny;
+              if (dot < 0) { b.vx -= 2 * dot * nx; b.vy -= 2 * dot * ny; }
+              b.x = en.x + nx * (b.r + en.r + 0.6);
+              b.y = en.y + ny * (b.r + en.r + 0.6);
+            }
+
+            if (blocked) {
+              SFX.play('shield');
+              en.flash = 3;
+              addFloat(en.x, en.y + en.r + 6, 'ESCUDO', '#00cec9', 10);
+            } else if (!b.hitCd.has(en.id)) {
+              if (b.pierce) b.hitCd.set(en.id, 14);
+              const tableMult = (hasPerk('ricochet_crit') && b.bounced) ? 2 : 1;
+              const dmg = state.atk * tableMult * (b.temp ? 0.7 : 1);
+              applyDamage(en, dmg, { fromBall:true, crit: tableMult > 1 });
+              SFX.play(tableMult > 1 ? 'crit' : 'hit', 1 + Math.min(0.45, state.turnCombo * 0.03));
+            }
+          }
+        }
+      }
+
+      // Rastro visual
+      b.trail.push({ x: b.x, y: b.y });
+      if (b.trail.length > 7) b.trail.shift();
+
+      if (Math.hypot(b.vx, b.vy) > 0.85) anyActive = true;
+    }
+
+    if (newClones.length) state.balls.push(...newClones);
+    processDeaths();
+
+    // Encerra turno se todos os orbes pararam ou todos inimigos morreram na onda 15
+    if (!anyActive || (state.wave === DATA.chapter1.totalWaves && state.enemies.length === 0)) {
+      endTurn();
+    }
+  }
+
+  /* ===== FIM DE TURNO (QUEIMADURA, CURA, AVANÇO, TIROS) ===== */
+  function endTurn() {
+    state.moving = false;
+    state.balls = [];
+    document.getElementById('btn-recall').style.display = 'none';
+
+    // 1. Queimadura (Sinergia Ígnea)
+    state.enemies.forEach(en => {
+      if (en.burn && en.hp > 0) {
+        applyDamage(en, state.atk, { col:'#ff9f43', noCrit:true });
+      }
+    });
+    processDeaths();
+
+    // 2. Clérigos curam aliados próximos
+    state.enemies.forEach(en => {
+      if (DATA.enemies[en.type].heals && en.hp > 0) {
+        const ally = state.enemies.find(o => o !== en && o.hp > 0 && o.hp < o.maxHp && Math.hypot(o.x - en.x, o.y - en.y) < 130);
+        if (ally) {
+          const heal = Math.max(2, Math.round(ally.maxHp * 0.22));
+          ally.hp = Math.min(ally.maxHp, ally.hp + heal);
+          state.beams.push({ x1: en.x, y1: en.y, x2: ally.x, y2: ally.y, col: '#1dd1a1', l: 16 });
+          addFloat(ally.x, ally.y - ally.r, `+${heal}`, '#1dd1a1', 12);
+        }
+      }
+    });
+
+    // 3. Chefes invocam reforços
+    const summoned = [];
+    state.enemies.forEach(en => {
+      if (DATA.enemies[en.type].summons && en.hp > 0) {
+        en.summonCd--;
+        if (en.summonCd <= 0 && state.enemies.length + summoned.length < 10) {
+          en.summonCd = 2;
+          const sx = Math.max(30, Math.min(LW - 30, en.x + (Math.random() > 0.5 ? 52 : -52)));
+          summoned.push(makeEnemy('goblin', sx, en.y + 34, state.wave));
+          addFloat(en.x, en.y - en.r - 8, 'INVOCOU!', '#feca57', 11);
+        }
+      }
+    });
+    if (summoned.length) state.enemies.push(...summoned);
+
+    // 4. Avanço dos inimigos + Tiros
+    for (let i = state.enemies.length - 1; i >= 0; i--) {
+      const en = state.enemies[i];
+      const def = DATA.enemies[en.type];
+      en.y += def.boss ? 22 : 36;
+
+      if (def.shootCd) {
+        en.shootCd--;
+        if (en.shootCd <= 0) {
+          en.shootCd = def.shootCd;
+          state.hp -= def.shootDmg;
+          state.shake = 9;
+          SFX.play('hurt');
+          state.beams.push({ x1: en.x, y1: en.y, x2: LAUNCH_X, y2: BARRIER_Y, col: '#ff5e57', l: 18 });
+          addFloat(LAUNCH_X, BARRIER_Y - 12, `-${def.shootDmg} HP`, '#ff5e57', 14);
+        }
+      }
+
+      if (en.y + en.r >= BARRIER_Y) {
+        const dmg = def.boss ? 4 : 2;
+        state.hp -= dmg;
+        state.shake = 12;
+        SFX.play('hurt');
+        addFloat(en.x, BARRIER_Y - 10, `-${dmg} BARREIRA!`, '#ff5e57', 13);
+        if (def.boss) en.y -= 72; // Chefe recua para o jogador ainda precisar derrotá-lo
+        else state.enemies.splice(i, 1);
+      }
+    }
+
+    updateHUD();
+
+    // Checa Derrota
+    if (state.hp <= 0) {
+      state.hp = 0;
+      finishRun(false);
+      return;
+    }
+
+    // Checa Vitória no Capítulo 1 (Onda 15 limpa!)
+    if (state.wave === DATA.chapter1.totalWaves && state.enemies.length === 0) {
+      finishRun(true);
+      return;
+    }
+
+    // Avança para próxima onda (se ainda não está na onda 15)
+    if (state.wave < DATA.chapter1.totalWaves) {
+      const shouldDraft = DATA.chapter1.draftWaves.includes(state.wave);
+      state.wave++;
+      spawnWave(state.wave);
+      updateHUD();
+      if (shouldDraft) openDraft();
+    }
+  }
+
+  /* ===== DRAFT DE PERKS ===== */
+  function openDraft() {
+    state.paused = true;
+    SFX.play('lvl');
+    const pool = DATA.perks.filter(p => p.repeatable || !hasPerk(p.id));
+    const picks = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
+    const list = document.getElementById('draft-list');
+    list.innerHTML = '';
+    document.getElementById('draft-title').textContent = state.wave === 8 ? 'RELÍQUIA DO MINI-CHEFE' : 'ESCOLHA UMA RUNA';
+    picks.forEach(p => {
+      const col = p.syn==='lightning' ? '#00cec9' : p.syn==='fire' ? '#ff9f43' : p.syn==='spectral' ? '#9c6bff' : '#feca57';
+      const el = document.createElement('div');
+      el.className = `draft-card ${p.syn}`;
+      el.innerHTML = `
+        <div class="draft-ico">${getSvgIcon(p.icon, col)}</div>
+        <div>
+          <div class="draft-syn" style="color:${col}">${p.synLabel}</div>
+          <div class="draft-name">${p.name}</div>
+          <div class="draft-desc">${p.desc}</div>
+        </div>
+      `;
+      el.onclick = () => pickPerk(p);
+      list.appendChild(el);
+    });
+    document.getElementById('modal-draft').classList.add('show');
+  }
+
+  function pickPerk(p) {
+    if (!p.repeatable && !hasPerk(p.id)) state.perks.push(p.id);
+    if (p.id === 'extra_orb' || p.id === 'storm_orb') state.ballCount++;
+    if (p.id === 'power_surge') state.atk += 2;
+    if (p.id === 'molten_core') state.atk += 3;
+    if (p.id === 'arcane_sight') state.critChance += 0.20;
+    if (p.id === 'bastion_heal') { state.maxHp += 2; state.hp = Math.min(state.maxHp, state.hp + 5); }
+    state.paused = false;
+    document.getElementById('modal-draft').classList.remove('show');
+    SFX.play('bumper');
+    updateHUD();
+  }
+
+  /* ===== FIM DE EXPEDIÇÃO ===== */
+  function finishRun(won) {
+    state.over = true;
+    const bonus = won ? 60 : 0;
+    const totalGold = Math.round((state.runGold + bonus) * state.goldMult);
+    Save.addGold(totalGold);
+    Save.recordWave(state.wave, won);
+
+    SFX.play(won ? 'lvl' : 'hurt');
+    document.getElementById('end-title').textContent = won ? 'CAPÍTULO CONQUISTADO!' : 'BARREIRA ROMPIDA';
+    document.getElementById('end-title').style.color = won ? '#1dd1a1' : '#ff5e57';
+    document.getElementById('end-sub').textContent = won
+      ? 'O Senhor Obsidiana caiu! Use o ouro nos Talentos para dominar ainda mais rápido.'
+      : 'Use o ouro coletado para fortalecer seus Talentos Permanentes e tentar de novo.';
+    document.getElementById('end-wave').textContent = `${state.wave} / 15`;
+    document.getElementById('end-kills').textContent = state.kills;
+    document.getElementById('end-gold').textContent = `+${totalGold}`;
+    document.getElementById('end-combo').textContent = `${state.bestCombo}×`;
+    document.getElementById('modal-end').classList.add('show');
+    updateHUD();
+  }
+
+  function updateHUD() {
+    if (!state) return;
+    document.getElementById('g-hp-bar').style.width = Math.max(0, (state.hp / state.maxHp) * 100) + '%';
+    document.getElementById('g-hp-txt').textContent = `${Math.max(0, state.hp)}/${state.maxHp}`;
+    document.getElementById('g-wave').textContent = state.wave === 15 ? 'CHEFE FINAL' : `ONDA ${state.wave}/15`;
+    document.getElementById('g-gold').textContent = state.runGold;
+    document.getElementById('g-atk').textContent = state.atk;
+    document.getElementById('g-balls').textContent = state.ballCount;
+    document.getElementById('g-crit').textContent = Math.round(state.critChance * 100) + '%';
+
+    const strip = document.getElementById('g-perks');
+    if (state.perks.length) {
+      strip.innerHTML = state.perks.map(id => {
+        const p = DATA.perks.find(x => x.id === id);
+        return `<span class="perk-tag ${p.syn}">${p.name}</span>`;
+      }).join('');
+    } else {
+      strip.innerHTML = '<span style="font-size:10.5px;color:var(--muted)">Arraste em qualquer lugar da arena para mirar e solte para lançar</span>';
+    }
+  }
+
+  /* ===== RENDERIZAÇÃO HD (ESTILO RUNESLING) ===== */
+  function drawEnemy(en, t) {
+    const def = DATA.enemies[en.type];
+    if (en.scale > 1) en.scale += (1 - en.scale) * 0.25;
+    if (en.flash > 0) en.flash--;
+
+    ctx.save();
+    ctx.translate(en.x, en.y);
+    ctx.scale(en.scale, en.scale);
+
+    // Aura sutil de chefe ou queimadura
+    if (def.boss || en.burn) {
+      const ag = ctx.createRadialGradient(0, 0, en.r * 0.4, 0, 0, en.r + 16);
+      ag.addColorStop(0, en.burn ? 'rgba(255,159,67,.42)' : 'rgba(255,94,87,.32)');
+      ag.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = ag; ctx.beginPath(); ctx.arc(0, 0, en.r + 16, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Chifres para Chefe Final
+    if (en.type === 'boss') {
+      ctx.fillStyle = '#2d1424'; ctx.strokeStyle = '#feca57'; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(-22,-20); ctx.quadraticCurveTo(-44,-38,-34,-50); ctx.quadraticCurveTo(-20,-32,-8,-28); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(22,-20); ctx.quadraticCurveTo(44,-38,34,-50); ctx.quadraticCurveTo(20,-32,8,-28); ctx.fill(); ctx.stroke();
+    }
+
+    // Medalhão metálico com gradiente
+    const grad = ctx.createRadialGradient(-en.r*0.3, -en.r*0.35, 3, 0, 0, en.r);
+    grad.addColorStop(0, def.col1); grad.addColorStop(1, def.col2);
+    ctx.fillStyle = en.flash > 0 ? '#ffffff' : grad;
+    ctx.beginPath(); ctx.arc(0, 0, en.r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = en.shocked ? '#00cec9' : def.rim;
+    ctx.lineWidth = def.boss ? 3 : 2;
+    ctx.stroke();
+
+    // Detalhes faciais / silhueta interna
+    if (en.flash === 0) {
+      ctx.fillStyle = def.eye;
+      if (en.type === 'healer') {
+        ctx.fillRect(-6, -8, 12, 3); ctx.fillRect(-1.5, -12.5, 3, 12);
+      } else if (en.type === 'shooter') {
+        ctx.beginPath(); ctx.arc(0, -5, 4, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.fillRect(-7, -7, 4.5, 3); ctx.fillRect(2.5, -7, 4.5, 3);
+      }
+    }
+
+    // Escudo frontal ciano (Cavaleiro e Mini-chefe)
+    if (def.frontShield) {
+      ctx.strokeStyle = '#00cec9'; ctx.lineWidth = 4.5; ctx.lineCap = 'round';
+      ctx.shadowColor = '#00cec9'; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(0, 2, en.r + 3.5, 0.16 * Math.PI, 0.84 * Math.PI); ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    // Placa de HP
+    ctx.fillStyle = 'rgba(10,12,22,.85)';
+    ctx.beginPath(); ctx.roundRect(-16, en.r - 13, 32, 14, 6); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = '800 10.5px "Plus Jakarta Sans"';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(Math.max(0, en.hp), 0, en.r - 6);
+
+    // Contador de tiro (Atirador / Chefe)
+    if (def.shootCd) {
+      ctx.fillStyle = '#ff5e57'; ctx.beginPath(); ctx.arc(en.r - 2, -en.r + 2, 8.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = '900 9.5px sans-serif'; ctx.fillText(en.shootCd, en.r - 2, -en.r + 2.5);
+    }
+
+    ctx.restore();
+  }
+
+  function render(t) {
+    ctx.save();
+    ctx.clearRect(0, 0, LW, LH);
+
+    if (state.shake > 0.4) {
+      ctx.translate((Math.random() - 0.5) * state.shake, (Math.random() - 0.5) * state.shake);
+      state.shake *= 0.84;
+    }
+
+    // Fundo pedra obsidiana
+    const bg = ctx.createRadialGradient(LW*.5, LH*.38, 20, LW*.5, LH*.5, LH*.68);
+    bg.addColorStop(0, '#1a203d'); bg.addColorStop(.62, '#0d1020'); bg.addColorStop(1, '#070912');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, LW, LH);
+
+    // Grade de pedra sutil
+    ctx.strokeStyle = 'rgba(130, 145, 220, 0.055)'; ctx.lineWidth = 1;
+    for (let x = 45; x < LW; x += 45) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,LH); ctx.stroke(); }
+    for (let y = 45; y < LH; y += 45) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(LW,y); ctx.stroke(); }
+
+    // Luz de tochas nas paredes
+    const fl = 0.9 + Math.sin(t * 0.008) * 0.1;
+    [[0, 180], [LW, 180], [0, 350], [LW, 350]].forEach(([tx, ty]) => {
+      const tg = ctx.createRadialGradient(tx, ty, 2, tx, ty, 115 * fl);
+      tg.addColorStop(0, 'rgba(255,140,50,.18)'); tg.addColorStop(1, 'rgba(255,90,20,0)');
+      ctx.fillStyle = tg; ctx.fillRect(0, 0, LW, LH);
+    });
+
+    // Poeira arcana
+    dust.forEach(p => {
+      p.y -= p.v; if (p.y < 0) p.y = LH;
+      ctx.fillStyle = 'rgba(0,206,201,.28)';
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+    });
+
+    // Linha de Barreira
+    ctx.strokeStyle = 'rgba(255,94,87,.5)'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 6]);
+    ctx.beginPath(); ctx.moveTo(12, BARRIER_Y); ctx.lineTo(LW - 12, BARRIER_Y); ctx.stroke(); ctx.setLineDash([]);
+
+    // === ELEMENTO 1: ANEL MULTIPLICADOR x2 ===
+    const rg = state.ring;
+    if (rg.hit > 0) rg.hit--;
+    ctx.save(); ctx.translate(rg.x, rg.y);
+    ctx.rotate(t * 0.0018);
+    ctx.strokeStyle = rg.hit > 0 ? '#ffffff' : '#feca57';
+    ctx.lineWidth = rg.hit > 0 ? 3.5 : 2.2;
+    ctx.setLineDash([8, 6]);
+    ctx.beginPath(); ctx.arc(0, 0, rg.r + (rg.hit > 0 ? 3 : 0), 0, Math.PI * 2); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+    ctx.fillStyle = 'rgba(254,202,87,.85)'; ctx.font = '900 10px "Plus Jakarta Sans"';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('×2', rg.x, rg.y);
+
+    // === ELEMENTO 2: PILAR DE PEDRA ===
+    const pl = state.pillar;
+    if (pl.hit > 0) pl.hit--;
+    ctx.fillStyle = pl.hit > 0 ? '#3a4673' : '#1b213b';
+    ctx.strokeStyle = pl.hit > 0 ? '#00cec9' : '#586699';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(pl.x, pl.y, pl.w, pl.h, 6); ctx.fill(); ctx.stroke();
+
+    // === ELEMENTO 3: BUMPERS RÚNICOS ===
+    state.bumpers.forEach(bp => {
+      if (bp.hit > 0) bp.hit--;
+      ctx.save(); ctx.translate(bp.x, bp.y);
+      ctx.fillStyle = bp.hit > 0 ? '#00cec9' : '#151b33';
+      ctx.strokeStyle = '#7c6cf6'; ctx.lineWidth = 2.6;
+      ctx.beginPath(); ctx.arc(0, 0, bp.r + (bp.hit > 0 ? 3 : 0), 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = bp.hit > 0 ? '#fff' : '#00cec9'; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(8,0); ctx.lineTo(0,8); ctx.lineTo(-8,0); ctx.closePath(); ctx.stroke();
+      ctx.restore();
+    });
+
+    // Ondas de explosão / choque
+    for (let i = state.wavesFx.length - 1; i >= 0; i--) {
+      const w = state.wavesFx[i];
+      w.r += (w.maxR - w.r) * 0.25; w.l--;
+      ctx.strokeStyle = w.col; ctx.globalAlpha = w.l / 16; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = 1;
+      if (w.l <= 0) state.wavesFx.splice(i, 1);
+    }
+
+    // Inimigos
+    state.enemies.forEach(en => drawEnemy(en, t));
+
+    // Raios / Lasers / Cura
+    for (let i = state.beams.length - 1; i >= 0; i--) {
+      const bm = state.beams[i]; bm.l--;
+      ctx.save(); ctx.strokeStyle = bm.col; ctx.globalAlpha = Math.min(1, bm.l / 10); ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(bm.x1, bm.y1);
+      if (bm.zig) {
+        const mx = (bm.x1 + bm.x2)/2 + (Math.random()*16-8);
+        const my = (bm.y1 + bm.y2)/2 + (Math.random()*16-8);
+        ctx.lineTo(mx, my);
+      }
+      ctx.lineTo(bm.x2, bm.y2); ctx.stroke(); ctx.restore();
+      if (bm.l <= 0) state.beams.splice(i, 1);
+    }
+
+    // Mira com 1 ou 2 quiques
+    if (state.drag && !state.moving) {
+      const aim = getAimAngle(state.drag);
+      if (aim) {
+        let vx = Math.cos(aim.ang), vy = Math.sin(aim.ang), px = LAUNCH_X, py = LAUNCH_Y;
+        let bounces = 0, maxBounces = hasPerk('arcane_sight') ? 2 : 1;
+        ctx.save();
+        ctx.strokeStyle = '#00cec9'; ctx.lineWidth = 2.2; ctx.setLineDash([6, 5]); ctx.lineDashOffset = -(t * 0.04);
+        ctx.beginPath(); ctx.moveTo(px, py);
+        for (let s = 0; s < (maxBounces === 2 ? 460 : 310); s += 4) {
+          px += vx * 4; py += vy * 4;
+          if (px < 8 || px > LW - 8) {
+            bounces++; if (bounces > maxBounces) break;
+            vx *= -1; px = Math.max(8, Math.min(LW - 8, px)); ctx.lineTo(px, py);
+          }
+          if (py < 8) {
+            bounces++; if (bounces > maxBounces) break;
+            vy *= -1; py = 8; ctx.lineTo(px, py);
+          }
+        }
+        ctx.lineTo(px, py); ctx.stroke(); ctx.setLineDash([]);
+        // Indicador sutil sob o polegar
+        ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(state.drag.s.x, state.drag.s.y, 16, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // Lançador Arcano na base
+    ctx.save();
+    ctx.strokeStyle = 'rgba(124,108,246,.5)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(LAUNCH_X, LAUNCH_Y, 18, 0, Math.PI * 2); ctx.stroke();
+    if (!state.moving) {
+      const og = ctx.createRadialGradient(LAUNCH_X - 3, LAUNCH_Y - 3, 2, LAUNCH_X, LAUNCH_Y, 10);
+      og.addColorStop(0, '#fff'); og.addColorStop(.5, '#00cec9'); og.addColorStop(1, '#6c5ce7');
+      ctx.fillStyle = og; ctx.beginPath(); ctx.arc(LAUNCH_X, LAUNCH_Y, 10, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+
+    // Orbes em voo
+    state.balls.forEach(b => {
+      for (let k = 0; k < b.trail.length; k++) {
+        const tr = b.trail[k];
+        ctx.fillStyle = b.pierce ? `rgba(156,107,255,${k/10})` : b.temp ? `rgba(254,202,87,${k/12})` : `rgba(0,206,201,${k/10})`;
+        ctx.beginPath(); ctx.arc(tr.x, tr.y, b.r * (k / b.trail.length) * 0.85, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.fillStyle = b.pierce ? '#c56cf0' : b.temp ? '#feca57' : '#00cec9';
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.6; ctx.stroke();
+    });
+
+    // Partículas e textos flutuantes
+    for (let i = state.parts.length - 1; i >= 0; i--) {
+      const p = state.parts[i]; p.x += p.vx; p.y += p.vy; p.l--;
+      ctx.fillStyle = p.col; ctx.globalAlpha = Math.min(1, p.l / 12);
+      ctx.fillRect(p.x, p.y, 3.5, 3.5); ctx.globalAlpha = 1;
+      if (p.l <= 0) state.parts.splice(i, 1);
+    }
+    for (let i = state.floats.length - 1; i >= 0; i--) {
+      const f = state.floats[i]; f.y -= 0.9; f.l--;
+      ctx.fillStyle = f.col; ctx.globalAlpha = Math.min(1, f.l / 10);
+      ctx.font = `900 ${f.size}px "Plus Jakarta Sans"`; ctx.textAlign = 'center';
+      ctx.fillText(f.txt, f.x, f.y); ctx.globalAlpha = 1;
+      if (f.l <= 0) state.floats.splice(i, 1);
+    }
+
+    // Banner de Chefe
+    if (state.bannerTimer > 0) {
+      state.bannerTimer--;
+      ctx.fillStyle = 'rgba(10,12,24,.88)'; ctx.fillRect(0, LH/2 - 24, LW, 48);
+      ctx.strokeStyle = '#feca57'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(0, LH/2 - 24); ctx.lineTo(LW, LH/2 - 24); ctx.moveTo(0, LH/2 + 24); ctx.lineTo(LW, LH/2 + 24); ctx.stroke();
+      ctx.fillStyle = '#feca57'; ctx.font = '900 13px Cinzel'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(state.bannerText, LW/2, LH/2);
+    }
+
+    ctx.restore();
+  }
+
+  function loop(t) {
+    rafId = requestAnimationFrame(loop);
+    if (!active || !state) return;
+    if (state.moving && !state.paused && !state.over) {
+      for (let s = 0; s < state.speedMult; s++) if (state.moving) stepPhysics();
+    }
+    render(t);
+  }
+
+  return { startRun, stop, abortToMenu, toggleSpeed, recallBalls };
+})();
+
+/* ===== BOOT ===== */
+SFX.updateIcons();
+UI.renderMenu();
+</script>
+</body>
+</html>

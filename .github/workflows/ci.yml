@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Tamanho do dist/
+        run: |
+          BYTES=$(du -sb dist | cut -f1)
+          LIMIT=$((4 * 1024 * 1024))
+          echo "dist/: $BYTES bytes ($(du -sh dist | cut -f1)) — limite 4 MB" | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ "$BYTES" -gt "$LIMIT" ]; then
+            echo "::warning::dist/ acima de 4 MB ($BYTES bytes)"
+          fi
