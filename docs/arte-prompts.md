@@ -387,7 +387,7 @@ Generate one tall vertical 1:4 strip centered in a square 1:1 canvas image. narr
 - Arquivo a devolver: `art-source/raw/app/app_icon.png`
 - Anexar no Gemini: `art-source/anchors/icon_anchor.png`
 - Fundo: #0D1020 · tamanho final 1024 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. a glowing cyan arcane orb (#00CEC9) resting in a dark forged iron slingshot, gold rune ring (#FECA57) behind it. mobile app icon, square full-bleed composition, stylized hand-painted dark fantasy 2D illustration, one bold central symbol readable at 48 pixels, high contrast, solid dark navy #0D1020 background filling every corner, no transparency, no rounded corners, no border, no text, no letters. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
