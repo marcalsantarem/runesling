@@ -334,6 +334,7 @@
       "preset": "skill_icon",
       "prompt": "small pile of gold coins with a gold crypt key on top (#FECA57 to #B87B14)",
       "bgColor": "white",
+      "removeEnclosedBg": true,
       "file": "art-source/raw/icons/icon_gold_greed.png",
       "geminiPrompt": "Generate one square 1:1 image. small pile of gold coins with a gold crypt key on top (#FECA57 to #B87B14). RPG skill icon, stylized hand-painted dark fantasy 2D game icon, one single central symbol, high contrast, crisp readable silhouette at 34 pixels, dark iron runic details, no frame, no border, no outer glow, no light bleeding outside the symbol, centered, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject."
     },

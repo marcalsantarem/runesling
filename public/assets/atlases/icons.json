@@ -140,7 +140,7 @@
         "h": 128
       }
     },
-    "icon_molten_core": {
+    "icon_gold_greed": {
       "frame": {
         "x": 270,
         "y": 136,
@@ -160,10 +160,30 @@
         "h": 128
       }
     },
-    "icon_power_surge": {
+    "icon_molten_core": {
       "frame": {
         "x": 270,
         "y": 270,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
+    },
+    "icon_power_surge": {
+      "frame": {
+        "x": 404,
+        "y": 2,
         "w": 128,
         "h": 128
       },
@@ -183,7 +203,7 @@
     "icon_ricochet_crit": {
       "frame": {
         "x": 404,
-        "y": 2,
+        "y": 136,
         "w": 128,
         "h": 128
       },
@@ -203,26 +223,6 @@
     "icon_static_crit": {
       "frame": {
         "x": 404,
-        "y": 136,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      }
-    },
-    "icon_storm_orb": {
-      "frame": {
-        "x": 404,
         "y": 270,
         "w": 128,
         "h": 128
@@ -240,7 +240,7 @@
         "h": 128
       }
     },
-    "icon_supernova": {
+    "icon_storm_orb": {
       "frame": {
         "x": 538,
         "y": 2,
@@ -260,9 +260,29 @@
         "h": 128
       }
     },
-    "icon_wall_clone": {
+    "icon_supernova": {
       "frame": {
         "x": 672,
+        "y": 2,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
+    },
+    "icon_wall_clone": {
+      "frame": {
+        "x": 806,
         "y": 2,
         "w": 128,
         "h": 128
