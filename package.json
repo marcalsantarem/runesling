@@ -1,7 +1,7 @@
 {
   "name": "runesling",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -14,8 +14,9 @@
     "typecheck": "tsc --noEmit",
     "assets:ingest": "node scripts/ingest-assets.mjs",
     "assets:cut": "node scripts/cut-assets.mjs",
-    "assets:pack": "node scripts/build-assets.mjs",
-    "assets:all": "node scripts/build-assets.mjs --all"
+    "assets:pack": "node scripts/build-assets.mjs && node scripts/pwa-icons.mjs",
+    "assets:all": "node scripts/build-assets.mjs --all && node scripts/pwa-icons.mjs",
+    "icons:pwa": "node scripts/pwa-icons.mjs"
   },
   "dependencies": {
     "@fontsource/cinzel": "5.3.0",

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { version } from '../../package.json';
 import type { EventBus } from '../core/EventBus';
+import { queueOptionalAssets } from '../core/assetManifest';
 import { gameBus, type GameEvents } from '../core/events';
 import { FONT_TITLE_STACK, waitForFonts } from '../core/fonts';
 
@@ -43,10 +44,15 @@ export function wireSceneFlow(bus: EventBus<GameEvents>, scenes: SceneControl): 
   };
 }
 
-/** Cena raiz: espera as fontes, liga o fluxo de cenas e avisa a UI com `app:ready`. Fica viva o app todo. */
+/** Cena raiz: carrega os atlases/imagens que existirem, espera as fontes, liga o fluxo de cenas e avisa a UI com `app:ready`. Fica viva o app todo. */
 export class BootScene extends Phaser.Scene {
   constructor() {
     super('BootScene');
+  }
+
+  preload(): void {
+    // Só o que existe em public/assets/ (lista gerada pelo Vite): sem 404 quando faltar arte.
+    queueOptionalAssets(this.load);
   }
 
   create(): void {
