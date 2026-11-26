@@ -77,8 +77,8 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-053 | Mais mockups da tela inicial em outros estilos: acampamento, grimório, arcano neon × 2 variações (tam. P) | M5 | AG08 | feita (dono escolhe) |
 | T-054 | Mockup final da tela inicial: 2a com o título na posição da 2b (tam. P) | M5 | AG08 | feita |
 | T-055 | Botão JOGAR menos genérico (4 variações) e mockups de Partida, Runas (Draft), Fim de run e Talentos no estilo da tela inicial final (tam. M) | M5 | AG08 | feita (dono escolhe o botão) |
-| T-056 | Comportamento de app: sem arrastar além da tela, sem zoom por toque duplo/pinça, sem seleção de texto (decisão 46) (tam. P) | M5 | AG07 + AG02 | em andamento |
-| T-057 | Aplicar a UI validada (decisões 44 e 45): tela inicial em mapa, botão placa de ferro, Partida, Runas, Fim de run e Talentos, com peças em CSS (tam. G) | M5 | AG02 | a fazer |
+| T-056 | Comportamento de app: sem arrastar além da tela, sem zoom por toque duplo/pinça, sem seleção de texto (decisão 46) (tam. P) | M5 | AG07 + AG02 | feita (falta conferir em iPhone real) |
+| T-057 | Aplicar a UI validada (decisões 44 e 45): tela inicial em mapa, botão placa de ferro, Partida, Runas, Fim de run e Talentos, com peças em CSS (tam. G) | M5 | AG02 | em andamento |
 | T-058 | Atualizar os prompts das peças de UI para o estilo validado (botão placa de ferro, fundo e nós do mapa, escudo rachado da derrota) antes de o dono gerar (tam. P) | M5 | AG08 | a fazer |
 | T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | a fazer |
 | T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | a fazer |

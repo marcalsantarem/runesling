@@ -18,9 +18,18 @@
       @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 600; font-display: swap; src: url('/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2') format('woff2'); }
       @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url('/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff2') format('woff2'); }
       @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 800; font-display: swap; src: url('/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-800-normal.woff2') format('woff2'); }
-      html, body { margin: 0; height: 100%; background: #0D1020; overflow: hidden; }
-      #app { position: relative; width: 100%; height: 100%; }
-      #game { position: absolute; inset: 0; }
+      /* Comportamento de app (decisão 46): sem rolagem/elástico, sem zoom por toque, sem seleção. */
+      html, body {
+        margin: 0; width: 100%; height: 100%; height: 100dvh; background: #0D1020; overflow: hidden;
+        overscroll-behavior: none; touch-action: manipulation;
+        -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+      }
+      body { position: fixed; inset: 0; }
+      input, textarea, [contenteditable="true"] { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+      #app { position: relative; width: 100%; height: 100%; overflow: hidden; touch-action: manipulation; }
+      #game { position: absolute; inset: 0; touch-action: none; }
+      #game canvas { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
       /* Camada da UI sobre o canvas; o container não captura toque, o AG02 liga `pointer-events` por elemento. */
       #ui-root { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
     </style>
