@@ -26,6 +26,7 @@ export function resolvePaths(opts = {}) {
     raw: r(opts.raw, 'art-source/raw'),
     cut: r(opts.cut, 'art-source/cut'),
     out: r(opts.out, 'public/assets'),
+    app: r(opts.app, 'art-source/app'), // ícone do app: só fonte do icons:pwa, fora do build (T-042)
     preview: r(opts.preview, 'art-source/preview.html'),
     cache: r(opts.cache, 'art-source/.cut-cache.json'),
   };
@@ -390,14 +391,17 @@ export async function packAtlas(frames, name, opts = {}) {
   return { image, json };
 }
 
-/** cut -> public/assets: atlases, ícones avulsos, cenário, ícone do app + preview. */
+/** `app/*` vai para `paths.app` (art-source, fora do build); o resto para `paths.out` (T-042). */
+const outFile = (paths, rel) => (rel.startsWith('app/') ? join(paths.app, rel.slice(4)) : join(paths.out, rel));
+
+/** cut -> public/assets (+ ícone do app em art-source/app): atlases, ícones avulsos, cenário + preview. */
 export async function buildAll(paths, log = console) {
   const { items } = loadManifest(paths);
   const atlases = new Map();
   const written = [];
   const missing = [];
   const write = (rel, buf) => {
-    const f = join(paths.out, rel);
+    const f = outFile(paths, rel);
     ensureDir(f);
     writeFileSync(f, buf);
     written.push(rel);
@@ -445,7 +449,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 export function writePreview(paths, items, atlasJson, written) {
   const dir = dirname(paths.preview);
   const url = (rel) => {
-    const f = join(paths.out, rel);
+    const f = outFile(paths, rel);
     const v = existsSync(f) ? sha(readFileSync(f)).slice(0, 8) : '0';
     return `${relative(dir, f).split(sep).join('/')}?v=${v}`;
   };
@@ -494,7 +498,7 @@ ${cards.join('\n')}
 
 // ---------- CLI ----------
 
-const PATH_OPTS = ['root', 'manifest', 'raw', 'cut', 'out', 'preview', 'cache'];
+const PATH_OPTS = ['root', 'manifest', 'raw', 'cut', 'out', 'app', 'preview', 'cache'];
 
 export function parseArgs(argv) {
   const opts = { _: [] };

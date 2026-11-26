@@ -3,7 +3,7 @@ import { join, relative } from 'node:path';
 import { defineConfig } from 'vite';
 import { VitePWA, type ManifestOptions } from 'vite-plugin-pwa';
 
-/** Web App Manifest (decisão 7). Ícones gerados de `public/assets/app/app_icon.png` por `npm run icons:pwa` (provisórios sem ele). */
+/** Web App Manifest (decisão 7). Ícones gerados de `art-source/app/app_icon.png` (fora do build, T-042) por `npm run icons:pwa` (provisórios sem ele). */
 export const pwaManifest: Partial<ManifestOptions> = {
   name: 'RuneSling',
   short_name: 'RuneSling',

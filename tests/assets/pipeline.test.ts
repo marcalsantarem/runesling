@@ -258,9 +258,11 @@ describe('esteira ponta a ponta', { timeout: 60_000 }, () => {
     const wall = await sharp(out('tiles/wall_trim_crypt.webp')).metadata();
     expect(wall.width).toBe(512);
     expect(wall.hasAlpha).toBe(true);
-    const app = await sharp(out('app/app_icon.png')).metadata();
+    const appIcon = join(root, 'art-source/app/app_icon.png');
+    expect(existsSync(out('app/app_icon.png'))).toBe(false); // fora do build (T-042)
+    const app = await sharp(appIcon).metadata();
     expect([app.width, app.height, app.hasAlpha]).toEqual([1024, 1024, false]);
-    const { px } = await rgba(readFileSync(out('app/app_icon.png')));
+    const { px } = await rgba(readFileSync(appIcon));
     expect(px(2, 2).slice(0, 3)).toEqual([0x0d, 0x10, 0x20]);
     const html = readFileSync(join(root, 'art-source/preview.html'), 'utf8');
     expect(html).toContain('#0D1020');
