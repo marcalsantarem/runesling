@@ -44,3 +44,15 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-022 | Ressalvas do QA do M3 (UI): HUD não bloqueia a mira onde cobre o campo (M3-01); chaves de strings para os textos da cena (M3-02); rótulos 1× / 1,5× (decisão 27) (tam. P) | M3 | AG02 | feita |
 | T-023 | Ressalvas do QA do M3 (cena): textos da cena via `strings.ts` (M3-02) e fonte 900 inexistente (M3-03); velocidade (decisão 27); recolher automático (decisão 28) (tam. P) | M3 | AG01 | feita |
 | T-021 | Validação do M3 e tag v0.4.0 (tam. P) | M3 | AG03 + AG00 | feita (passa com ressalvas; falta a tag) |
+
+## M4 (v0.5.0): Pipeline de arte
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-024 | Guia visual (`docs/arte.md`) e manifesto com o prompt exato de cada imagem, âncoras primeiro (decisões 29, 31, 32) (tam. P) | M4 | AG08 | a fazer |
+| T-025 | Pipeline: ingestão das imagens do dono, recorte de fundo, trim/centro/máscara circular, atlases WebP e `preview.html` (decisão 30) (tam. M) | M4 | AG08 | a fazer |
+| T-026 | Rodar o pipeline com as imagens do dono e gerar os atlases (depende das imagens) (tam. P) | M4 | AG08 | a fazer |
+| T-027 | Cena usa os sprites por `spriteKey` (com fallback procedural), chão e moldura da arena (tam. M) | M4 | AG01 | a fazer |
+| T-028 | Ícones de runas e talentos na UI: Draft, Talentos, faixa de runas (decisão 32) (tam. P) | M4 | AG02 | a fazer |
+| T-029 | Carregar atlases no Boot, ícone definitivo do PWA e versão 0.5.0 (tam. P) | M4 | AG07 | a fazer |
+| T-030 | Validação do M4 e tag v0.5.0 (tam. P) | M4 | AG03 + AG00 | a fazer |
