@@ -60,7 +60,7 @@
         "h": 128
       }
     },
-    "icon_static_crit": {
+    "icon_molten_core": {
       "frame": {
         "x": 2,
         "y": 136,
@@ -80,7 +80,7 @@
         "h": 128
       }
     },
-    "icon_storm_orb": {
+    "icon_static_crit": {
       "frame": {
         "x": 2,
         "y": 270,
@@ -100,10 +100,30 @@
         "h": 128
       }
     },
-    "icon_supernova": {
+    "icon_storm_orb": {
       "frame": {
         "x": 136,
         "y": 136,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
+    },
+    "icon_supernova": {
+      "frame": {
+        "x": 136,
+        "y": 270,
         "w": 128,
         "h": 128
       },
