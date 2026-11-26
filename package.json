@@ -1,7 +1,7 @@
 {
   "name": "runesling",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -11,7 +11,12 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "assets:ingest": "node scripts/ingest-assets.mjs",
+    "assets:cut": "node scripts/cut-assets.mjs",
+    "assets:pack": "node scripts/build-assets.mjs && node scripts/pwa-icons.mjs",
+    "assets:all": "node scripts/build-assets.mjs --all && node scripts/pwa-icons.mjs",
+    "icons:pwa": "node scripts/pwa-icons.mjs"
   },
   "dependencies": {
     "@fontsource/cinzel": "5.3.0",
@@ -21,6 +26,8 @@
   },
   "devDependencies": {
     "happy-dom": "21.0.4",
+    "maxrects-packer": "2.7.4",
+    "sharp": "0.35.5",
     "typescript": "6.0.3",
     "vite": "8.3.8",
     "vite-plugin-pwa": "2.0.0",

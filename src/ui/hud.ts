@@ -1,7 +1,7 @@
 /** HUD da partida: faixa superior (HP, onda, ouro, pausa), faixa de runas, barra inferior e banner. */
 import type { RunState } from '../core/events';
 import type { GameData, PerkId } from '../data/types';
-import { button, el, icon, ICONS, show } from './dom';
+import { artIcon, button, el, icon, ICONS, show } from './dom';
 import { pct } from './menu';
 import { perkName, t } from './strings';
 
@@ -35,35 +35,41 @@ export function groupPerks(perks: readonly PerkId[]): { id: PerkId; count: numbe
 
 function stat(label: string, key: string): { node: HTMLElement; value: HTMLElement } {
   const value = el('b', { attrs: { 'data-ui': key } });
-  return { node: el('span', { className: 'rs-foot-stat' }, [el('span', { text: label }), value]), value };
+  return { node: el('span', { className: 'rs-foot-stat rs-inset' }, [el('small', { text: label }), value]), value };
 }
 
 export function createHud(game: GameData, h: HudHandlers): HudView {
   const hpFill = el('div', { className: 'rs-hp-fill' });
   const hpText = el('span', { className: 'rs-hp-txt', attrs: { 'data-ui': 'hud-hp' } });
-  const waveText = el('div', { className: 'rs-wave', attrs: { 'data-ui': 'hud-wave' } });
+  const waveNum = el('b');
+  const waveTotal = el('em');
+  const waveText = el('div', { className: 'rs-wave', attrs: { 'data-ui': 'hud-wave', role: 'status' } }, [
+    el('small', { text: t('hud.waveLabel'), attrs: { 'aria-hidden': 'true' } }),
+    el('span', { className: 'rs-wave-num', attrs: { 'aria-hidden': 'true' } }, [waveNum, waveTotal]),
+  ]);
   const goldText = el('span', { attrs: { 'data-ui': 'hud-gold' } });
   const pauseBtn = el(
     'button',
     {
-      className: 'rs-btn rs-icon-btn',
+      className: 'rs-btn rs-btn-icon',
       attrs: { type: 'button', 'aria-label': t('hud.pause'), 'data-ui': 'hud-pause' },
       onClick: () => h.onPause(),
     },
-    [icon(ICONS.pause, 20)],
+    [icon(ICONS.pause, 22, 'ui_icon_pause')],
   );
 
   const top = el('div', { className: 'rs-hud-bar rs-hud-top' }, [
     el('div', { className: 'rs-hp', attrs: { 'aria-label': t('hud.hpLabel') } }, [
-      icon(ICONS.heart, 14),
+      icon(ICONS.heart, 20, 'ui_icon_heart'),
       el('div', { className: 'rs-hp-track' }, [hpFill]),
       hpText,
     ]),
     waveText,
-    el('div', { className: 'rs-hud-right' }, [
-      el('span', { className: 'rs-gold-pill', attrs: { 'aria-label': t('hud.goldLabel') } }, [icon(ICONS.coin, 14), goldText]),
-      pauseBtn,
+    el('span', { className: 'rs-hud-gold', attrs: { 'aria-label': t('hud.goldLabel') } }, [
+      icon(ICONS.coin, 18, 'ui_icon_coin'),
+      goldText,
     ]),
+    pauseBtn,
   ]);
   const strip = el('div', { className: 'rs-rune-strip', attrs: { 'data-ui': 'hud-runes' } });
   const topBand = el('div', { className: 'rs-band rs-band-top' }, [top, strip]);
@@ -71,17 +77,28 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
   const atk = stat(t('hud.atk'), 'hud-atk');
   const orbs = stat(t('hud.orbs'), 'hud-orbs');
   const crit = stat(t('hud.crit'), 'hud-crit');
-  const recallBtn = button('rs-btn-ghost', t('hud.recall'), () => h.onRecall(), { 'data-ui': 'hud-recall' });
-  const speedBtn = button('rs-btn-ghost rs-btn-speed', t('hud.speed.1'), () => h.onToggleSpeed(), {
+  const recallBtn = el(
+    'button',
+    {
+      className: 'rs-btn rs-btn-action rs-btn-recall',
+      attrs: { type: 'button', 'data-ui': 'hud-recall' },
+      onClick: () => h.onRecall(),
+    },
+    [icon(ICONS.recall, 20), el('span', { text: t('hud.recall') })],
+  );
+  const speedBtn = button('rs-btn-secondary rs-btn-speed', t('hud.speed.1'), () => h.onToggleSpeed(), {
     'data-ui': 'hud-speed',
   });
   const bottom = el('div', { className: 'rs-hud-bar rs-hud-bottom' }, [
     el('div', { className: 'rs-foot-stats' }, [atk.node, orbs.node, crit.node]),
-    el('div', { className: 'rs-foot-btns' }, [recallBtn, speedBtn]),
+    el('div', { className: 'rs-foot-btns' }, [speedBtn, recallBtn]),
   ]);
   const bottomBand = el('div', { className: 'rs-band rs-band-bottom' }, [bottom]);
 
-  const bannerEl = el('div', { className: 'rs-banner', attrs: { 'data-ui': 'hud-banner', role: 'status' } });
+  const bannerText = el('span', { className: 'rs-ribbon-text' });
+  const bannerEl = el('div', { className: 'rs-banner rs-ribbon rs-ribbon-big', attrs: { 'data-ui': 'hud-banner', role: 'status' } }, [
+    bannerText,
+  ]);
 
   const root = el('section', { className: 'rs-screen rs-hud', attrs: { 'data-ui': 'screen-hud' } }, [
     topBand,
@@ -102,11 +119,20 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     }
     strip.replaceChildren(
       ...groupPerks(perks).map(({ id, count }) =>
-        el('span', {
-          className: `rs-rune rs-syn-${game.perks[id].synergy}`,
-          text: count > 1 ? t('hud.runeCount', { name: perkName(id), count }) : perkName(id),
-          attrs: { 'data-perk': id },
-        }),
+        el(
+          'span',
+          {
+            className: `rs-rune rs-syn-${game.perks[id].synergy}`,
+            attrs: {
+              'data-perk': id,
+              'aria-label': count > 1 ? t('hud.runeCount', { name: perkName(id), count }) : perkName(id),
+            },
+          },
+          [
+            artIcon(game.perks[id].iconKey, 'rs-rune-icon rs-art'),
+            count > 1 ? el('span', { className: 'rs-rune-count', text: t('hud.runeStack', { count }) }) : null,
+          ],
+        ),
       ),
     );
   }
@@ -115,7 +141,9 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     const ratio = s.maxHp > 0 ? Math.max(0, Math.min(1, s.hp / s.maxHp)) : 0;
     hpFill.style.width = `${ratio * 100}%`;
     hpText.textContent = t('hud.hp', { hp: s.hp, max: s.maxHp });
-    waveText.textContent = t('hud.wave', { wave: s.wave, total: s.totalWaves });
+    waveNum.textContent = String(s.wave);
+    waveTotal.textContent = t('hud.waveTotal', { total: s.totalWaves });
+    waveText.setAttribute('aria-label', t('hud.wave', { wave: s.wave, total: s.totalWaves }));
     goldText.textContent = String(s.gold);
     atk.value.textContent = String(s.atk);
     orbs.value.textContent = String(s.orbs);
@@ -137,7 +165,7 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
 
   function banner(text: string): void {
     hideBanner();
-    bannerEl.textContent = text;
+    bannerText.textContent = text;
     show(bannerEl, true);
     bannerEl.classList.add('is-shown');
     bannerTimer = setTimeout(hideBanner, BANNER_MS);
@@ -147,7 +175,8 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     hideBanner();
     lastPerks = '';
     hpFill.style.width = '100%';
-    for (const n of [hpText, waveText, goldText, atk.value, orbs.value, crit.value]) n.textContent = '';
+    for (const n of [hpText, waveNum, waveTotal, goldText, atk.value, orbs.value, crit.value]) n.textContent = '';
+    waveText.removeAttribute('aria-label');
     speedBtn.textContent = t('hud.speed.1');
     speedBtn.setAttribute('aria-label', t('hud.speedLabel', { speed: t('hud.speed.1') }));
     speedBtn.classList.remove('is-on');

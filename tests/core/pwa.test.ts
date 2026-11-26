@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pwaManifest } from '../../vite.config';
+import { listPublicAssets, pwaManifest } from '../../vite.config';
 
 const publicIcons = Object.keys(import.meta.glob('../../public/icons/*.png'));
 
@@ -25,5 +25,10 @@ describe('PWA manifest', () => {
     for (const icon of icons) {
       expect(publicIcons).toContain(`../../public/${icon.src}`);
     }
+  });
+
+  it('ícone do app (1024) fica fora de public/ e do build (T-042)', () => {
+    expect(listPublicAssets().some((p) => p.startsWith('app/'))).toBe(false);
+    expect(Object.keys(import.meta.glob('../../public/**/app_icon.*'))).toEqual([]);
   });
 });

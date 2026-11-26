@@ -5,6 +5,7 @@ import type { EnemyState } from '../../match/RunState';
 import { hitFlashFrames, SQUASH_PEAK, squashScale } from '../fx/fxMath';
 import { ensureCanvasTexture, glowTexture } from './draw';
 import { COLOR, CSS, DEFAULT_ENEMY_PALETTE, ENEMY_PALETTES, type EnemyPalette } from './palette';
+import { ATLAS_ENEMIES, hasTexture, medallionScale } from './sprites';
 
 /** Fração do caminho até a posição lógica por frame (avanço suave no fim do turno). */
 const FOLLOW = 0.2;
@@ -21,6 +22,11 @@ const FACES: { readonly [spriteKey: string]: Face } = {
 
 /** Sprites com chifres (Chefe Final do slice). */
 const HORNED = new Set(['boss_obsidian']);
+
+/** Chefe com chifres saindo do círculo (quadro de 384 maior que o medalhão). */
+export function isHorned(def: EnemyDef): boolean {
+  return HORNED.has(def.spriteKey);
+}
 
 /** Meia largura da textura do corpo (chifres do chefe passam do raio). */
 export function bodyHalfSize(def: EnemyDef): number {
@@ -130,8 +136,14 @@ export class EnemyView {
     this.aura = scene.add.image(0, 0, this.bossKey).setDisplaySize(auraSize, auraSize).setVisible(!!def.isBoss);
     this.root.add(this.aura);
 
-    const h = bodyHalfSize(def);
-    this.body = scene.add.image(0, 0, enemyBodyTexture(scene, def, res)).setDisplaySize(h * 2, h * 2);
+    if (hasTexture(scene.textures, ATLAS_ENEMIES, def.spriteKey)) {
+      // Sprite real (M4): círculo da arte = diâmetro da hitbox; chifres do chefe passam do círculo.
+      this.body = scene.add.image(0, 0, ATLAS_ENEMIES, def.spriteKey);
+      this.body.setScale(medallionScale(r, this.body.frame.realWidth, isHorned(def)));
+    } else {
+      const h = bodyHalfSize(def);
+      this.body = scene.add.image(0, 0, enemyBodyTexture(scene, def, res)).setDisplaySize(h * 2, h * 2);
+    }
     this.root.add(this.body);
 
     this.shock = scene.add.graphics().lineStyle(def.isBoss ? 3 : 2, COLOR.cyan, 1).strokeCircle(0, 0, r).setVisible(false);

@@ -1,0 +1,9 @@
+# BRF-029 — AG07 — T-034 PWA se atualiza sozinho
+**Leia:** `vite.config.ts` (bloco VitePWA), `src/main.ts`, `netlify.toml`. **Regra:** respostas curtas; sem commit/push/branches.
+**Problema (visto pelo dono):** no celular, o service worker manteve um bundle antigo (sem a lista `__RS_ASSETS__` com os atlases); ícones da UI aparecem (vêm da rede), mas inimigos e cenário seguem procedurais. Hoje `injectRegister: 'script'` só registra o SW, sem recarregar a página quando a versão nova assume.
+**Fazer:** (1) Trocar para registro por `virtual:pwa-register` em `src/main.ts` com `registerType: 'autoUpdate'`: quando o SW novo assumir, recarregar a página automaticamente (uma vez, sem loop), inclusive no app instalado. (2) Checar atualização ao voltar o app para o primeiro plano (`visibilitychange`) e a cada ~60 min. (3) Garantir `skipWaiting`/`clientsClaim` e `cleanupOutdatedCaches`. (4) Não pode interferir no `npm run dev`. (5) Testes do que for lógica pura (ex.: guarda contra recarregar duas vezes).
+**Permitido:** `vite.config.ts`, `src/main.ts`, `src/core/` (módulo novo do registro), `tests/core/`, `src/vite-env.d.ts` (tipos do virtual module). **Proibido:** o resto.
+**Pronto quando:** typecheck, suíte e build verdes; teste no `vite preview` com Playwright: abrir a build A, gerar build B (mudança trivial temporária, revertida depois), recarregar uma vez → página passa sozinha para B sem segunda ação manual.
+**Entrega:** até 4 linhas.
+
+**Acréscimo (T-031, parte do AG07):** favicon do site a partir de `public/icons/` (ícone do PWA atual; quando `app_icon` chegar, o `icons:pwa` também gera o favicon), com `<link rel="icon">` no `index.html`, para não haver 404 de `/favicon.ico`. **Permitido também:** `index.html`, `public/favicon*`, `scripts/pwa-icons.mjs`. O AG02 trabalha em paralelo em `src/ui/` e o AG01 em `src/scenes/`.

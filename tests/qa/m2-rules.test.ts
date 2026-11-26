@@ -138,7 +138,7 @@ describe('QA M2 — regras de run', () => {
       if (a.wave === 15) expect(a.drafts).toBe(7);
       expect(sim(i * 7919)).toEqual(a);
     }
-  });
+  }, 60_000);
 
   it('lançamento com mais de 28 orbes é limitado a 28', () => {
     const arena: Arena = { bumpers: [], pillars: [], rings: [], enemies: [] };

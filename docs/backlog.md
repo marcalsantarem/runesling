@@ -44,3 +44,34 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-022 | Ressalvas do QA do M3 (UI): HUD não bloqueia a mira onde cobre o campo (M3-01); chaves de strings para os textos da cena (M3-02); rótulos 1× / 1,5× (decisão 27) (tam. P) | M3 | AG02 | feita |
 | T-023 | Ressalvas do QA do M3 (cena): textos da cena via `strings.ts` (M3-02) e fonte 900 inexistente (M3-03); velocidade (decisão 27); recolher automático (decisão 28) (tam. P) | M3 | AG01 | feita |
 | T-021 | Validação do M3 e tag v0.4.0 (tam. P) | M3 | AG03 + AG00 | feita (passa com ressalvas; falta a tag) |
+
+## M4 (v0.5.0): Pipeline de arte
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-024 | Guia visual (`docs/arte.md`) e manifesto com o prompt exato de cada imagem, âncoras primeiro (decisões 29, 31, 32) (tam. P) | M4 | AG08 | feita |
+| T-025 | Pipeline: ingestão das imagens do dono, recorte de fundo, trim/centro/máscara circular, atlases WebP e `preview.html` (decisão 30) (tam. M) | M4 | AG08 | feita |
+| T-026 | Rodar o pipeline com as imagens do dono e gerar os atlases (depende das imagens) (tam. P) | M4 | AG08 | feita (31/31 imagens) |
+| T-027 | Cena usa os sprites por `spriteKey` (com fallback procedural), chão e moldura da arena (tam. M) | M4 | AG01 | feita |
+| T-028 | Ícones de runas e talentos na UI: Draft, Talentos, faixa de runas (decisão 32) (tam. P) | M4 | AG02 | feita |
+| T-029 | Carregar atlases no Boot, ícone definitivo do PWA e versão 0.5.0 (tam. P) | M4 | AG07 | feita |
+| T-031 | UI só pede ícones que existem (usar a lista de assets do build, `src/core/assetManifest.ts`) e favicon do site, para não gerar 404 no console (tam. P) | M4 | AG02 + AG07 | feita |
+| T-032 | Pilar: sprite esticado para o retângulo exato da colisão (decisão 34) (tam. P) | M4 | AG01 | feita |
+| T-033 | Revisar `icon_static_crit`: em 34 px se confunde com `icon_chain_lightning` (dono decide depois) (tam. P) | M4 | AG08 | a fazer |
+| T-034 | PWA se atualiza sozinho: recarregar quando houver versão nova e checar atualização periodicamente (o aparelho do dono ficou preso numa versão antiga) (tam. P) | M4 | AG07 | feita |
+| T-042 | Tirar do build a fonte do ícone do app (`app_icon.png`, 1,1 MB, só serve para gerar os ícones) e conferir o peso do build (dist em 3,8 MB, limite 4 MB) (tam. P) | M4 | AG07 + AG08 | feita (dist 2,1 MB) |
+| T-043 | Largura da moldura lateral (hoje 10 px): dono decide depois de testar no celular (tam. P) | M4 | AG01 | adiada pelo dono |
+| T-030 | Validação do M4 e tag v0.5.0 (tam. P) | M4 | AG03 + AG00 | feita (passa com ressalvas; falta a tag) |
+
+## M5 (v0.6.0): Nova UI
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-035 | Mockups das 3 direções visuais da UI (Menu, HUD e Draft em cada) para o dono escolher (decisão 38) (tam. P) | M5 | AG08 | feita |
+| T-036 | Guia de UI da direção A e prompts das peças de UI para o Gemini (molduras 9-slice, botões, fitas, cartas por sinergia, ícones do HUD) (tam. P) | M5 | AG08 | feita |
+| T-037 | Menu e Talentos na direção A, primeiro com peças em CSS como no mockup (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
+| T-038 | HUD, Draft, Fim de run e Pausa na direção A, com animações de UI (entrada dos modais, toque nos botões, cartas do Draft) (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
+| T-039 | Processar as peças de UI geradas pelo dono e trocar o CSS provisório por elas (depende das imagens) (tam. M) | M5 | AG08 + AG02 | a fazer |
+| T-044 | Ressalvas do QA do M4 na UI: "+" do ouro parece botão sem ação (M4-01); capturar e revisar a tela de derrota nova (M4-02) (tam. P) | M5 | AG02 | a fazer |
+| T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | a fazer |
+| T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | a fazer |

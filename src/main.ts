@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { BattleScene } from './scenes/BattleScene';
 import { BootScene, WORLD_HEIGHT, WORLD_WIDTH } from './scenes/BootScene';
 import { mountUI } from './ui';
+import { createReloadGuard, scheduleUpdateChecks } from './core/pwaUpdate';
 
 const BACKGROUND_COLOR = '#0D1020';
 /** Nitidez em telas HiDPI, limitada a 2 (vertical slice). */
@@ -36,3 +37,25 @@ new Phaser.Game({
   // Boot é a raiz (fica viva); Battle é lançada por `ui:startRun` (ver BootScene).
   scene: [BootScene, BattleScene],
 });
+
+// PWA (T-034): só no build. SW novo assume (skipWaiting/clientsClaim) → recarrega uma vez.
+if (import.meta.env.PROD) {
+  void import('virtual:pwa-register').then(({ registerSW }) => {
+    let storage: Storage | null = null;
+    try {
+      storage = window.sessionStorage;
+    } catch {
+      storage = null;
+    }
+    const mayReload = createReloadGuard(storage);
+    registerSW({
+      immediate: true,
+      onNeedReload: () => {
+        if (mayReload()) window.location.reload();
+      },
+      onRegisteredSW: (_url, registration) => {
+        if (registration) scheduleUpdateChecks(registration, { doc: document, setInterval: (fn, ms) => window.setInterval(fn, ms) });
+      },
+    });
+  });
+}

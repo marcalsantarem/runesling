@@ -20,8 +20,15 @@ const ptBR = {
   'menu.stat.orbs': 'ORBES',
   'menu.stat.crit': 'CRIT',
   'menu.startStats': 'Atributos iniciais',
+  'menu.boss': 'Chefe: {name}',
+  'menu.goldPlus': '+',
+  'menu.tabBadgeLabel': '{count} talentos disponíveis para comprar',
 
-  'talents.title': 'TALENTOS PERMANENTES',
+  'settings.label': 'Configurações',
+  'settings.title': 'CONFIGURAÇÕES',
+  'settings.close': 'FECHAR',
+
+  'talents.title': 'TALENTOS',
   'talents.subtitle': 'Melhorias mantidas entre todas as partidas',
   'talents.level': 'Nv. {level}/{max}',
   'talents.cost': '{cost} G',
@@ -30,6 +37,8 @@ const ptBR = {
 
   'hud.hp': '{hp}/{max}',
   'hud.wave': 'ONDA {wave}/{total}',
+  'hud.waveLabel': 'ONDA',
+  'hud.waveTotal': '/{total}',
   'hud.atk': 'ATK',
   'hud.orbs': 'ORBES',
   'hud.crit': 'CRIT',
@@ -41,6 +50,7 @@ const ptBR = {
   'hud.pause': 'Pausar',
   'hud.runesEmpty': 'Arraste na arena para mirar e solte para lançar',
   'hud.runeCount': '{name} ×{count}',
+  'hud.runeStack': '×{count}',
   'hud.goldLabel': 'Ouro da run',
   'hud.hpLabel': 'HP da barreira',
 
@@ -53,6 +63,8 @@ const ptBR = {
 
   'draft.title': 'ESCOLHA UMA RUNA',
   'draft.subtitle': 'Combine sinergias Elétrica, Ígnea ou Espectral.',
+  'draft.newSynergy': 'Nova sinergia',
+  'draft.nthSynergy': '{n}ª da sinergia',
 
   'synergy.lightning': 'Elétrica',
   'synergy.fire': 'Ígnea',
@@ -132,6 +144,10 @@ export function talentName(id: string): string {
 
 export function talentDesc(id: string): string {
   return loadGameData().talents[id]?.desc ?? '';
+}
+
+export function enemyName(id: string): string {
+  return loadGameData().enemies[id]?.name ?? id;
 }
 
 export function chapterName(id: string): string {
