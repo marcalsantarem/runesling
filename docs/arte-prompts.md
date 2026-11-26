@@ -343,7 +343,7 @@ Generate one square 1:1 image. runic sword pointing up with gold energy flowing 
 - Arquivo a devolver: `art-source/raw/icons/icon_bastion_heal.png`
 - Anexar no Gemini: `art-source/anchors/icon_anchor.png`
 - Fundo: magenta · tamanho final 128 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. stone seal shaped like a heart with an emerald rune glowing at the center (#1DD1A1). RPG skill icon, stylized hand-painted dark fantasy 2D game icon, one single central symbol, high contrast, crisp readable silhouette at 34 pixels, dark iron runic details, no frame, no border, no outer glow, no light bleeding outside the symbol, centered, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
