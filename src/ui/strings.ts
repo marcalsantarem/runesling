@@ -21,7 +21,6 @@ const ptBR = {
   'menu.stat.crit': 'CRIT',
   'menu.startStats': 'Atributos iniciais',
   'menu.boss': 'Chefe: {name}',
-  'menu.goldPlus': '+',
   'menu.tabBadgeLabel': '{count} talentos disponíveis para comprar',
 
   'settings.label': 'Configurações',

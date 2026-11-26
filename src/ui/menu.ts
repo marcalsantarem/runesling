@@ -88,7 +88,6 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     el('div', { className: 'rs-frame rs-gold-pill', attrs: { 'aria-label': t('gold.label') } }, [
       icon(ICONS.coin, 20, 'ui_icon_coin'),
       goldValue,
-      el('span', { className: 'rs-plus', text: t('menu.goldPlus'), attrs: { 'aria-hidden': 'true' } }),
     ]),
     el('div', { className: 'rs-spacer' }),
     soundBtn,

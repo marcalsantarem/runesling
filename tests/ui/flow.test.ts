@@ -26,6 +26,9 @@ describe('fluxo de telas', () => {
     h.bus.emit('app:ready', {});
     expect(h.visible('screen-menu')).toBe(true);
     expect(h.q('menu-gold').textContent).toBe('40');
+    // M4-01: sem loja até o M10, o contador de ouro é só placa (sem "+").
+    expect(h.q('menu-gold').parentElement?.textContent).toBe('40');
+    expect(h.root.querySelector('.rs-plus')).toBeNull();
     expect(h.q('menu-best').textContent).toBe('0 / 15');
     expect(h.q('menu-atk').textContent).toBe('3');
     expect(h.q('menu-hp').textContent).toBe('12');
@@ -110,6 +113,9 @@ describe('fluxo de telas', () => {
     h.bus.emit('run:ended', { won: false, wave: 9, goldEarned: 57 });
     expect(h.visible('modal-end')).toBe(true);
     expect(h.q('end-title').textContent).toBe('BARREIRA ROMPIDA');
+    // M4-02: derrota usa a mesma fita/emblema da vitória, sem o destaque dourado.
+    expect(h.q('end-title').closest('.rs-ribbon')?.classList.contains('is-defeat')).toBe(true);
+    expect(h.root.querySelector('.rs-end-emblem')?.classList.contains('is-victory')).toBe(false);
     expect(h.q('end-wave').textContent).toBe('9/15');
     expect(h.q('end-gold').textContent).toBe('+57');
     h.click('end-again');
