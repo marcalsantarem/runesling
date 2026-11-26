@@ -59,6 +59,26 @@
         "w": 128,
         "h": 128
       }
+    },
+    "icon_storm_orb": {
+      "frame": {
+        "x": 2,
+        "y": 136,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
     }
   },
   "meta": {
@@ -68,7 +88,7 @@
     "format": "RGBA8888",
     "size": {
       "w": 512,
-      "h": 256
+      "h": 512
     },
     "scale": "1"
   }
