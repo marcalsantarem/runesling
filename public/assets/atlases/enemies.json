@@ -179,6 +179,26 @@
         "w": 384,
         "h": 384
       }
+    },
+    "obstacle_bumper_rune": {
+      "frame": {
+        "x": 264,
+        "y": 788,
+        "w": 192,
+        "h": 192
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 192,
+        "h": 192
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      }
     }
   },
   "meta": {

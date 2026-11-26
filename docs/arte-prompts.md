@@ -167,7 +167,7 @@ Generate one square 1:1 image. horned obsidian demon lord bust, crimson and blac
 - Arquivo a devolver: `art-source/raw/obstacles/obstacle_bumper_rune.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: magenta · tamanho final 192 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. circular runic pinball bumper seen from above, round dark iron dome with a carved cyan rune in the center (#00CEC9), thick iron ring edge, perfectly round silhouette. top-down view arena prop, dark fantasy 2D game asset, stylized hand-painted illustration, forged dark iron and obsidian stone, clean bold silhouette, dramatic top-down lighting, no outer glow, no light bleeding outside the shape, no cast shadow, centered, no text, no letters, no numbers, no UI. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
