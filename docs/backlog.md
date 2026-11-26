@@ -60,3 +60,9 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-033 | Revisar `icon_static_crit`: em 34 px se confunde com `icon_chain_lightning` (dono decide depois) (tam. P) | M4 | AG08 | a fazer |
 | T-034 | PWA se atualiza sozinho: recarregar quando houver versão nova e checar atualização periodicamente (o aparelho do dono ficou preso numa versão antiga) (tam. P) | M4 | AG07 | feita |
 | T-030 | Validação do M4 e tag v0.5.0 (tam. P) | M4 | AG03 + AG00 | a fazer |
+
+## M5 (v0.6.0): Nova UI
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-035 | Mockups das 3 direções visuais da UI (Menu, HUD e Draft em cada) para o dono escolher (decisão 38) (tam. P) | M5 | AG08 | em andamento |
