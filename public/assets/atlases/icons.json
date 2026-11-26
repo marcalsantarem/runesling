@@ -1,8 +1,28 @@
 {
   "frames": {
-    "icon_chain_lightning": {
+    "icon_bumper_shock": {
       "frame": {
         "x": 2,
+        "y": 2,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
+    },
+    "icon_chain_lightning": {
+      "frame": {
+        "x": 136,
         "y": 2,
         "w": 128,
         "h": 128
@@ -27,7 +47,7 @@
     "image": "icons.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 256,
+      "w": 512,
       "h": 256
     },
     "scale": "1"
