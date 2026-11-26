@@ -59,7 +59,8 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-032 | Pilar: sprite esticado para o retângulo exato da colisão (decisão 34) (tam. P) | M4 | AG01 | feita |
 | T-033 | Revisar `icon_static_crit`: em 34 px se confunde com `icon_chain_lightning` (dono decide depois) (tam. P) | M4 | AG08 | a fazer |
 | T-034 | PWA se atualiza sozinho: recarregar quando houver versão nova e checar atualização periodicamente (o aparelho do dono ficou preso numa versão antiga) (tam. P) | M4 | AG07 | feita |
-| T-042 | Tirar do build a fonte do ícone do app (`app_icon.png`, 1,1 MB, só serve para gerar os ícones) e conferir o peso do build (dist em 3,8 MB, limite 4 MB) (tam. P) | M4 | AG07 + AG08 | a fazer |
+| T-042 | Tirar do build a fonte do ícone do app (`app_icon.png`, 1,1 MB, só serve para gerar os ícones) e conferir o peso do build (dist em 3,8 MB, limite 4 MB) (tam. P) | M4 | AG07 + AG08 | em andamento |
+| T-043 | Largura da moldura lateral (hoje 10 px): dono decide depois de testar no celular (tam. P) | M4 | AG01 | adiada pelo dono |
 | T-030 | Validação do M4 e tag v0.5.0 (tam. P) | M4 | AG03 + AG00 | a fazer |
 
 ## M5 (v0.6.0): Nova UI
