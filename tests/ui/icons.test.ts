@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it } from 'vitest';
 import { loadGameData } from '../../src/data/types';
-import { artIcon, iconPath, resetMissingIcons } from '../../src/ui/dom';
+import { artIcon, hasIconFile, iconPath, resetMissingIcons, setAvailableAssets } from '../../src/ui/dom';
 import { runState, setup, type Harness } from './helpers';
 
 let h: Harness | undefined;
@@ -9,6 +9,7 @@ afterEach(() => {
   h?.ui.destroy();
   h = undefined;
   resetMissingIcons();
+  setAvailableAssets();
 });
 
 describe('Ícones na UI (T-028)', () => {
@@ -24,6 +25,7 @@ describe('Ícones na UI (T-028)', () => {
   });
 
   it('carregou: marca has-art; falhou: remove a imagem e mantém a bolinha', () => {
+    setAvailableAssets(['icons/icon_ok.webp', 'icons/icon_missing.webp']);
     const ok = artIcon('icon_ok', 'rs-draft-gem rs-art');
     ok.querySelector('img')?.dispatchEvent(new Event('load'));
     expect(ok.classList.contains('has-art')).toBe(true);
@@ -36,6 +38,19 @@ describe('Ícones na UI (T-028)', () => {
     expect(bad.classList.contains('rs-draft-gem')).toBe(true);
     // chave que falhou não é pedida de novo
     expect(artIcon('icon_missing', 'rs-art').querySelector('img')).toBeNull();
+  });
+
+  it('só cria <img> para ícone listado em AVAILABLE_ASSETS (T-031)', () => {
+    setAvailableAssets(['icons/icon_ok.webp', 'atlases/icons.webp']);
+    expect(hasIconFile('icon_ok')).toBe(true);
+    expect(hasIconFile('icons')).toBe(false);
+    expect(artIcon('icon_ok', 'rs-art').querySelector('img')?.getAttribute('src')).toBe(iconPath('icon_ok'));
+    const none = artIcon('icon_absent', 'rs-draft-gem rs-art');
+    expect(none.querySelector('img')).toBeNull();
+    expect(none.classList.contains('rs-draft-gem')).toBe(true);
+    expect(none.getAttribute('data-icon')).toBe('icon_absent');
+    setAvailableAssets([]);
+    expect(artIcon('icon_ok', 'rs-art').querySelector('img')).toBeNull();
   });
 
   it('draft, talentos e faixa de runas usam o iconKey do dado', async () => {

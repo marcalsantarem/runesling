@@ -1,4 +1,5 @@
 /** Helpers mínimos de DOM da UI (sem framework). Texto sempre por `textContent`. */
+import { AVAILABLE_ASSETS } from '../core/assetManifest';
 
 export interface ElOptions {
   className?: string;
@@ -64,6 +65,19 @@ export function iconPath(iconKey: string): string {
   return `${import.meta.env.BASE_URL}assets/icons/${iconKey}.webp`;
 }
 
+/** Arquivos em `public/assets/` conhecidos no build (T-031): só pedimos ícones que existem. */
+let availableAssets: ReadonlySet<string> = new Set(AVAILABLE_ASSETS);
+
+/** Só para testes: troca a lista de assets existentes (sem argumento, volta à do build). */
+export function setAvailableAssets(list: readonly string[] = AVAILABLE_ASSETS): void {
+  availableAssets = new Set(list);
+}
+
+/** O arquivo `icons/<iconKey>.webp` existe em `public/assets/`? */
+export function hasIconFile(iconKey: string): boolean {
+  return availableAssets.has(`icons/${iconKey}.webp`);
+}
+
 /** Chaves cujo arquivo falhou nesta sessão: não pedimos de novo (evita 404 repetido a cada render). */
 const missingIcons = new Set<string>();
 
@@ -74,11 +88,12 @@ export function resetMissingIcons(): void {
 
 /**
  * Moldura do ícone de runa/talento. A moldura mantém a bolinha colorida (CSS de `className`)
- * como fallback; a imagem só aparece quando carrega (`has-art`). Se falhar, some sem quebrar layout.
+ * como fallback; sem arquivo listado em `AVAILABLE_ASSETS`, nem cria `<img>` (sem requisição/404).
+ * A imagem só aparece quando carrega (`has-art`). Se falhar, some sem quebrar layout.
  */
 export function artIcon(iconKey: string, className: string): HTMLSpanElement {
   const frame = el('span', { className, attrs: { 'aria-hidden': 'true', 'data-icon': iconKey } });
-  if (!iconKey || missingIcons.has(iconKey)) return frame;
+  if (!iconKey || !hasIconFile(iconKey) || missingIcons.has(iconKey)) return frame;
   const img = el('img', {
     className: 'rs-art-img',
     attrs: { src: iconPath(iconKey), alt: '', width: '128', height: '128', decoding: 'async', draggable: 'false' },

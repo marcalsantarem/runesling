@@ -10,7 +10,8 @@ import {
   hasTexture,
   MEDALLION_PX,
   medallionScale,
-  pillarScale,
+  pillarFit,
+  alphaBounds,
   TEX_FLOOR,
   tileScaleFor,
   type TextureLookup,
@@ -71,9 +72,40 @@ describe('Sprites do M4 — escala', () => {
     expect(medallionScale(17, 128, false) * 128).toBeCloseTo(medallionScale(17, 256, false) * 256, 6);
   });
 
-  it('obstáculos: bumper/anel = 2r e pilar = largura do retângulo', () => {
+  it('obstáculos: bumper/anel = 2r', () => {
     expect(circleObstacleScale(17, 192) * 192 * 0.92).toBeCloseTo(34, 6);
-    expect(pillarScale(68, 192) * 192 * 0.92).toBeCloseTo(68, 6);
+  });
+
+  it('pilar (decisão 34): o conteúdo do frame ocupa exatamente o retângulo 68×16', () => {
+    // Caixa medida no atlas atual: x 8..184, y 69..123 no quadro de 192.
+    const box = { x: 8, y: 69, w: 177, h: 55 };
+    const fit = pillarFit(68, 16, box, 192, 192);
+    expect(fit.scaleX * box.w).toBeCloseTo(68, 9);
+    expect(fit.scaleY * box.h).toBeCloseTo(16, 9);
+    expect(fit.scaleY).toBeLessThan(fit.scaleX); // achata na vertical
+    // Origem no centro do conteúdo: as bordas do conteúdo caem nas bordas do retângulo centrado.
+    const cx = 100;
+    const cy = 50;
+    const left = cx - fit.originX * 192 * fit.scaleX + box.x * fit.scaleX;
+    const top = cy - fit.originY * 192 * fit.scaleY + box.y * fit.scaleY;
+    expect(left).toBeCloseTo(cx - 34, 9);
+    expect(top).toBeCloseTo(cy - 8, 9);
+  });
+
+  it('pilar: caixa ou quadro inválido não gera escala infinita', () => {
+    expect(pillarFit(68, 16, { x: 0, y: 0, w: 0, h: 10 }, 192, 192)).toEqual({ scaleX: 1, scaleY: 1, originX: 0.5, originY: 0.5 });
+    expect(pillarFit(68, 16, { x: 0, y: 0, w: 10, h: 10 }, 0, 192).scaleX).toBe(1);
+  });
+
+  it('alphaBounds: caixa dos pixels visíveis; vazio = quadro inteiro', () => {
+    const w = 6;
+    const h = 4;
+    const data = new Uint8ClampedArray(w * h * 4);
+    data[(1 * w + 2) * 4 + 3] = 255;
+    data[(2 * w + 4) * 4 + 3] = 200;
+    data[(3 * w + 0) * 4 + 3] = 5; // abaixo do limiar
+    expect(alphaBounds(data, w, h, 8)).toEqual({ x: 2, y: 1, w: 3, h: 2 });
+    expect(alphaBounds(new Uint8ClampedArray(w * h * 4), w, h)).toEqual({ x: 0, y: 0, w, h });
   });
 
   it('chão e moldura: tileScale mapeia a textura para a medida do mundo', () => {
@@ -84,7 +116,6 @@ describe('Sprites do M4 — escala', () => {
   it('frame inválido (largura 0) não gera escala infinita', () => {
     expect(medallionScale(17, 0, false)).toBe(1);
     expect(circleObstacleScale(17, 0)).toBe(1);
-    expect(pillarScale(68, 0)).toBe(1);
     expect(tileScaleFor(0, 10)).toBe(1);
   });
 });

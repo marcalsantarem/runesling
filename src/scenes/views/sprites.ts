@@ -52,12 +52,60 @@ export function circleObstacleScale(radius: number, frameWidth: number): number 
   return frameWidth <= 0 ? 1 : (radius * 2) / (frameWidth * CONTENT);
 }
 
+/** Retângulo em px dentro do quadro do frame (coordenadas do quadro não aparado). */
+export interface FrameBox {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/** Ajuste do sprite a um retângulo: escalas X/Y separadas e origem no centro do conteúdo. */
+export interface StretchFit {
+  scaleX: number;
+  scaleY: number;
+  originX: number;
+  originY: number;
+}
+
 /**
- * Escala do pilar: largura do conteúdo do quadro = largura do retângulo da física (escala uniforme,
- * sem distorcer a arte; supõe a laje desenhada na proporção dentro do quadro de 192).
+ * Decisão 34: o conteúdo real do sprite do pilar (`box`, o trim) ocupa exatamente o retângulo
+ * da colisão `w`×`h`, mesmo achatando a arte. `frameW`/`frameH` = quadro não aparado
+ * (`realWidth`/`realHeight`); a origem fica no centro do conteúdo para posicionar no centro do retângulo.
  */
-export function pillarScale(w: number, frameWidth: number): number {
-  return frameWidth <= 0 ? 1 : w / (frameWidth * CONTENT);
+export function pillarFit(w: number, h: number, box: FrameBox, frameW: number, frameH: number): StretchFit {
+  if (box.w <= 0 || box.h <= 0 || frameW <= 0 || frameH <= 0) {
+    return { scaleX: 1, scaleY: 1, originX: 0.5, originY: 0.5 };
+  }
+  return {
+    scaleX: w / box.w,
+    scaleY: h / box.h,
+    originX: (box.x + box.w / 2) / frameW,
+    originY: (box.y + box.h / 2) / frameH,
+  };
+}
+
+/**
+ * Caixa dos pixels com alfa > `threshold` em `data` (RGBA, `width`×`height`).
+ * Usada quando o atlas não vem aparado (`trimmed: false`). Sem pixel visível: o quadro inteiro.
+ */
+export function alphaBounds(data: ArrayLike<number>, width: number, height: number, threshold = 0): FrameBox {
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if ((data[(y * width + x) * 4 + 3] ?? 0) > threshold) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX < 0) return { x: 0, y: 0, w: width, h: height };
+  return { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 };
 }
 
 /** `tileScale` que faz `textureWidth` px da textura ocupar `worldWidth` unidades do mundo. */

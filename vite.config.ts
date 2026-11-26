@@ -52,14 +52,16 @@ export default defineConfig({
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'script', // registerSW.js injetado só no build; main.ts intocado
+      injectRegister: false, // registro em main.ts via virtual:pwa-register (T-034)
       manifest: pwaManifest,
       manifestFilename: 'manifest.webmanifest',
       filename: 'sw.js',
       devOptions: { enabled: false }, // sem SW no `npm run dev`
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,webp,svg,json,mp3,ogg,m4a,woff2,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,webp,svg,json,mp3,ogg,m4a,woff2,webmanifest}'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        skipWaiting: true,
+        clientsClaim: true,
         cleanupOutdatedCaches: true,
         navigateFallback: 'index.html',
       },
