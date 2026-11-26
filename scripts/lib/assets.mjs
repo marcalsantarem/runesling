@@ -141,7 +141,8 @@ const dist = (d, i, c) => Math.hypot(d[i] - c[0], d[i + 1] - c[1], d[i + 2] - c[
  * Na faixa de borda o alpha é a projeção (C-fundo) sobre (frente-fundo), com descontaminação
  * de cor (sem halo); sem frente confiável, rampa suave entre t0 e t1.
  * removeEnclosedBg (só fundo neutro): também remove bolsões de fundo cercados pela arte,
- * semeados em fundo puro (< t0) e com área >= enclosedMinArea px; bolsões menores (brilhos) ficam.
+ * só fundo puro (< t0, para não invadir brilhos claros vizinhos) e área >= enclosedMinArea px;
+ * bolsões menores (brilhos) ficam. A franja do bolsão é tratada pela faixa de borda.
  */
 export async function cutBackground(input, opts = {}) {
   const t0 = opts.t0 ?? 28;
@@ -198,7 +199,7 @@ export async function cutBackground(input, opts = {}) {
           const p = comp[k];
           const x = p % W;
           for (const q of [x > 0 ? p - 1 : -1, x < W - 1 ? p + 1 : -1, p - W, p + W])
-            if (q >= 0 && q < N && !seen[q] && !inBg[q] && d[q] < t1) (seen[q] = 1), comp.push(q);
+            if (q >= 0 && q < N && !seen[q] && !inBg[q] && d[q] < t0) (seen[q] = 1), comp.push(q);
         }
         if (comp.length >= minArea) for (const p of comp) inBg[p] = 1;
       }
@@ -289,7 +290,7 @@ export async function cutAll(paths, opts = {}, log = console) {
       continue;
     }
     const buf = readFileSync(it.raw);
-    const hash = sha(buf, JSON.stringify([CUT_VERSION, it.removeBg, it.bgColor, ...(it.removeEnclosedBg ? ['enclosed'] : [])]));
+    const hash = sha(buf, JSON.stringify([CUT_VERSION, it.removeBg, it.bgColor, ...(it.removeEnclosedBg ? ['enclosed2'] : [])]));
     if (cache[it.key] === hash && existsSync(it.cut)) {
       report.skipped.push(it.key);
       continue;

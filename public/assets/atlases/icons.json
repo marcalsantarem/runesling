@@ -140,7 +140,7 @@
         "h": 128
       }
     },
-    "icon_ricochet_crit": {
+    "icon_power_surge": {
       "frame": {
         "x": 270,
         "y": 136,
@@ -160,7 +160,7 @@
         "h": 128
       }
     },
-    "icon_static_crit": {
+    "icon_ricochet_crit": {
       "frame": {
         "x": 270,
         "y": 270,
@@ -180,7 +180,7 @@
         "h": 128
       }
     },
-    "icon_storm_orb": {
+    "icon_static_crit": {
       "frame": {
         "x": 404,
         "y": 2,
@@ -200,7 +200,7 @@
         "h": 128
       }
     },
-    "icon_supernova": {
+    "icon_storm_orb": {
       "frame": {
         "x": 404,
         "y": 136,
@@ -220,10 +220,30 @@
         "h": 128
       }
     },
-    "icon_wall_clone": {
+    "icon_supernova": {
       "frame": {
         "x": 404,
         "y": 270,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
+    },
+    "icon_wall_clone": {
+      "frame": {
+        "x": 538,
+        "y": 2,
         "w": 128,
         "h": 128
       },
