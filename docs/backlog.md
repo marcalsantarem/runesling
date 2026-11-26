@@ -75,6 +75,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-044 | Ressalvas do QA do M4 na UI: "+" do ouro parece botão sem ação (M4-01); capturar e revisar a tela de derrota nova (M4-02) (tam. P) | M5 | AG02 | feita |
 | T-052 | Mockups da nova tela inicial: 3 conceitos (cripta viva, mapa de expedição, lançador em destaque) × 2 variações cada (tam. P) | M5 | AG08 | feita (dono escolhe) |
 | T-053 | Mais mockups da tela inicial em outros estilos: acampamento, grimório, arcano neon × 2 variações (tam. P) | M5 | AG08 | feita (dono escolhe) |
+| T-054 | Mockup final da tela inicial: 2b com o título na posição do 2a (tam. P) | M5 | AG08 | em andamento |
 | T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | a fazer |
 | T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | a fazer |
 
