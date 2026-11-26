@@ -45,7 +45,8 @@ export function parseColor(c) {
 export function loadManifest(paths) {
   if (!existsSync(paths.manifest)) throw new Error(`manifesto não encontrado: ${paths.manifest}`);
   const m = JSON.parse(readFileSync(paths.manifest, 'utf8'));
-  const items = (m.items ?? []).map((it) => {
+  // deprecated = peça marcada "não usar" (T-058): fica no manifesto como registro, fora do pipeline.
+  const items = (m.items ?? []).filter((it) => it.deprecated !== true).map((it) => {
     const preset = m.presets?.[it.preset];
     if (!preset) throw new Error(`item ${it.key}: preset desconhecido "${it.preset}"`);
     let rawFile;
@@ -64,7 +65,7 @@ export function loadManifest(paths) {
       category,
       kind,
       atlas: preset.atlas ?? null,
-      size: preset.size,
+      size: it.size ?? preset.size,
       circularMask: preset.circularMask === true,
       removeBg: preset.removeBg !== false,
       bgColor: bg ?? null,

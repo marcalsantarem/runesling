@@ -11,7 +11,7 @@ export interface ResolvedItem {
   key: string;
   preset: string;
   category: string;
-  kind: 'sprite' | 'tile' | 'app';
+  kind: 'sprite' | 'tile' | 'app' | 'ui';
   atlas: string | null;
   size: number | [number, number];
   circularMask: boolean;

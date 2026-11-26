@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
@@ -8,6 +9,7 @@ import {
   cutAll,
   cutBackground,
   ingest,
+  loadManifest,
   normalizeSprite,
   packAtlas,
   resolvePaths,
@@ -268,5 +270,83 @@ describe('esteira ponta a ponta', { timeout: 60_000 }, () => {
     expect(html).toContain('#0D1020');
     for (const k of ['enemy_goblin', 'boss_obsidian', 'icon_chain_lightning', 'floor_crypt', 'wall_trim_crypt', 'app_icon']) expect(html).toContain(`data-key="${k}"`);
     expect(html).toContain('../public/assets/atlases/enemies.webp');
+  });
+});
+
+describe("manifesto real: peças de UI no estilo validado (T-058)", () => {
+  const NEW_KEYS = [
+    "ui_btn_mini",
+    "ui_btn_round",
+    "ui_btn_square",
+    "ui_ribbon_dark",
+    "ui_pill",
+    "ui_map_bg",
+    "ui_map_node",
+    "ui_map_node_locked",
+    "ui_defeat_shield",
+    "ui_socket",
+    "ui_icon_lock",
+    "ui_icon_back",
+    "ui_icon_check",
+    "ui_icon_recall",
+  ];
+  type UiItem = {
+    key: string;
+    preset: string;
+    file: string;
+    size: [number, number];
+    nineSlice: [number, number, number, number] | null;
+    deprecated?: boolean;
+    bgColor?: string | null;
+    geminiPrompt: string;
+    prompt?: string;
+    anchor?: string;
+    anchorFor?: string;
+  };
+  const root = fileURLToPath(new URL("../..", import.meta.url));
+  const raw = JSON.parse(
+    readFileSync(join(root, "scripts/assets-manifest.json"), "utf8"),
+  ) as {
+    anchors: Record<string, string>;
+    presets: Record<string, { kind?: string }>;
+    items: UiItem[];
+  };
+  const ui = raw.items.filter((i) => raw.presets[i.preset]?.kind === "ui");
+
+  it('carrega com as chaves novas e deixa as "não usar" fora do pipeline', () => {
+    const { items } = loadManifest(resolvePaths({ root }));
+    const keys = items.map((i) => i.key);
+    for (const k of NEW_KEYS) expect(keys).toContain(k);
+    expect(keys).not.toContain("ui_icon_sword");
+    expect(new Set(keys).size).toBe(keys.length);
+    const node = items.find((i) => i.key === "ui_map_node")!;
+    expect([node.kind, node.bgColor, node.size]).toEqual([
+      "ui",
+      "magenta",
+      [256, 256],
+    ]);
+    expect(items.find((i) => i.key === "ui_map_bg")!.removeBg).toBe(false);
+  });
+
+  it("cada peça tem arquivo em raw/ui, tamanho, 9-slice coerente e prompt sem brilho externo pedido", () => {
+    for (const i of ui) {
+      expect(i.file).toBe(`art-source/raw/ui/${i.key}.png`);
+      expect(i.size).toHaveLength(2);
+      if (i.nineSlice) {
+        const [t, r, b, l] = i.nineSlice;
+        expect(t + b).toBeLessThan(i.size[1]);
+        expect(l + r).toBeLessThan(i.size[0]);
+      }
+      expect(i.geminiPrompt).toContain(i.prompt ?? "");
+      expect(i.geminiPrompt).not.toMatch(/with (an )?outer glow/i);
+    }
+  });
+
+  it("âncora de UI: ui_btn_primary vem primeiro e vira ui_anchor; as outras anexam ui_anchor", () => {
+    const live = ui.filter((i) => !i.deprecated);
+    expect(live[0]!.key).toBe("ui_btn_primary");
+    expect(live[0]!.anchorFor).toBe(raw.anchors.ui);
+    for (const i of live.slice(1).filter((x) => x.preset === "ui_piece"))
+      expect(i.anchor ?? raw.anchors.ui).toBe(raw.anchors.ui);
   });
 });
