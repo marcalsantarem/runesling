@@ -39,6 +39,26 @@
         "w": 128,
         "h": 128
       }
+    },
+    "icon_static_crit": {
+      "frame": {
+        "x": 270,
+        "y": 2,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
     }
   },
   "meta": {
