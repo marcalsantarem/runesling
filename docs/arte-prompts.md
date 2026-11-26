@@ -299,7 +299,7 @@ Generate one square 1:1 image. violet orb bouncing off an angled wall with a sha
 - Arquivo a devolver: `art-source/raw/icons/icon_wall_clone.png`
 - Anexar no Gemini: `art-source/anchors/icon_anchor.png`
 - Fundo: white · tamanho final 128 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. violet orb splitting into two mirrored spectral orbs under a stone ceiling edge (#9C6BFF to #3E1F73). RPG skill icon, stylized hand-painted dark fantasy 2D game icon, one single central symbol, high contrast, crisp readable silhouette at 34 pixels, dark iron runic details, no frame, no border, no outer glow, no light bleeding outside the symbol, centered, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
@@ -310,7 +310,7 @@ Generate one square 1:1 image. violet orb splitting into two mirrored spectral o
 - Arquivo a devolver: `art-source/raw/icons/icon_arcane_sight.png`
 - Anexar no Gemini: `art-source/anchors/icon_anchor.png`
 - Fundo: white · tamanho final 128 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. violet arcane all-seeing eye with a rune iris (#9C6BFF to #3E1F73). RPG skill icon, stylized hand-painted dark fantasy 2D game icon, one single central symbol, high contrast, crisp readable silhouette at 34 pixels, dark iron runic details, no frame, no border, no outer glow, no light bleeding outside the symbol, centered, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.

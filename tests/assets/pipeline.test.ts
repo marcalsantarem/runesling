@@ -79,6 +79,23 @@ describe('recorte de fundo', () => {
     expect(Math.abs(r - 0x1f) + Math.abs(g - 0x6b) + Math.abs(b - 0x5a)).toBeLessThan(6);
   });
 
+  it('removeEnclosedBg: remove bolsão de fundo cercado grande e mantém brilho pequeno', async () => {
+    const img = await synth({
+      bg: '#ffffff',
+      shape:
+        '<circle cx="200" cy="200" r="160" fill="#3e1f73"/><circle cx="150" cy="200" r="40" fill="#ffffff"/><circle cx="280" cy="200" r="6" fill="#ffffff"/>',
+    });
+    const off = await rgba(await cutBackground(img, { bgColor: 'white' }));
+    expect(off.px(150, 200)[3]).toBe(255); // padrão: bolsão cercado fica
+    const on = await rgba(await cutBackground(img, { bgColor: 'white', removeEnclosedBg: true }));
+    expect(on.px(5, 5)[3]).toBe(0);
+    expect(on.px(150, 200)[3]).toBe(0); // bolsão (~5000 px) removido
+    expect(on.px(280, 200)[3]).toBe(255); // brilho pequeno (< 400 px) preservado
+    expect(on.px(200, 100)[3]).toBe(255);
+    const [r] = on.px(150, 200 - 41); // borda do bolsão sem halo branco
+    expect(on.px(150, 200 - 41)[3] === 0 || r < 170).toBe(true);
+  });
+
   it('sem dica de cor detecta o fundo pela borda', async () => {
     const img = await synth({ bg: '#f4f4f2', shape: '<rect x="100" y="100" width="200" height="200" fill="#202040"/>' });
     const { px } = await rgba(await cutBackground(img));

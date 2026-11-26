@@ -17,6 +17,7 @@ export interface ResolvedItem {
   circularMask: boolean;
   removeBg: boolean;
   bgColor: string | null;
+  removeEnclosedBg: boolean;
   raw: string;
   cut: string;
   standaloneIcon: boolean;
@@ -51,7 +52,7 @@ export function ingest(
 ): Promise<{ ingested: string[]; unknown: string[]; duplicates: string[]; missing: string[] }>;
 export function cutBackground(
   input: Buffer | string,
-  opts?: { bgColor?: string | null; t0?: number; t1?: number },
+  opts?: { bgColor?: string | null; t0?: number; t1?: number; removeEnclosedBg?: boolean; enclosedMinArea?: number },
 ): Promise<Buffer>;
 export function cutAll(
   paths: AssetPaths,

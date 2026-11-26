@@ -1,8 +1,28 @@
 {
   "frames": {
-    "icon_bumper_shock": {
+    "icon_arcane_sight": {
       "frame": {
         "x": 2,
+        "y": 2,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
+    },
+    "icon_bumper_shock": {
+      "frame": {
+        "x": 136,
         "y": 2,
         "w": 128,
         "h": 128
@@ -22,7 +42,7 @@
     },
     "icon_chain_lightning": {
       "frame": {
-        "x": 136,
+        "x": 270,
         "y": 2,
         "w": 128,
         "h": 128
@@ -42,8 +62,8 @@
     },
     "icon_fire_splash": {
       "frame": {
-        "x": 270,
-        "y": 2,
+        "x": 2,
+        "y": 136,
         "w": 128,
         "h": 128
       },
@@ -63,7 +83,7 @@
     "icon_ghost_ball": {
       "frame": {
         "x": 2,
-        "y": 136,
+        "y": 270,
         "w": 128,
         "h": 128
       },
@@ -82,8 +102,8 @@
     },
     "icon_molten_core": {
       "frame": {
-        "x": 2,
-        "y": 270,
+        "x": 136,
+        "y": 136,
         "w": 128,
         "h": 128
       },
@@ -103,7 +123,7 @@
     "icon_ricochet_crit": {
       "frame": {
         "x": 136,
-        "y": 136,
+        "y": 270,
         "w": 128,
         "h": 128
       },
@@ -122,8 +142,8 @@
     },
     "icon_static_crit": {
       "frame": {
-        "x": 136,
-        "y": 270,
+        "x": 270,
+        "y": 136,
         "w": 128,
         "h": 128
       },
@@ -143,7 +163,7 @@
     "icon_storm_orb": {
       "frame": {
         "x": 270,
-        "y": 136,
+        "y": 270,
         "w": 128,
         "h": 128
       },
@@ -162,8 +182,28 @@
     },
     "icon_supernova": {
       "frame": {
-        "x": 270,
-        "y": 270,
+        "x": 404,
+        "y": 2,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
+    },
+    "icon_wall_clone": {
+      "frame": {
+        "x": 404,
+        "y": 136,
         "w": 128,
         "h": 128
       },
@@ -187,7 +227,7 @@
     "image": "icons.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 512,
+      "w": 1024,
       "h": 512
     },
     "scale": "1"

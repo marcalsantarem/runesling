@@ -67,6 +67,7 @@ export function loadManifest(paths) {
       circularMask: preset.circularMask === true,
       removeBg: preset.removeBg !== false,
       bgColor: bg ?? null,
+      removeEnclosedBg: (it.removeEnclosedBg ?? preset.removeEnclosedBg) === true,
       raw: resolve(paths.raw, rel),
       cut: resolve(paths.cut, rel),
       standaloneIcon: preset.atlas === 'icons',
@@ -139,6 +140,8 @@ const dist = (d, i, c) => Math.hypot(d[i] - c[0], d[i + 1] - c[1], d[i + 2] - c[
  * brancos internos). Fundo saturado (magenta): chroma key global (remove também buracos).
  * Na faixa de borda o alpha é a projeção (C-fundo) sobre (frente-fundo), com descontaminação
  * de cor (sem halo); sem frente confiável, rampa suave entre t0 e t1.
+ * removeEnclosedBg (só fundo neutro): também remove bolsões de fundo cercados pela arte,
+ * semeados em fundo puro (< t0) e com área >= enclosedMinArea px; bolsões menores (brilhos) ficam.
  */
 export async function cutBackground(input, opts = {}) {
   const t0 = opts.t0 ?? 28;
@@ -183,6 +186,22 @@ export async function cutBackground(input, opts = {}) {
       const x = p % W;
       const nb = [x > 0 ? p - 1 : -1, x < W - 1 ? p + 1 : -1, p - W, p + W];
       for (const q of nb) if (q >= 0 && q < N && !inBg[q] && d[q] < t1) (inBg[q] = 1), stack.push(q);
+    }
+    if (opts.removeEnclosedBg) {
+      const minArea = opts.enclosedMinArea ?? 400;
+      const seen = new Uint8Array(N);
+      for (let s = 0; s < N; s++) {
+        if (inBg[s] || seen[s] || d[s] >= t0) continue;
+        const comp = [s];
+        seen[s] = 1;
+        for (let k = 0; k < comp.length; k++) {
+          const p = comp[k];
+          const x = p % W;
+          for (const q of [x > 0 ? p - 1 : -1, x < W - 1 ? p + 1 : -1, p - W, p + W])
+            if (q >= 0 && q < N && !seen[q] && !inBg[q] && d[q] < t1) (seen[q] = 1), comp.push(q);
+        }
+        if (comp.length >= minArea) for (const p of comp) inBg[p] = 1;
+      }
     }
   }
 
@@ -270,14 +289,14 @@ export async function cutAll(paths, opts = {}, log = console) {
       continue;
     }
     const buf = readFileSync(it.raw);
-    const hash = sha(buf, JSON.stringify([CUT_VERSION, it.removeBg, it.bgColor]));
+    const hash = sha(buf, JSON.stringify([CUT_VERSION, it.removeBg, it.bgColor, ...(it.removeEnclosedBg ? ['enclosed'] : [])]));
     if (cache[it.key] === hash && existsSync(it.cut)) {
       report.skipped.push(it.key);
       continue;
     }
     ensureDir(it.cut);
     if (it.removeBg) {
-      writeFileSync(it.cut, await cutBackground(buf, { bgColor: it.bgColor }));
+      writeFileSync(it.cut, await cutBackground(buf, { bgColor: it.bgColor, removeEnclosedBg: it.removeEnclosedBg }));
       report.cut.push(it.key);
     } else {
       await sharp(buf).png().toFile(it.cut);
