@@ -79,7 +79,7 @@ Generate one square 1:1 image. crackling cyan arcane lightning bolt forking into
 - Arquivo a devolver: `art-source/raw/enemies/enemy_goblin.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: white · tamanho final 256 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. angry armored goblin warrior bust, tan-orange leathery skin (#C87D4B to #4A2511), pointed ears, crude bronze rim highlights (#D4A373), glowing amber eyes (#FECA57). circular monster medallion token filling the frame, thick round forged dark iron rim with small rivets, dark obsidian inner background, dark fantasy 2D game asset, stylized hand-painted illustration, clean bold silhouette readable at 40 pixels, rich forged metal and stone textures, dramatic top-down lighting, glowing eyes as the brightest accent, no outer glow, no light bleeding outside the rim, centered, front view, no text, no letters, no numbers, no UI. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
@@ -90,7 +90,7 @@ Generate one square 1:1 image. angry armored goblin warrior bust, tan-orange lea
 - Arquivo a devolver: `art-source/raw/enemies/enemy_shooter.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: white · tamanho final 256 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. hooded cultist caster bust, violet robes (#9C6BFF to #2D1459), lilac rim highlights (#D1B3FF), face hidden in shadow, glowing red eyes (#FF5E57). circular monster medallion token filling the frame, thick round forged dark iron rim with small rivets, dark obsidian inner background, dark fantasy 2D game asset, stylized hand-painted illustration, clean bold silhouette readable at 40 pixels, rich forged metal and stone textures, dramatic top-down lighting, glowing eyes as the brightest accent, no outer glow, no light bleeding outside the rim, centered, front view, no text, no letters, no numbers, no UI. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
@@ -101,7 +101,7 @@ Generate one square 1:1 image. hooded cultist caster bust, violet robes (#9C6BFF
 - Arquivo a devolver: `art-source/raw/enemies/enemy_bomb.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: white · tamanho final 256 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. magma golem head, cracked black basalt plates with molten orange seams (#FF9F43 to #7A2208), pale yellow rim highlights (#FFEAA7), white-hot eyes (#FFF6CC). circular monster medallion token filling the frame, thick round forged dark iron rim with small rivets, dark obsidian inner background, dark fantasy 2D game asset, stylized hand-painted illustration, clean bold silhouette readable at 40 pixels, rich forged metal and stone textures, dramatic top-down lighting, glowing eyes as the brightest accent, no outer glow, no light bleeding outside the rim, centered, front view, no text, no letters, no numbers, no UI. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
@@ -112,7 +112,7 @@ Generate one square 1:1 image. magma golem head, cracked black basalt plates wit
 - Arquivo a devolver: `art-source/raw/enemies/enemy_splitter.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: white · tamanho final 256 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. wraith specter face, translucent magenta-violet ghostly hood (#E056FD to #47126B), pink rim highlights (#F5B5FF), hollow white glowing eyes. circular monster medallion token filling the frame, thick round forged dark iron rim with small rivets, dark obsidian inner background, dark fantasy 2D game asset, stylized hand-painted illustration, clean bold silhouette readable at 40 pixels, rich forged metal and stone textures, dramatic top-down lighting, glowing eyes as the brightest accent, no outer glow, no light bleeding outside the rim, centered, front view, no text, no letters, no numbers, no UI. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
@@ -123,7 +123,7 @@ Generate one square 1:1 image. wraith specter face, translucent magenta-violet g
 - Arquivo a devolver: `art-source/raw/enemies/enemy_mini.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: white · tamanho final 256 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. tiny wisp spark creature, round small violet ember body (#C56CF0 to #381254), very simple shape, two big white glowing eyes, minimal detail so it reads at 24 pixels. circular monster medallion token filling the frame, thick round forged dark iron rim with small rivets, dark obsidian inner background, dark fantasy 2D game asset, stylized hand-painted illustration, clean bold silhouette readable at 40 pixels, rich forged metal and stone textures, dramatic top-down lighting, glowing eyes as the brightest accent, no outer glow, no light bleeding outside the rim, centered, front view, no text, no letters, no numbers, no UI. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
@@ -134,7 +134,7 @@ Generate one square 1:1 image. tiny wisp spark creature, round small violet embe
 - Arquivo a devolver: `art-source/raw/enemies/enemy_healer.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: magenta · tamanho final 256 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. dark cleric bust in a hood with a small holy sigil on the forehead, emerald robes (#1DD1A1 to #0B4D3C), mint rim highlights (#8EF5D8), soft pale green eyes (#E8FFF8). circular monster medallion token filling the frame, thick round forged dark iron rim with small rivets, dark obsidian inner background, dark fantasy 2D game asset, stylized hand-painted illustration, clean bold silhouette readable at 40 pixels, rich forged metal and stone textures, dramatic top-down lighting, glowing eyes as the brightest accent, no outer glow, no light bleeding outside the rim, centered, front view, no text, no letters, no numbers, no UI. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
@@ -145,7 +145,7 @@ Generate one square 1:1 image. dark cleric bust in a hood with a small holy sigi
 - Arquivo a devolver: `art-source/raw/bosses/miniboss_iron.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: white · tamanho final 384 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. iron guardian colossus helmet bust, massive riveted blue-grey armor (#7C8BB8 to #1B223B), tower shield edge in front, gold rim (#FECA57), glowing cyan eye slit (#00CEC9). ornate boss circular medallion token, thick carved gold and obsidian rim, dark fantasy 2D game asset, stylized hand-painted illustration, clean bold silhouette readable at 70 pixels, dramatic top-down lighting, no outer glow, no light bleeding outside the shape, centered, front view, no text, no letters, no numbers, no UI. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
@@ -156,7 +156,7 @@ Generate one square 1:1 image. iron guardian colossus helmet bust, massive rivet
 - Arquivo a devolver: `art-source/raw/bosses/boss_obsidian.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: white · tamanho final 384 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. horned obsidian demon lord bust, crimson and black skin (#FF5E57 to #450C17), thick carved gold and crimson circular rim (#FECA57), curved golden horns protruding slightly above the top rim, fiery pale yellow eyes (#FFF3B0). ornate boss circular medallion token, thick carved gold and obsidian rim, dark fantasy 2D game asset, stylized hand-painted illustration, clean bold silhouette readable at 70 pixels, dramatic top-down lighting, no outer glow, no light bleeding outside the shape, centered, front view, no text, no letters, no numbers, no UI. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
