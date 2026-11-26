@@ -189,7 +189,7 @@ Generate one square 1:1 image. horizontal rectangular obsidian stone beam seen f
 - Arquivo a devolver: `art-source/raw/obstacles/obstacle_ring_multiplier.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: magenta · tamanho final 192 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. circular golden portal ring seen from above, thin ornate gold ring (#FECA57 to #B87B14) with small engraved runes, empty hollow center, perfectly round silhouette. top-down view arena prop, dark fantasy 2D game asset, stylized hand-painted illustration, forged dark iron and obsidian stone, clean bold silhouette, dramatic top-down lighting, no outer glow, no light bleeding outside the shape, no cast shadow, centered, no text, no letters, no numbers, no UI. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
