@@ -199,6 +199,26 @@
         "w": 192,
         "h": 192
       }
+    },
+    "obstacle_pillar_obsidian": {
+      "frame": {
+        "x": 916,
+        "y": 2,
+        "w": 192,
+        "h": 192
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 192,
+        "h": 192
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      }
     }
   },
   "meta": {
@@ -207,7 +227,7 @@
     "image": "enemies.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 1024,
+      "w": 2048,
       "h": 1024
     },
     "scale": "1"

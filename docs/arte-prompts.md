@@ -178,7 +178,7 @@ Generate one square 1:1 image. circular runic pinball bumper seen from above, ro
 - Arquivo a devolver: `art-source/raw/obstacles/obstacle_pillar_obsidian.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
 - Fundo: white · tamanho final 192 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. horizontal rectangular obsidian stone beam seen from above, polished black stone (#14182B) with carved edges and thin forged iron bands at both ends, wide flat proportions about 4 to 1, sharp rectangular silhouette. top-down view arena prop, dark fantasy 2D game asset, stylized hand-painted illustration, forged dark iron and obsidian stone, clean bold silhouette, dramatic top-down lighting, no outer glow, no light bleeding outside the shape, no cast shadow, centered, no text, no letters, no numbers, no UI. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
