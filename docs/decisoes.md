@@ -30,3 +30,5 @@ Regras em [`modo_trabalho/Decisoes.md`](../modo_trabalho/Decisoes.md).
 | 24 | Fontes | Decidido | Cinzel e Plus Jakarta Sans empacotadas no build (.woff2), funcionando offline no PWA. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
 | 25 | CSS da UI | Decidido | CSS puro com variáveis da paleta do GDD; sem Tailwind. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
 | 26 | Save do slice | Decidido | Não migrar o save do vertical slice; o jogo novo começa do zero. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
+| 27 | Velocidade do jogo | Decidido | A velocidade normal passa a ser a antiga 2× (2 ciclos de 4 sub-passos por frame). O botão de acelerar leva à antiga 3× (3 ciclos). No botão: "1×" (normal) e "1,5×" (rápido). | Definido pelo dono do projeto em 2026-11-26 |
+| 28 | Recolher automático | Decidido | Quando não há mais nenhum inimigo vivo durante o voo, os orbes são recolhidos automaticamente e o turno termina na hora. O botão Recolher continua para os outros casos. | Definido pelo dono do projeto em 2026-11-26 |

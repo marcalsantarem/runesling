@@ -41,6 +41,6 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-018 | UI: strings pt-BR, CSS com variáveis, HUD, barra inferior, Draft, Menu, Talentos, Fim de run, Pausa/configurações (decisões 22, 23, 25) (tam. G) | M3 | AG02 | feita |
 | T-019 | Game feel básico: hit-flash, números flutuando, tremida de tela, partículas simples (decisão 21) (tam. P) | M3 | AG01 | feita |
 | T-020 | Versão 0.4.0 (tam. P) | M3 | AG07 | feita |
-| T-022 | Ressalvas do QA do M3 (UI): HUD não bloqueia a mira onde cobre o campo (M3-01); chaves de strings para os textos da cena (M3-02) (tam. P) | M3 | AG02 | a fazer |
-| T-023 | Ressalvas do QA do M3 (cena): textos da cena via `strings.ts` (M3-02) e fonte 900 inexistente (M3-03) (tam. P) | M3 | AG01 | a fazer |
+| T-022 | Ressalvas do QA do M3 (UI): HUD não bloqueia a mira onde cobre o campo (M3-01); chaves de strings para os textos da cena (M3-02); rótulos 1× / 1,5× (decisão 27) (tam. P) | M3 | AG02 | em andamento |
+| T-023 | Ressalvas do QA do M3 (cena): textos da cena via `strings.ts` (M3-02) e fonte 900 inexistente (M3-03); velocidade (decisão 27); recolher automático (decisão 28) (tam. P) | M3 | AG01 | em andamento |
 | T-021 | Validação do M3 e tag v0.4.0 (tam. P) | M3 | AG03 + AG00 | feita (passa com ressalvas; falta a tag) |
