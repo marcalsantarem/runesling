@@ -75,3 +75,15 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-044 | Ressalvas do QA do M4 na UI: "+" do ouro parece botão sem ação (M4-01); capturar e revisar a tela de derrota nova (M4-02) (tam. P) | M5 | AG02 | feita |
 | T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | a fazer |
 | T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | a fazer |
+
+## M6 (v0.7.0): Game feel
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-045 | Motor de som sintetizado (Web Audio): catálogo de efeitos por evento, tom pelo combo, variação ±8%, liberação no 1º toque, volume e mudo (decisão 39) (tam. M) | M6 | AG11 | a fazer |
+| T-046 | Ligar os sons aos eventos da partida e da UI (impacto, bumper, explosão, raio, morte, barreira, draft, botões) (tam. P) | M6 | AG01 + AG02 | a fazer |
+| T-047 | Partículas com brilho aditivo e bloom leve; squash e tremida de tela mais fortes (decisão 41) (tam. M) | M6 | AG09 | a fazer |
+| T-048 | Contador de combo visível durante o voo, com cor e escala crescentes (decisão 41) (tam. P) | M6 | AG09 | a fazer |
+| T-049 | Configurações: volume dos efeitos (o liga/desliga já existe) e "reduzir movimento" (decisão 42) (tam. P) | M6 | AG02 + AG04 | a fazer |
+| T-050 | Versão 0.7.0 (tam. P) | M6 | AG07 | a fazer |
+| T-051 | Validação do M6 e tag v0.7.0 (tam. P) | M6 | AG03 + AG00 | a fazer |
