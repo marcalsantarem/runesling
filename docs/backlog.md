@@ -76,7 +76,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-052 | Mockups da nova tela inicial: 3 conceitos (cripta viva, mapa de expedição, lançador em destaque) × 2 variações cada (tam. P) | M5 | AG08 | feita (dono escolhe) |
 | T-053 | Mais mockups da tela inicial em outros estilos: acampamento, grimório, arcano neon × 2 variações (tam. P) | M5 | AG08 | feita (dono escolhe) |
 | T-054 | Mockup final da tela inicial: 2a com o título na posição da 2b (tam. P) | M5 | AG08 | feita |
-| T-055 | Botão JOGAR menos genérico (4 variações) e mockups de Partida, Runas (Draft), Fim de run e Talentos no estilo da tela inicial final (tam. M) | M5 | AG08 | em andamento |
+| T-055 | Botão JOGAR menos genérico (4 variações) e mockups de Partida, Runas (Draft), Fim de run e Talentos no estilo da tela inicial final (tam. M) | M5 | AG08 | feita (dono escolhe o botão) |
 | T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | a fazer |
 | T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | a fazer |
 
