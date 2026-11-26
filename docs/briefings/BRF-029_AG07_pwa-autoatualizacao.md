@@ -5,3 +5,5 @@
 **Permitido:** `vite.config.ts`, `src/main.ts`, `src/core/` (módulo novo do registro), `tests/core/`, `src/vite-env.d.ts` (tipos do virtual module). **Proibido:** o resto.
 **Pronto quando:** typecheck, suíte e build verdes; teste no `vite preview` com Playwright: abrir a build A, gerar build B (mudança trivial temporária, revertida depois), recarregar uma vez → página passa sozinha para B sem segunda ação manual.
 **Entrega:** até 4 linhas.
+
+**Acréscimo (T-031, parte do AG07):** favicon do site a partir de `public/icons/` (ícone do PWA atual; quando `app_icon` chegar, o `icons:pwa` também gera o favicon), com `<link rel="icon">` no `index.html`, para não haver 404 de `/favicon.ico`. **Permitido também:** `index.html`, `public/favicon*`, `scripts/pwa-icons.mjs`. O AG02 trabalha em paralelo em `src/ui/` e o AG01 em `src/scenes/`.
