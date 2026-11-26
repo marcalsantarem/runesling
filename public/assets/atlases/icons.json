@@ -60,7 +60,7 @@
         "h": 128
       }
     },
-    "icon_molten_core": {
+    "icon_ghost_ball": {
       "frame": {
         "x": 2,
         "y": 136,
@@ -80,10 +80,30 @@
         "h": 128
       }
     },
-    "icon_static_crit": {
+    "icon_molten_core": {
       "frame": {
         "x": 2,
         "y": 270,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      }
+    },
+    "icon_static_crit": {
+      "frame": {
+        "x": 136,
+        "y": 136,
         "w": 128,
         "h": 128
       },
@@ -103,7 +123,7 @@
     "icon_storm_orb": {
       "frame": {
         "x": 136,
-        "y": 136,
+        "y": 270,
         "w": 128,
         "h": 128
       },
@@ -122,8 +142,8 @@
     },
     "icon_supernova": {
       "frame": {
-        "x": 136,
-        "y": 270,
+        "x": 270,
+        "y": 136,
         "w": 128,
         "h": 128
       },
