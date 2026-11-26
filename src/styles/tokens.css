@@ -1,0 +1,43 @@
+/* Paleta e tipografia Obsidian Arcane (GDD §6.1, decisão 25). Cor = mecânica. */
+:root {
+  /* 60% fundo */
+  --rs-bg: #06070f;
+  --rs-arena: #0d1020;
+  /* 30% estrutura e HUD */
+  --rs-panel: #14182b;
+  --rs-panel-2: #1b213b;
+  --rs-border: #2e385c;
+  /* 10% ação e leitura */
+  --rs-gold: #feca57;
+  --rs-gold-dark: #b87b14;
+  --rs-cyan: #00cec9;
+  --rs-cyan-dark: #0984e3;
+  --rs-magma: #ff9f43;
+  --rs-magma-dark: #992d0c;
+  --rs-violet: #9c6bff;
+  --rs-violet-dark: #3e1f73;
+  --rs-crimson: #ff5e57;
+  --rs-crimson-dark: #8f1d2c;
+  --rs-emerald: #1dd1a1;
+  --rs-text: #f3f5fa;
+  --rs-muted: #8b95b5;
+
+  /* Sinergias (GDD §4) */
+  --rs-syn-lightning: var(--rs-cyan);
+  --rs-syn-fire: var(--rs-magma);
+  --rs-syn-spectral: var(--rs-violet);
+  --rs-syn-core: var(--rs-gold);
+
+  /* Tipografia (nomes iguais a src/core/fonts.ts) */
+  --rs-font-title: 'Cinzel', serif;
+  --rs-font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* Toque: alvo mínimo */
+  --rs-touch: 44px;
+  --rs-radius: 12px;
+
+  /* Alturas das faixas do HUD */
+  --rs-top-h: 96px;
+  --rs-bot-h: 64px;
+  --rs-hud-max: 480px;
+}

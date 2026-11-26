@@ -11,10 +11,17 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png" />
     <title>RuneSling</title>
     <style>
+      /* Fontes empacotadas no build (decisão 24): só .woff2, subset latin; nomes em src/core/fonts.ts. */
+      @font-face { font-family: 'Cinzel'; font-style: normal; font-weight: 700; font-display: swap; src: url('/node_modules/@fontsource/cinzel/files/cinzel-latin-700-normal.woff2') format('woff2'); }
+      @font-face { font-family: 'Cinzel'; font-style: normal; font-weight: 900; font-display: swap; src: url('/node_modules/@fontsource/cinzel/files/cinzel-latin-900-normal.woff2') format('woff2'); }
+      @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 600; font-display: swap; src: url('/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2') format('woff2'); }
+      @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url('/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff2') format('woff2'); }
+      @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 800; font-display: swap; src: url('/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-800-normal.woff2') format('woff2'); }
       html, body { margin: 0; height: 100%; background: #0D1020; overflow: hidden; }
       #app { position: relative; width: 100%; height: 100%; }
       #game { position: absolute; inset: 0; }
-      #ui-root { position: absolute; inset: 0; pointer-events: none; }
+      /* Camada da UI sobre o canvas; o container não captura toque, o AG02 liga `pointer-events` por elemento. */
+      #ui-root { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
     </style>
   </head>
   <body>

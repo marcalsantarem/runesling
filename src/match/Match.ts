@@ -79,13 +79,26 @@ export class Match {
     return true;
   }
 
-  /** Um frame de voo. Encerra o turno quando os orbes param ou a onda final é limpa. */
+  /**
+   * Um frame de voo (`speedMultiplier` = ciclos de física). Encerra o turno quando os orbes param
+   * ou, decisão 28, quando não resta inimigo vivo na arena (recolher automático, mesmo fluxo do Recolher).
+   */
   step(speedMultiplier = 1): void {
     if (this.state.phase !== 'flight') return;
     this.combat.clearEvents();
     this.engine.step(speedMultiplier);
     this.combat.processPhysics(this.engine);
-    if (this.engine.isSettled() || this.combat.isFinalWaveCleared()) this.finishTurn();
+    if (this.engine.isSettled() || !this.hasLiveEnemies()) this.finishTurn();
+  }
+
+  /** Há ao menos um inimigo vivo na arena (invocações futuras não contam). */
+  hasLiveEnemies(): boolean {
+    const list = this.state.enemies;
+    for (let i = 0; i < list.length; i++) {
+      const en = list[i]!;
+      if (en.hp > 0 && !en.dead) return true;
+    }
+    return false;
   }
 
   /** Botão Recolher: remove todos os orbes e encerra o turno. */

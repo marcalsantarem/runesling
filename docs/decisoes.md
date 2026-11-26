@@ -22,3 +22,13 @@ Regras em [`modo_trabalho/Decisoes.md`](../modo_trabalho/Decisoes.md).
 | 16 | Tabela Letal e chão | Decidido | O quique no chão não ativa a Tabela Letal; só paredes, teto, bumpers e pilares (GDD §4.3). | Definido pelo dono do projeto em 2026-11-25 |
 | 17 | Bônus de vitória | Decidido | Os +60 de ouro da vitória são somados fixos, sem o multiplicador da Cobiça da Cripta (GDD §5.1). | Definido pelo dono do projeto em 2026-11-25 |
 | 18 | Suíte na validação | Decidido | As tasks de validação de marco rodam a suíte de testes **uma vez** só (antes eram 3 rodadas, por `modo_trabalho/Validacao.md`). | Definido pelo dono do projeto em 2026-11-25 |
+| 19 | Visual do M3 | Decidido | Inimigos, orbes, bumpers, anel, pilar e arena desenhados por código no estilo do vertical slice; a cena fica pronta para trocar por sprites no M4. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
+| 20 | Áudio | Decidido | Sem áudio no M3; os efeitos sonoros entram só no M5, já no formato final. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
+| 21 | Game feel no M3 | Decidido | Entra o básico do slice: hit-flash, números de dano flutuando, tremida de tela e partículas simples. Aditivo, bloom e haptics ficam para o M5. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
+| 22 | Idioma | Decidido | pt-BR no M3, com todos os textos centralizados num módulo de strings pronto para inglês; o inglês entra antes da publicação (M6). | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
+| 23 | Telas do M3 | Decidido | Partida (HUD, barra inferior com 2× e Recolher, modal de Draft), Menu principal, Talentos, Fim de run, Pausa e configurações. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
+| 24 | Fontes | Decidido | Cinzel e Plus Jakarta Sans empacotadas no build (.woff2), funcionando offline no PWA. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
+| 25 | CSS da UI | Decidido | CSS puro com variáveis da paleta do GDD; sem Tailwind. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
+| 26 | Save do slice | Decidido | Não migrar o save do vertical slice; o jogo novo começa do zero. | Definido pelo dono do projeto em 2026-11-25 (rodada do M3) |
+| 27 | Velocidade do jogo | Decidido | A velocidade normal passa a ser a antiga 2× (2 ciclos de 4 sub-passos por frame). O botão de acelerar leva à antiga 3× (3 ciclos). No botão: "1×" (normal) e "1,5×" (rápido). | Definido pelo dono do projeto em 2026-11-26 |
+| 28 | Recolher automático | Decidido | Quando não há mais nenhum inimigo vivo durante o voo, os orbes são recolhidos automaticamente e o turno termina na hora. O botão Recolher continua para os outros casos. | Definido pelo dono do projeto em 2026-11-26 |

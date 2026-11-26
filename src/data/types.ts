@@ -192,6 +192,8 @@ export interface RulesDef {
     readonly bumper: { readonly speedMult: number; readonly minSpeed: number; readonly maxSpeed: number };
     readonly ring: { readonly clonesPerOrb: number; readonly cloneAngleRad: number; readonly cloneRadius: number };
   };
+  /** Decisão 27: ciclos de física por frame para normal (`speed` 1) e rápido (`speed` 2). */
+  readonly speed: { readonly multipliers: readonly [number, number] };
   readonly maxActiveOrbs: number;
   readonly victoryGoldBonus: number;
   readonly runStart: { readonly hp: number; readonly atk: number; readonly orbs: number; readonly critChance: number; readonly goldMult: number };

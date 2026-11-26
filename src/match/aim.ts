@@ -2,6 +2,7 @@
  * Mira (GDD §2.1/§2.2): ângulo com trava, cancelamento, potência, leque e previsão.
  * TS puro, sem Phaser. A previsão escreve num buffer reutilizável (sem alocação por frame).
  */
+import type { GameData } from '../data/types';
 
 export interface AimConfig {
   /** Margem da trava: −π + m ≤ θ ≤ −m. */
@@ -34,6 +35,21 @@ export const DEFAULT_AIM_CONFIG: Readonly<AimConfig> = Object.freeze({
   previewLength2: 460,
   worldWidth: 360,
 });
+
+/** Config da mira a partir de `rules.launch`/`rules.world` (números do JSON); o resto do padrão do slice. */
+export function aimConfigFromRules(data: GameData): AimConfig {
+  const l = data.rules.launch;
+  return {
+    ...DEFAULT_AIM_CONFIG,
+    angleMargin: l.minAngleRad,
+    cancelDistance: l.cancelPullPx,
+    basePower: l.v0Base,
+    powerBonus: l.v0Bonus,
+    powerDistance: l.pullForMaxPx,
+    fanSpread: l.multishotSpreadRad,
+    worldWidth: data.rules.world.width,
+  };
+}
 
 export interface Aim {
   angle: number;

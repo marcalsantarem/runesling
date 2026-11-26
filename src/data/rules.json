@@ -17,6 +17,7 @@
     "bumper": { "speedMult": 1.15, "minSpeed": 7.5, "maxSpeed": 15.5 },
     "ring": { "clonesPerOrb": 1, "cloneAngleRad": 0.22, "cloneRadius": 6.8 }
   },
+  "speed": { "multipliers": [2, 3] },
   "maxActiveOrbs": 28,
   "victoryGoldBonus": 60,
   "runStart": { "hp": 12, "atk": 3, "orbs": 2, "critChance": 0.05, "goldMult": 1.0 }
