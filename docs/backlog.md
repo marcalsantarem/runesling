@@ -56,4 +56,5 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-028 | Ícones de runas e talentos na UI: Draft, Talentos, faixa de runas (decisão 32) (tam. P) | M4 | AG02 | feita |
 | T-029 | Carregar atlases no Boot, ícone definitivo do PWA e versão 0.5.0 (tam. P) | M4 | AG07 | feita |
 | T-031 | UI só pede ícones que existem (usar a lista de assets do build, `src/core/assetManifest.ts`) e favicon do site, para não gerar 404 no console (tam. P) | M4 | AG02 + AG07 | a fazer |
+| T-032 | Pilar: sprite esticado para o retângulo exato da colisão (decisão 34) (tam. P) | M4 | AG01 | a fazer |
 | T-030 | Validação do M4 e tag v0.5.0 (tam. P) | M4 | AG03 + AG00 | a fazer |
