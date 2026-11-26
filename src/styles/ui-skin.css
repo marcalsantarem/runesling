@@ -1,0 +1,104 @@
+/*
+ * Peças de UI da direção A (contrato _contrato-m5-ui.md, decisão 38).
+ * Cada peça é uma variável `--ui-<chave>` (imagem) com `-slice` (insets do 9-slice em px do arquivo)
+ * e `-bw` (largura da moldura na tela). Sem arquivo, a variável fica `none` e vale o fallback em
+ * CSS puro de ui.css. Com `public/assets/ui/<chave>.webp`, src/ui/skin.ts preenche a variável e
+ * põe `skin-<chave>` no container; as regras abaixo ligam a imagem sem mexer no layout (T-039).
+ */
+.rs-ui {
+  --ui-panel: none;            --ui-panel-slice: 48;          --ui-panel-bw: 24px;
+  --ui-panel-dark: none;       --ui-panel-dark-slice: 24;     --ui-panel-dark-bw: 12px;
+  --ui-btn-primary: none;      --ui-btn-primary-slice: 32;    --ui-btn-primary-bw: 16px;
+  --ui-btn-secondary: none;    --ui-btn-secondary-slice: 32;  --ui-btn-secondary-bw: 16px;
+  --ui-btn-action: none;       --ui-btn-action-slice: 32;     --ui-btn-action-bw: 16px;
+  --ui-ribbon: none;           --ui-ribbon-slice: 0 64 0 64;  --ui-ribbon-bw: 0 32px 0 32px;
+  --ui-card-lightning: none;   --ui-card-lightning-slice: 48; --ui-card-lightning-bw: 24px;
+  --ui-card-fire: none;        --ui-card-fire-slice: 48;      --ui-card-fire-bw: 24px;
+  --ui-card-spectral: none;    --ui-card-spectral-slice: 48;  --ui-card-spectral-bw: 24px;
+  --ui-card-core: none;        --ui-card-core-slice: 48;      --ui-card-core-bw: 24px;
+  --ui-hud-bar: none;          --ui-hud-bar-slice: 40;        --ui-hud-bar-bw: 20px;
+  --ui-gem-lightning: none;
+  --ui-gem-fire: none;
+  --ui-gem-spectral: none;
+  --ui-gem-core: none;
+  --ui-icon-coin: none;
+  --ui-icon-heart: none;
+  --ui-icon-pause: none;
+  --ui-icon-gear: none;
+  --ui-icon-sound: none;
+  --ui-icon-sound-off: none;
+  --ui-icon-star: none;
+  --ui-icon-sword: none;
+}
+
+/* ---------- 9-slice: a imagem substitui moldura, relevo e rebites do fallback ---------- */
+.rs-ui.skin-ui_panel .rs-frame,
+.rs-ui.skin-ui_panel_dark .rs-inset,
+.rs-ui.skin-ui_btn_primary .rs-btn-primary,
+.rs-ui.skin-ui_btn_secondary .rs-btn-secondary,
+.rs-ui.skin-ui_btn_secondary .rs-btn-icon,
+.rs-ui.skin-ui_btn_action .rs-btn-action,
+.rs-ui.skin-ui_hud_bar .rs-hud-bar,
+.rs-ui.skin-ui_card_lightning .rs-draft-card.rs-syn-lightning,
+.rs-ui.skin-ui_card_fire .rs-draft-card.rs-syn-fire,
+.rs-ui.skin-ui_card_spectral .rs-draft-card.rs-syn-spectral,
+.rs-ui.skin-ui_card_core .rs-draft-card.rs-syn-core {
+  background: none;
+  border-color: transparent;
+  border-image-repeat: stretch;
+  border-image-outset: 0;
+  box-shadow: 0 var(--rs-drop, 6px) 14px rgba(0, 0, 0, .5);
+}
+.rs-ui.skin-ui_panel .rs-frame { border-image-source: var(--ui-panel); border-image-slice: var(--ui-panel-slice) fill; border-image-width: var(--ui-panel-bw); }
+.rs-ui.skin-ui_panel_dark .rs-inset { border-image-source: var(--ui-panel-dark); border-image-slice: var(--ui-panel-dark-slice) fill; border-image-width: var(--ui-panel-dark-bw); }
+.rs-ui.skin-ui_btn_primary .rs-btn-primary { border-image-source: var(--ui-btn-primary); border-image-slice: var(--ui-btn-primary-slice) fill; border-image-width: var(--ui-btn-primary-bw); }
+.rs-ui.skin-ui_btn_secondary .rs-btn-secondary,
+.rs-ui.skin-ui_btn_secondary .rs-btn-icon { border-image-source: var(--ui-btn-secondary); border-image-slice: var(--ui-btn-secondary-slice) fill; border-image-width: var(--ui-btn-secondary-bw); }
+.rs-ui.skin-ui_btn_action .rs-btn-action { border-image-source: var(--ui-btn-action); border-image-slice: var(--ui-btn-action-slice) fill; border-image-width: var(--ui-btn-action-bw); }
+.rs-ui.skin-ui_hud_bar .rs-hud-bar { border-image-source: var(--ui-hud-bar); border-image-slice: var(--ui-hud-bar-slice) fill; border-image-width: var(--ui-hud-bar-bw); }
+.rs-ui.skin-ui_card_lightning .rs-draft-card.rs-syn-lightning { border-image-source: var(--ui-card-lightning); border-image-slice: var(--ui-card-lightning-slice) fill; border-image-width: var(--ui-card-lightning-bw); }
+.rs-ui.skin-ui_card_fire .rs-draft-card.rs-syn-fire { border-image-source: var(--ui-card-fire); border-image-slice: var(--ui-card-fire-slice) fill; border-image-width: var(--ui-card-fire-bw); }
+.rs-ui.skin-ui_card_spectral .rs-draft-card.rs-syn-spectral { border-image-source: var(--ui-card-spectral); border-image-slice: var(--ui-card-spectral-slice) fill; border-image-width: var(--ui-card-spectral-bw); }
+.rs-ui.skin-ui_card_core .rs-draft-card.rs-syn-core { border-image-source: var(--ui-card-core); border-image-slice: var(--ui-card-core-slice) fill; border-image-width: var(--ui-card-core-bw); }
+.rs-ui.skin-ui_panel .rs-frame::before,
+.rs-ui.skin-ui_hud_bar .rs-hud-bar::before,
+.rs-ui.skin-ui_card_lightning .rs-draft-card.rs-syn-lightning::before,
+.rs-ui.skin-ui_card_fire .rs-draft-card.rs-syn-fire::before,
+.rs-ui.skin-ui_card_spectral .rs-draft-card.rs-syn-spectral::before,
+.rs-ui.skin-ui_card_core .rs-draft-card.rs-syn-core::before { display: none; }
+
+/* ---------- Fita (3-slice horizontal): pontas e faixa viram uma imagem ---------- */
+.rs-ui.skin-ui_ribbon .rs-ribbon::before,
+.rs-ui.skin-ui_ribbon .rs-ribbon::after { display: none; }
+.rs-ui.skin-ui_ribbon .rs-ribbon-text {
+  background: none;
+  border: 0 solid transparent;
+  box-shadow: none;
+  border-image: var(--ui-ribbon) var(--ui-ribbon-slice) fill / var(--ui-ribbon-bw) / 0 stretch;
+  padding-inline: 34px;
+}
+
+/* ---------- Losango do topo da carta ---------- */
+.rs-ui.skin-ui_gem_lightning .rs-syn-lightning .rs-gem { background: var(--ui-gem-lightning) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
+.rs-ui.skin-ui_gem_fire .rs-syn-fire .rs-gem { background: var(--ui-gem-fire) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
+.rs-ui.skin-ui_gem_spectral .rs-syn-spectral .rs-gem { background: var(--ui-gem-spectral) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
+.rs-ui.skin-ui_gem_core .rs-syn-core .rs-gem { background: var(--ui-gem-core) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
+
+/* ---------- Ícones: a imagem entra no lugar do SVG ---------- */
+.rs-uicon { width: var(--rs-icon-size, 18px); height: var(--rs-icon-size, 18px); background: center / contain no-repeat; }
+.rs-ui.skin-ui_icon_coin .rs-uicon-ui_icon_coin { background-image: var(--ui-icon-coin); }
+.rs-ui.skin-ui_icon_heart .rs-uicon-ui_icon_heart { background-image: var(--ui-icon-heart); }
+.rs-ui.skin-ui_icon_pause .rs-uicon-ui_icon_pause { background-image: var(--ui-icon-pause); }
+.rs-ui.skin-ui_icon_gear .rs-uicon-ui_icon_gear { background-image: var(--ui-icon-gear); }
+.rs-ui.skin-ui_icon_sound .rs-uicon-ui_icon_sound { background-image: var(--ui-icon-sound); }
+.rs-ui.skin-ui_icon_sound_off .rs-uicon-ui_icon_sound_off { background-image: var(--ui-icon-sound-off); }
+.rs-ui.skin-ui_icon_star .rs-uicon-ui_icon_star { background-image: var(--ui-icon-star); }
+.rs-ui.skin-ui_icon_sword .rs-uicon-ui_icon_sword { background-image: var(--ui-icon-sword); }
+.rs-ui.skin-ui_icon_coin .rs-uicon-ui_icon_coin svg,
+.rs-ui.skin-ui_icon_heart .rs-uicon-ui_icon_heart svg,
+.rs-ui.skin-ui_icon_pause .rs-uicon-ui_icon_pause svg,
+.rs-ui.skin-ui_icon_gear .rs-uicon-ui_icon_gear svg,
+.rs-ui.skin-ui_icon_sound .rs-uicon-ui_icon_sound svg,
+.rs-ui.skin-ui_icon_sound_off .rs-uicon-ui_icon_sound_off svg,
+.rs-ui.skin-ui_icon_star .rs-uicon-ui_icon_star svg,
+.rs-ui.skin-ui_icon_sword .rs-uicon-ui_icon_sword svg { visibility: hidden; }

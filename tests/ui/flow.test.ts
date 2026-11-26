@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BANNER_MS } from '../../src/ui/hud';
+import { DRAFT_PICK_MS } from '../../src/ui/modals';
 import { flush, runState, setup, type Harness } from './helpers';
 
 let h: Harness;
@@ -40,7 +41,8 @@ describe('fluxo de telas', () => {
     await inRun();
     h.bus.emit('run:state', runState({ hp: 7, maxHp: 14, wave: 4, gold: 33, atk: 5, orbs: 3, crit: 0.15 }));
     expect(h.q('hud-hp').textContent).toBe('7/14');
-    expect(h.q('hud-wave').textContent).toBe('ONDA 4/15');
+    expect(h.q('hud-wave').getAttribute('aria-label')).toBe('ONDA 4/15');
+    expect(h.q('hud-wave').textContent).toBe('ONDA4/15');
     expect(h.q('hud-gold').textContent).toBe('33');
     expect(h.q('hud-atk').textContent).toBe('5');
     expect(h.q('hud-orbs').textContent).toBe('3');
@@ -78,11 +80,16 @@ describe('fluxo de telas', () => {
     ]);
     expect(cards[0]?.textContent).toContain('Ígnea');
     expect(h.q<HTMLButtonElement>('hud-pause').disabled).toBe(true);
+    vi.useFakeTimers();
     cards[1]?.click();
     cards[1]?.click();
     expect(h.emitted.filter((e) => e.name === 'ui:pickPerk')).toEqual([
       { name: 'ui:pickPerk', payload: { perkId: 'ghost_ball' } },
     ]);
+    // Destaque da carta escolhida; o modal some depois da animação.
+    expect(cards[1]?.classList.contains('is-picked')).toBe(true);
+    expect(h.q('modal-draft').classList.contains('is-closing')).toBe(true);
+    vi.advanceTimersByTime(DRAFT_PICK_MS + 1);
     expect(h.visible('modal-draft')).toBe(false);
     expect(h.q<HTMLButtonElement>('hud-pause').disabled).toBe(false);
   });

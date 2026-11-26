@@ -3,6 +3,7 @@
  * Uso no main.ts: `mountUI(document.getElementById('ui-root')!)`.
  */
 import '../styles/ui.css';
+import { mountSkin } from './skin';
 import { gameBus, type GameEvents, type RunState } from '../core/events';
 import type { EventBus } from '../core/EventBus';
 import { loadGameData } from '../data/types';
@@ -86,6 +87,7 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
   ]);
   root.appendChild(container);
   const unwatch = watchLayout(root, container);
+  mountSkin(container);
 
   function refreshPause(): void {
     hud.setPauseEnabled(!draft.visible && !end.visible && !pause.visible);
@@ -131,7 +133,7 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
     }),
     bus.on('draft:open', ({ choices }) => {
       if (screen !== 'run') return;
-      draft.open(choices);
+      draft.open(choices, lastState?.perks ?? []);
       refreshPause();
     }),
     bus.on('run:ended', ({ won, wave, goldEarned }) => {

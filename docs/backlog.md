@@ -67,8 +67,8 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 |---|---|---|---|---|
 | T-035 | Mockups das 3 direções visuais da UI (Menu, HUD e Draft em cada) para o dono escolher (decisão 38) (tam. P) | M5 | AG08 | feita |
 | T-036 | Guia de UI da direção A e prompts das peças de UI para o Gemini (molduras 9-slice, botões, fitas, cartas por sinergia, ícones do HUD) (tam. P) | M5 | AG08 | feita |
-| T-037 | Menu e Talentos na direção A, primeiro com peças em CSS como no mockup (tam. M) | M5 | AG02 | em andamento |
-| T-038 | HUD, Draft, Fim de run e Pausa na direção A, com animações de UI (entrada dos modais, toque nos botões, cartas do Draft) (tam. M) | M5 | AG02 | em andamento |
+| T-037 | Menu e Talentos na direção A, primeiro com peças em CSS como no mockup (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
+| T-038 | HUD, Draft, Fim de run e Pausa na direção A, com animações de UI (entrada dos modais, toque nos botões, cartas do Draft) (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
 | T-039 | Processar as peças de UI geradas pelo dono e trocar o CSS provisório por elas (depende das imagens) (tam. M) | M5 | AG08 + AG02 | a fazer |
 | T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | a fazer |
 | T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | a fazer |
