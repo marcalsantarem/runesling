@@ -18,7 +18,7 @@ describe('Talentos', () => {
     for (const id of ['atk', 'hp', 'balls', 'crit', 'gold']) expect(h.visible(`talent-${id}`)).toBe(true);
 
     const buyAtk = h.q<HTMLButtonElement>('talent-buy-atk');
-    expect(buyAtk.textContent).toBe('25 G');
+    expect(buyAtk.textContent).toBe('25');
     expect(buyAtk.disabled).toBe(false);
     expect(h.q<HTMLButtonElement>('talent-buy-balls').disabled).toBe(true); // 75 G > 40 G
 
@@ -27,7 +27,7 @@ describe('Talentos', () => {
     expect(h.profile.talentLevel('atk')).toBe(1);
     expect(h.q('menu-gold').textContent).toBe('15');
     expect(h.q('talent-lv-atk').textContent).toBe('Nv. 1/10');
-    expect(h.q('talent-buy-atk').textContent).toBe('45 G');
+    expect(h.q('talent-buy-atk').textContent).toBe('45');
     expect(h.q<HTMLButtonElement>('talent-buy-atk').disabled).toBe(true);
     expect(h.q('menu-atk').textContent).toBe('4');
   });

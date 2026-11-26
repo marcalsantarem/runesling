@@ -51,8 +51,8 @@ describe('Menu e Talentos na direção A', () => {
   it('medalhão do chefe, barra da melhor onda e selo de talentos compráveis', async () => {
     h = await setup();
     h.bus.emit('app:ready', {});
-    expect(h.q('menu-boss').textContent).toContain('Senhor Obsidiana');
-    expect(h.q('menu-progress').style.width).toBe('0%');
+    expect(h.q('menu-boss').getAttribute('aria-label')).toContain('Senhor Obsidiana');
+    expect(h.q('menu-best').textContent).toBe('0/15');
     const ids = ['atk', 'hp', 'balls', 'crit', 'gold'] as const;
     const affordable = () => ids.filter((id) => h?.profile.canBuy(id)).length;
     expect(affordable()).toBeGreaterThan(0);
@@ -120,5 +120,38 @@ describe('Partida na direção A', () => {
     h.click('end-again');
     h.bus.emit('run:ended', { won: false, wave: 3, goldEarned: 1 });
     expect(rib?.classList.contains('is-defeat')).toBe(true);
+  });
+});
+
+describe('Botão placa de ferro (decisão 44)', () => {
+  it('variantes mapeiam as peças, mini sem rebites/runas, pressionado e rótulo', async () => {
+    const { plate, setPlateLabel } = await import('../../src/ui/dom');
+    const gold = plate('gold', 'JOGAR', () => undefined, { size: 'lg' });
+    expect(gold.classList.contains('rs-btn-primary')).toBe(true);
+    expect(gold.querySelectorAll('.rs-plate-rv')).toHaveLength(4);
+    expect(gold.querySelectorAll('.rs-plate-rn')).toHaveLength(2);
+    expect(gold.textContent).toBe('JOGAR');
+    expect(plate('iron', 'MENU', () => undefined).classList.contains('rs-btn-secondary')).toBe(true);
+    const cyan = plate('cyan', 'RECOLHER', () => undefined, { size: 'mini' });
+    expect(cyan.classList.contains('rs-btn-action')).toBe(true);
+    expect(cyan.querySelector('.rs-plate-rv, .rs-plate-rn')).toBeNull();
+    gold.dispatchEvent(new Event('pointerdown'));
+    expect(gold.classList.contains('is-down')).toBe(true);
+    gold.dispatchEvent(new Event('pointerup'));
+    expect(gold.classList.contains('is-down')).toBe(false);
+    gold.disabled = true;
+    gold.dispatchEvent(new Event('pointerdown'));
+    expect(gold.classList.contains('is-down')).toBe(false);
+    setPlateLabel(gold, 'DE NOVO');
+    expect(gold.textContent).toBe('DE NOVO');
+    expect(gold.querySelector('.rs-plate-fr')).not.toBeNull();
+  });
+
+  it('todos os botões de texto das telas usam a placa', async () => {
+    h = await setup();
+    h.bus.emit('app:ready', {});
+    for (const k of ['menu-play', 'talent-buy-atk', 'settings-sound', 'settings-close', 'hud-speed', 'hud-recall', 'end-again', 'end-menu', 'pause-resume', 'pause-sound', 'pause-quit']) {
+      expect(h.q(k).classList.contains('rs-plate'), k).toBe(true);
+    }
   });
 });

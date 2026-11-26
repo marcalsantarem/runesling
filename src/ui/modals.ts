@@ -1,6 +1,6 @@
 /** Modais da partida: Draft de runas, Fim de run e Pausa. */
 import type { GameData, PerkId, Synergy } from '../data/types';
-import { artIcon, button, el, icon, ICONS, ribbon, show } from './dom';
+import { artIcon, atlasFrame, el, icon, ICONS, plate, ribbon, setPlateLabel, show } from './dom';
 import { perkDesc, perkName, synergyName, t } from './strings';
 
 export interface ModalView {
@@ -9,7 +9,7 @@ export interface ModalView {
   readonly visible: boolean;
 }
 
-function modalShell(key: string, children: (HTMLElement | null)[], bodyClass = 'rs-frame rs-modal-panel'): HTMLElement {
+function modalShell(key: string, children: (HTMLElement | null)[], bodyClass = 'rs-modal-panel'): HTMLElement {
   const node = el('section', { className: 'rs-modal', attrs: { 'data-ui': key, role: 'dialog', 'aria-modal': 'true' } }, [
     el('div', { className: `rs-modal-body ${bodyClass}`.trim() }, children),
   ]);
@@ -70,6 +70,8 @@ export function createDraft(game: GameData, onPick: (id: PerkId) => void): Draft
       ...choices.map((id, i) => {
         const syn = game.perks[id].synergy;
         const seal = synergySeal(syn, owned, game);
+        const r = game.perks[id].rarity;
+        const rarity = r === 'rare' || r === 'epic' ? t(`draft.rarity.${r}`) : null;
         const card: HTMLButtonElement = el(
           'button',
           {
@@ -87,12 +89,25 @@ export function createDraft(game: GameData, onPick: (id: PerkId) => void): Draft
             },
           },
           [
-            el('span', { className: 'rs-gem', attrs: { 'aria-hidden': 'true' } }),
-            el('span', { className: 'rs-draft-syn', text: synergyName(syn) }),
-            el('span', { className: 'rs-socket' }, [artIcon(game.perks[id].iconKey, 'rs-draft-gem rs-art')]),
-            el('span', { className: 'rs-draft-name', text: perkName(id) }),
-            el('span', { className: 'rs-draft-desc', text: perkDesc(id) }),
-            seal ? el('span', { className: 'rs-draft-seal', text: seal }) : null,
+            // Capas de canto na cor da sinergia (peça ui_gem_* entra no encaixe do ícone).
+            el('span', { className: 'rs-gem', attrs: { 'aria-hidden': 'true' } }, [
+              el('i', { className: 'rs-cap rs-cap-tl' }),
+              el('i', { className: 'rs-cap rs-cap-tr' }),
+              el('i', { className: 'rs-cap rs-cap-bl' }),
+              el('i', { className: 'rs-cap rs-cap-br' }),
+            ]),
+            el('span', { className: 'rs-draft-in' }, [
+              el('span', { className: 'rs-socket rs-draft-socket' }, [artIcon(game.perks[id].iconKey, 'rs-draft-gem rs-art')]),
+              el('span', { className: 'rs-draft-tx' }, [
+                el('span', { className: 'rs-draft-name', text: perkName(id) }),
+                el('span', { className: 'rs-draft-tags' }, [
+                  el('span', { className: 'rs-draft-syn', text: synergyName(syn) }),
+                  rarity ? el('span', { className: 'rs-draft-syn rs-draft-rare', text: rarity }) : null,
+                ]),
+                el('span', { className: 'rs-draft-desc', text: perkDesc(id) }),
+              ]),
+              seal ? el('span', { className: `rs-draft-seal${owned.some((o) => game.perks[o]?.synergy === syn) ? '' : ' is-new'}`, text: seal }) : null,
+            ]),
           ],
         );
         card.style.setProperty('--i', String(i));
@@ -120,37 +135,67 @@ export interface EndView extends ModalView {
   open(r: { won: boolean; wave: number; totalWaves: number; goldEarned: number }): void;
 }
 
-export function createEnd(onMenu: () => void, onAgain: () => void): EndView {
-  const titleRibbon = ribbon('', 'rs-ribbon-big rs-modal-ribbon');
+export function createEnd(onMenu: () => void, onAgain: () => void, game?: GameData): EndView {
+  const titleRibbon = ribbon('', 'rs-ribbon-big rs-modal-ribbon rs-end-ribbon');
   const title = titleRibbon.label;
   title.setAttribute('data-ui', 'end-title');
-  const emblem = el('div', { className: 'rs-end-emblem', attrs: { 'aria-hidden': 'true' } });
-  const sub = el('p', { className: 'rs-modal-sub' });
+  // Medalhão: chefe com selo de vitória, ou escudo da barreira rachado soltando cacos (CSS/SVG).
+  const bossPic = el('span', { className: 'rs-atlas rs-end-pic', attrs: { 'aria-hidden': 'true' } });
+  const bossId = game ? Object.values(game.enemies).filter((e) => e.isBoss).pop()?.id : undefined;
+  if (game && bossId) atlasFrame(bossPic, 'enemies', game.enemies[bossId]?.spriteKey ?? bossId);
+  const seal = el('span', { className: 'rs-end-seal' }, [icon(ICONS.check, 34)]);
+  const shield = el('span', { className: 'rs-end-shield' }, [
+    icon(ICONS.shield, 100),
+    ...[0, 1, 2].map((i) => el('i', { className: `rs-shard rs-shard-${i}` })),
+  ]);
+  const emblem = el('div', { className: 'rs-end-emblem', attrs: { 'aria-hidden': 'true' } }, [bossPic, seal, shield]);
+  const sub = el('p', { className: 'rs-modal-sub rs-end-sub' });
   const wave = el('b', { attrs: { 'data-ui': 'end-wave' } });
   const gold = el('b', { className: 'rs-text-gold', attrs: { 'data-ui': 'end-gold' } });
-  const root = modalShell('modal-end', [
-    emblem,
-    titleRibbon.node,
-    sub,
-    el('div', { className: 'rs-summary' }, [
-      el('div', { className: 'rs-mini-stat rs-inset' }, [el('span', { text: t('end.wave') }), wave]),
-      el('div', { className: 'rs-mini-stat rs-inset' }, [
-        el('span', { text: t('end.gold') }),
-        el('span', { className: 'rs-gold-value' }, [icon(ICONS.coin, 18, 'ui_icon_coin'), gold]),
+  const rivets = ['tl', 'tr', 'bl', 'br'].map((p) => el('i', { className: `rs-rv4 rs-rv4-${p}`, attrs: { 'aria-hidden': 'true' } }));
+  const root = modalShell(
+    'modal-end',
+    [
+      el('div', { className: 'rs-end-fx', attrs: { 'aria-hidden': 'true' } }, [
+        el('div', { className: 'rs-end-rays' }),
+        ...[40, 90, 150, 230, 300, 350].map((x, i) => {
+          const e = el('i', { className: 'rs-ember' });
+          e.style.left = `${(x / 390) * 100}%`;
+          e.style.setProperty('--d', `${5.5 + (i % 3)}s`);
+          e.style.setProperty('--dl', `${(i * 0.9) % 3}s`);
+          e.style.setProperty('--dx', `${i % 2 ? -24 : 26}px`);
+          return e;
+        }),
       ]),
-    ]),
-    el('div', { className: 'rs-modal-actions' }, [
-      button('rs-btn-secondary', t('end.menu'), onMenu, { 'data-ui': 'end-menu' }),
-      button('rs-btn-primary', t('end.again'), onAgain, { 'data-ui': 'end-again' }),
-    ]),
-  ]);
+      emblem,
+      titleRibbon.node,
+      sub,
+      el('div', { className: 'rs-summary' }, [
+        ...rivets,
+        el('div', { className: 'rs-summary-in' }, [
+          el('div', { className: 'rs-summary-row' }, [el('small', { text: t('end.wave') }), wave]),
+          el('div', { className: 'rs-summary-row' }, [
+            el('small', { text: t('end.gold') }),
+            el('span', { className: 'rs-gold-value' }, [icon(ICONS.coin, 34, 'ui_icon_coin'), gold]),
+          ]),
+        ]),
+      ]),
+      el('div', { className: 'rs-modal-actions' }, [
+        plate('gold', t('end.again'), onAgain, { size: 'lg', className: 'rs-btn-wide', attrs: { 'data-ui': 'end-again' } }),
+        plate('iron', t('end.menu'), onMenu, { attrs: { 'data-ui': 'end-menu' } }),
+      ]),
+    ],
+    'rs-modal-bare rs-end-body',
+  );
+  root.classList.add('rs-modal-end');
 
   function open(r: { won: boolean; wave: number; totalWaves: number; goldEarned: number }): void {
     title.textContent = r.won ? t('end.victory') : t('end.defeat');
     titleRibbon.node.classList.toggle('is-victory', r.won);
     titleRibbon.node.classList.toggle('is-defeat', !r.won);
-    emblem.replaceChildren(r.won ? icon(ICONS.star, 56, 'ui_icon_star') : icon(ICONS.skull, 56));
     emblem.classList.toggle('is-victory', r.won);
+    root.classList.toggle('is-victory', r.won);
+    root.classList.toggle('is-defeat', !r.won);
     sub.textContent = r.won ? t('end.victorySub') : t('end.defeatSub');
     wave.textContent = t('end.waveValue', { wave: r.wave, total: r.totalWaves });
     gold.textContent = t('end.goldValue', { gold: r.goldEarned });
@@ -174,18 +219,23 @@ export interface PauseView extends ModalView {
 }
 
 export function createPause(h: { onResume(): void; onQuit(): void; onToggleSound(): void }): PauseView {
-  const soundBtn = button('rs-btn-secondary', t('pause.soundOn'), () => h.onToggleSound(), { 'data-ui': 'pause-sound' });
-  const root = modalShell('modal-pause', [
-    ribbon(t('pause.title'), 'rs-ribbon-big rs-modal-ribbon').node,
-    el('div', { className: 'rs-modal-stack' }, [
-      soundBtn,
-      button('rs-btn-danger', t('pause.quit'), () => h.onQuit(), { 'data-ui': 'pause-quit' }),
-      button('rs-btn-primary rs-btn-lg', t('pause.resume'), () => h.onResume(), { 'data-ui': 'pause-resume' }),
-    ]),
-  ]);
+  const soundBtn = plate('iron', t('pause.soundOn'), () => h.onToggleSound(), { attrs: { 'data-ui': 'pause-sound' } });
+  const root = modalShell(
+    'modal-pause',
+    [
+      ribbon(t('pause.title'), 'rs-ribbon-big rs-modal-ribbon').node,
+      el('div', { className: 'rs-modal-stack' }, [
+        plate('gold', t('pause.resume'), () => h.onResume(), { size: 'lg', className: 'rs-btn-wide', attrs: { 'data-ui': 'pause-resume' } }),
+        soundBtn,
+        plate('iron', t('pause.quit'), () => h.onQuit(), { attrs: { 'data-ui': 'pause-quit' } }),
+      ]),
+    ],
+    'rs-modal-panel rs-pause-body',
+  );
+  root.classList.add('rs-modal-center');
 
   function setMuted(muted: boolean): void {
-    soundBtn.textContent = muted ? t('pause.soundOff') : t('pause.soundOn');
+    setPlateLabel(soundBtn, muted ? t('pause.soundOff') : t('pause.soundOn'));
     soundBtn.setAttribute('aria-pressed', String(!muted));
   }
 

@@ -29,7 +29,7 @@ describe('fluxo de telas', () => {
     // M4-01: sem loja até o M10, o contador de ouro é só placa (sem "+").
     expect(h.q('menu-gold').parentElement?.textContent).toBe('40');
     expect(h.root.querySelector('.rs-plus')).toBeNull();
-    expect(h.q('menu-best').textContent).toBe('0 / 15');
+    expect(h.q('menu-best').textContent).toBe('0/15');
     expect(h.q('menu-atk').textContent).toBe('3');
     expect(h.q('menu-hp').textContent).toBe('12');
     expect(h.q('menu-orbs').textContent).toBe('2');

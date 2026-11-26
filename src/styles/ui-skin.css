@@ -32,57 +32,70 @@
 }
 
 /* ---------- 9-slice: a imagem substitui moldura, relevo e rebites do fallback ---------- */
-.rs-ui.skin-ui_panel .rs-frame,
-.rs-ui.skin-ui_panel_dark .rs-inset,
+.rs-ui.skin-ui_panel .rs-talent,
+.rs-ui.skin-ui_panel .rs-summary,
+.rs-ui.skin-ui_panel_dark .rs-talent-in,
+.rs-ui.skin-ui_panel_dark .rs-summary-in,
+.rs-ui.skin-ui_panel_dark .rs-startp,
+.rs-ui.skin-ui_panel_dark .rs-foot-stat,
+.rs-ui.skin-ui_panel_dark .rs-rune-strip,
 .rs-ui.skin-ui_btn_primary .rs-btn-primary,
 .rs-ui.skin-ui_btn_secondary .rs-btn-secondary,
 .rs-ui.skin-ui_btn_secondary .rs-btn-icon,
 .rs-ui.skin-ui_btn_action .rs-btn-action,
-.rs-ui.skin-ui_hud_bar .rs-hud-bar,
+.rs-ui.skin-ui_hud_bar .rs-band,
 .rs-ui.skin-ui_card_lightning .rs-draft-card.rs-syn-lightning,
 .rs-ui.skin-ui_card_fire .rs-draft-card.rs-syn-fire,
 .rs-ui.skin-ui_card_spectral .rs-draft-card.rs-syn-spectral,
 .rs-ui.skin-ui_card_core .rs-draft-card.rs-syn-core {
   background: none;
-  border-color: transparent;
+  border: 0 solid transparent;
   border-image-repeat: stretch;
   border-image-outset: 0;
-  box-shadow: 0 var(--rs-drop, 6px) 14px rgba(0, 0, 0, .5);
+  box-shadow: none;
 }
-.rs-ui.skin-ui_panel .rs-frame { border-image-source: var(--ui-panel); border-image-slice: var(--ui-panel-slice) fill; border-image-width: var(--ui-panel-bw); }
-.rs-ui.skin-ui_panel_dark .rs-inset { border-image-source: var(--ui-panel-dark); border-image-slice: var(--ui-panel-dark-slice) fill; border-image-width: var(--ui-panel-dark-bw); }
+.rs-ui.skin-ui_panel .rs-talent,
+.rs-ui.skin-ui_panel .rs-summary { border-image-source: var(--ui-panel); border-image-slice: var(--ui-panel-slice) fill; border-image-width: var(--ui-panel-bw); }
+.rs-ui.skin-ui_panel_dark .rs-talent-in,
+.rs-ui.skin-ui_panel_dark .rs-summary-in,
+.rs-ui.skin-ui_panel_dark .rs-startp,
+.rs-ui.skin-ui_panel_dark .rs-foot-stat,
+.rs-ui.skin-ui_panel_dark .rs-rune-strip { border-image-source: var(--ui-panel-dark); border-image-slice: var(--ui-panel-dark-slice) fill; border-image-width: var(--ui-panel-dark-bw); }
 .rs-ui.skin-ui_btn_primary .rs-btn-primary { border-image-source: var(--ui-btn-primary); border-image-slice: var(--ui-btn-primary-slice) fill; border-image-width: var(--ui-btn-primary-bw); }
 .rs-ui.skin-ui_btn_secondary .rs-btn-secondary,
 .rs-ui.skin-ui_btn_secondary .rs-btn-icon { border-image-source: var(--ui-btn-secondary); border-image-slice: var(--ui-btn-secondary-slice) fill; border-image-width: var(--ui-btn-secondary-bw); }
 .rs-ui.skin-ui_btn_action .rs-btn-action { border-image-source: var(--ui-btn-action); border-image-slice: var(--ui-btn-action-slice) fill; border-image-width: var(--ui-btn-action-bw); }
-.rs-ui.skin-ui_hud_bar .rs-hud-bar { border-image-source: var(--ui-hud-bar); border-image-slice: var(--ui-hud-bar-slice) fill; border-image-width: var(--ui-hud-bar-bw); }
+.rs-ui.skin-ui_hud_bar .rs-band { border-image-source: var(--ui-hud-bar); border-image-slice: var(--ui-hud-bar-slice) fill; border-image-width: var(--ui-hud-bar-bw); }
 .rs-ui.skin-ui_card_lightning .rs-draft-card.rs-syn-lightning { border-image-source: var(--ui-card-lightning); border-image-slice: var(--ui-card-lightning-slice) fill; border-image-width: var(--ui-card-lightning-bw); }
 .rs-ui.skin-ui_card_fire .rs-draft-card.rs-syn-fire { border-image-source: var(--ui-card-fire); border-image-slice: var(--ui-card-fire-slice) fill; border-image-width: var(--ui-card-fire-bw); }
 .rs-ui.skin-ui_card_spectral .rs-draft-card.rs-syn-spectral { border-image-source: var(--ui-card-spectral); border-image-slice: var(--ui-card-spectral-slice) fill; border-image-width: var(--ui-card-spectral-bw); }
 .rs-ui.skin-ui_card_core .rs-draft-card.rs-syn-core { border-image-source: var(--ui-card-core); border-image-slice: var(--ui-card-core-slice) fill; border-image-width: var(--ui-card-core-bw); }
-.rs-ui.skin-ui_panel .rs-frame::before,
-.rs-ui.skin-ui_hud_bar .rs-hud-bar::before,
-.rs-ui.skin-ui_card_lightning .rs-draft-card.rs-syn-lightning::before,
-.rs-ui.skin-ui_card_fire .rs-draft-card.rs-syn-fire::before,
-.rs-ui.skin-ui_card_spectral .rs-draft-card.rs-syn-spectral::before,
-.rs-ui.skin-ui_card_core .rs-draft-card.rs-syn-core::before { display: none; }
+.rs-ui.skin-ui_panel .rs-summary .rs-rv4,
+.rs-ui.skin-ui_btn_secondary .rs-btn-icon::after,
+.rs-ui[class*="skin-ui_card_"] .rs-draft-card .rs-cap { display: none; }
 
-/* ---------- Fita (3-slice horizontal): pontas e faixa viram uma imagem ---------- */
-.rs-ui.skin-ui_ribbon .rs-ribbon::before,
-.rs-ui.skin-ui_ribbon .rs-ribbon::after { display: none; }
-.rs-ui.skin-ui_ribbon .rs-ribbon-text {
+/* Placa de ferro (botões): com a peça, somem as camadas de CSS (moldura, miolo, rebites, runas) e fica o texto */
+.rs-ui.skin-ui_btn_primary .rs-plate.rs-btn-primary :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv, .rs-plate-rn),
+.rs-ui.skin-ui_btn_secondary .rs-plate.rs-btn-secondary :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv, .rs-plate-rn),
+.rs-ui.skin-ui_btn_action .rs-plate.rs-btn-action :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv, .rs-plate-rn) { display: none; }
+.rs-ui.skin-ui_btn_primary .rs-plate.rs-btn-primary .rs-plate-pl,
+.rs-ui.skin-ui_btn_secondary .rs-plate.rs-btn-secondary .rs-plate-pl,
+.rs-ui.skin-ui_btn_action .rs-plate.rs-btn-action .rs-plate-pl { inset: 0; background: none; box-shadow: none; clip-path: none; }
+
+/* ---------- Fita (3-slice horizontal): a imagem substitui faixa, pontas e filetes ---------- */
+.rs-ui.skin-ui_ribbon .rs-ribbon {
   background: none;
+  clip-path: none;
   border: 0 solid transparent;
-  box-shadow: none;
   border-image: var(--ui-ribbon) var(--ui-ribbon-slice) fill / var(--ui-ribbon-bw) / 0 stretch;
-  padding-inline: 34px;
 }
+.rs-ui.skin-ui_ribbon .rs-ribbon::before { display: none; }
 
-/* ---------- Losango do topo da carta ---------- */
-.rs-ui.skin-ui_gem_lightning .rs-syn-lightning .rs-gem { background: var(--ui-gem-lightning) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
-.rs-ui.skin-ui_gem_fire .rs-syn-fire .rs-gem { background: var(--ui-gem-fire) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
-.rs-ui.skin-ui_gem_spectral .rs-syn-spectral .rs-gem { background: var(--ui-gem-spectral) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
-.rs-ui.skin-ui_gem_core .rs-syn-core .rs-gem { background: var(--ui-gem-core) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
+/* ---------- Gema da carta: a peça entra no encaixe redondo do ícone ---------- */
+.rs-ui.skin-ui_gem_lightning .rs-syn-lightning .rs-draft-socket { background: var(--ui-gem-lightning) center / contain no-repeat; box-shadow: none; }
+.rs-ui.skin-ui_gem_fire .rs-syn-fire .rs-draft-socket { background: var(--ui-gem-fire) center / contain no-repeat; box-shadow: none; }
+.rs-ui.skin-ui_gem_spectral .rs-syn-spectral .rs-draft-socket { background: var(--ui-gem-spectral) center / contain no-repeat; box-shadow: none; }
+.rs-ui.skin-ui_gem_core .rs-syn-core .rs-draft-socket { background: var(--ui-gem-core) center / contain no-repeat; box-shadow: none; }
 
 /* ---------- Ícones: a imagem entra no lugar do SVG ---------- */
 .rs-uicon { width: var(--rs-icon-size, 18px); height: var(--rs-icon-size, 18px); background: center / contain no-repeat; }

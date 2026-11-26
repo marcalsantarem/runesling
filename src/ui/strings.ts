@@ -6,15 +6,15 @@ import { loadGameData, type PerkId, type Synergy } from '../data/types';
 
 const ptBR = {
   'app.title': 'RUNESLING',
-  'app.subtitle': 'Capítulo {n} • {name}',
+  'app.subtitle': 'Capítulo {n} · {name}',
 
-  'menu.tab.play': 'EXPEDIÇÃO',
   'menu.tab.talents': 'TALENTOS',
   'menu.play': 'JOGAR',
-  'menu.badge.waves': '{total} ONDAS',
-  'menu.badge.cleared': 'CONQUISTADO',
-  'menu.stat.bestWave': 'MELHOR ONDA',
-  'menu.stat.bestWaveValue': '{wave} / {total}',
+  'menu.chapter': 'Capítulo {n}',
+  'menu.locked': 'TRANCADO',
+  'menu.stat.bestWave': 'ONDA',
+  'menu.stat.bestWaveValue': '{wave}/{total}',
+  'menu.bestLabel': 'Recorde: onda {wave} de {total}',
   'menu.stat.atk': 'ATK',
   'menu.stat.hp': 'HP',
   'menu.stat.orbs': 'ORBES',
@@ -30,7 +30,8 @@ const ptBR = {
   'talents.title': 'TALENTOS',
   'talents.subtitle': 'Melhorias mantidas entre todas as partidas',
   'talents.level': 'Nv. {level}/{max}',
-  'talents.cost': '{cost} G',
+  'talents.cost': '{cost}',
+  'talents.back': 'Voltar',
   'talents.max': 'MÁX',
   'talents.buyLabel': 'Comprar {name} por {cost} de ouro',
 
@@ -64,6 +65,8 @@ const ptBR = {
   'draft.subtitle': 'Combine sinergias Elétrica, Ígnea ou Espectral.',
   'draft.newSynergy': 'Nova sinergia',
   'draft.nthSynergy': '{n}ª da sinergia',
+  'draft.rarity.rare': 'Rara',
+  'draft.rarity.epic': 'Épica',
 
   'synergy.lightning': 'Elétrica',
   'synergy.fire': 'Ígnea',

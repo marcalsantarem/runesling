@@ -67,6 +67,7 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
   const end = createEnd(
     () => quitToMenu(),
     () => startRun(),
+    game,
   );
   const pause = createPause({
     onResume: () => {
@@ -102,7 +103,10 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
     draft.hide();
     end.hide();
     pause.hide();
-    if (next === 'menu') menu.render(data, profile);
+    if (next === 'menu') {
+      menu.setTab('play');
+      menu.render(data, profile);
+    }
     refreshPause();
   }
 
