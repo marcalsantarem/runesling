@@ -66,7 +66,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | Id | Descrição | Marco | Agente(s) | Estado |
 |---|---|---|---|---|
 | T-035 | Mockups das 3 direções visuais da UI (Menu, HUD e Draft em cada) para o dono escolher (decisão 38) (tam. P) | M5 | AG08 | feita |
-| T-036 | Guia de UI da direção A e prompts das peças de UI para o Gemini (molduras 9-slice, botões, fitas, cartas por sinergia, ícones do HUD) (tam. P) | M5 | AG08 | em andamento |
+| T-036 | Guia de UI da direção A e prompts das peças de UI para o Gemini (molduras 9-slice, botões, fitas, cartas por sinergia, ícones do HUD) (tam. P) | M5 | AG08 | feita |
 | T-037 | Menu e Talentos na direção A, primeiro com peças em CSS como no mockup (tam. M) | M5 | AG02 | em andamento |
 | T-038 | HUD, Draft, Fim de run e Pausa na direção A, com animações de UI (entrada dos modais, toque nos botões, cartas do Draft) (tam. M) | M5 | AG02 | em andamento |
 | T-039 | Processar as peças de UI geradas pelo dono e trocar o CSS provisório por elas (depende das imagens) (tam. M) | M5 | AG08 + AG02 | a fazer |
