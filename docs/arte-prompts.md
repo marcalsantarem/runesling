@@ -365,7 +365,7 @@ Generate one square 1:1 image. small pile of gold coins with a gold crypt key on
 - Arquivo a devolver: `art-source/raw/tiles/floor_crypt.png`
 - Anexar no Gemini: nenhuma imagem
 - Fundo: nenhum · tamanho final 512 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one square 1:1 image. dark obsidian dungeon stone floor tiles with subtle carved ancient runes barely visible, deep navy and charcoal palette (#0D1020 to #06070F). top-down seamless tileable 2D dungeon floor texture, edges wrap perfectly on all four sides, low contrast dark tones, flat even lighting, no vignette, no perspective, no characters, no objects, no text, no UI.
