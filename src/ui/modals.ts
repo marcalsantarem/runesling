@@ -1,6 +1,6 @@
 /** Modais da partida: Draft de runas, Fim de run e Pausa. */
 import type { GameData, PerkId } from '../data/types';
-import { button, el, show } from './dom';
+import { artIcon, button, el, show } from './dom';
 import { perkDesc, perkName, synergyName, t } from './strings';
 
 export interface ModalView {
@@ -49,7 +49,7 @@ export function createDraft(game: GameData, onPick: (id: PerkId) => void): Draft
             },
           },
           [
-            el('span', { className: 'rs-draft-gem', attrs: { 'aria-hidden': 'true' } }),
+            artIcon(game.perks[id].iconKey, 'rs-draft-gem rs-art'),
             el('span', { className: 'rs-draft-text' }, [
               el('span', { className: 'rs-draft-syn', text: synergyName(syn) }),
               el('span', { className: 'rs-draft-name', text: perkName(id) }),

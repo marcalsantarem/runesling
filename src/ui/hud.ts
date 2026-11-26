@@ -1,7 +1,7 @@
 /** HUD da partida: faixa superior (HP, onda, ouro, pausa), faixa de runas, barra inferior e banner. */
 import type { RunState } from '../core/events';
 import type { GameData, PerkId } from '../data/types';
-import { button, el, icon, ICONS, show } from './dom';
+import { artIcon, button, el, icon, ICONS, show } from './dom';
 import { pct } from './menu';
 import { perkName, t } from './strings';
 
@@ -102,11 +102,21 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     }
     strip.replaceChildren(
       ...groupPerks(perks).map(({ id, count }) =>
-        el('span', {
-          className: `rs-rune rs-syn-${game.perks[id].synergy}`,
-          text: count > 1 ? t('hud.runeCount', { name: perkName(id), count }) : perkName(id),
-          attrs: { 'data-perk': id },
-        }),
+        el(
+          'span',
+          {
+            className: `rs-rune rs-syn-${game.perks[id].synergy}`,
+            attrs: {
+              'data-perk': id,
+              'aria-label': count > 1 ? t('hud.runeCount', { name: perkName(id), count }) : perkName(id),
+            },
+          },
+          [
+            artIcon(game.perks[id].iconKey, 'rs-rune-icon rs-art'),
+            el('span', { className: 'rs-rune-name', text: perkName(id) }),
+            count > 1 ? el('span', { className: 'rs-rune-count', text: t('hud.runeStack', { count }) }) : null,
+          ],
+        ),
       ),
     );
   }

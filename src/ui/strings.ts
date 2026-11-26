@@ -41,6 +41,7 @@ const ptBR = {
   'hud.pause': 'Pausar',
   'hud.runesEmpty': 'Arraste na arena para mirar e solte para lançar',
   'hud.runeCount': '{name} ×{count}',
+  'hud.runeStack': '×{count}',
   'hud.goldLabel': 'Ouro da run',
   'hud.hpLabel': 'HP da barreira',
 

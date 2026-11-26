@@ -58,3 +58,37 @@ export const ICONS = {
   soundOff:
     '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
 } as const;
+
+/** Caminho do ícone avulso da UI (contrato M4): `public/assets/icons/<iconKey>.webp`. */
+export function iconPath(iconKey: string): string {
+  return `${import.meta.env.BASE_URL}assets/icons/${iconKey}.webp`;
+}
+
+/** Chaves cujo arquivo falhou nesta sessão: não pedimos de novo (evita 404 repetido a cada render). */
+const missingIcons = new Set<string>();
+
+/** Só para testes: esquece as falhas registradas. */
+export function resetMissingIcons(): void {
+  missingIcons.clear();
+}
+
+/**
+ * Moldura do ícone de runa/talento. A moldura mantém a bolinha colorida (CSS de `className`)
+ * como fallback; a imagem só aparece quando carrega (`has-art`). Se falhar, some sem quebrar layout.
+ */
+export function artIcon(iconKey: string, className: string): HTMLSpanElement {
+  const frame = el('span', { className, attrs: { 'aria-hidden': 'true', 'data-icon': iconKey } });
+  if (!iconKey || missingIcons.has(iconKey)) return frame;
+  const img = el('img', {
+    className: 'rs-art-img',
+    attrs: { src: iconPath(iconKey), alt: '', width: '128', height: '128', decoding: 'async', draggable: 'false' },
+  });
+  img.addEventListener('load', () => frame.classList.add('has-art'));
+  img.addEventListener('error', () => {
+    missingIcons.add(iconKey);
+    frame.classList.remove('has-art');
+    img.remove();
+  });
+  frame.appendChild(img);
+  return frame;
+}

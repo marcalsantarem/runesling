@@ -7,3 +7,4 @@ art-source/cut/
 art-source/.cache.json
 *.log
 .DS_Store
+art-source/.cut-cache.json

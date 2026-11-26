@@ -210,8 +210,17 @@
 .rs-rune-strip::-webkit-scrollbar { display: none; }
 .rs-rune-hint { font-size: 10.5px; color: var(--rs-muted); font-weight: 600; white-space: nowrap; }
 .rs-rune {
-  font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 7px; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+  font-size: 10px; font-weight: 800; padding: 2px 7px 2px 3px; border-radius: 7px; white-space: nowrap;
   background: #171d36; border: 1px solid color-mix(in srgb, var(--rs-syn) 60%, transparent); color: var(--rs-syn);
+}
+.rs-rune-icon {
+  width: 20px; height: 20px; flex-shrink: 0; border-radius: 5px;
+  background: radial-gradient(circle at 50% 50%, var(--rs-syn) 0 4px, var(--rs-arena) 5px);
+}
+.rs-rune-count {
+  font-size: 9.5px; font-weight: 900; color: #fff; padding: 0 4px; border-radius: 5px;
+  background: color-mix(in srgb, var(--rs-syn) 45%, #0d1020);
 }
 .rs-syn-lightning { --rs-syn: var(--rs-syn-lightning); }
 .rs-syn-fire { --rs-syn: var(--rs-syn-fire); }
@@ -299,3 +308,12 @@
   .rs-banner.is-shown { animation: none; }
   .rs-btn { transition: none; }
 }
+
+/* T-028: ícone avulso sobre a bolinha (fallback). A imagem só aparece quando carrega. */
+.rs-art { position: relative; overflow: hidden; display: inline-block; }
+.rs-art-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; opacity: 0; pointer-events: none; user-select: none;
+}
+.rs-art.has-art { background: var(--rs-arena); }
+.rs-art.has-art .rs-art-img { opacity: 1; }

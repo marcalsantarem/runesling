@@ -1,7 +1,7 @@
 /** Menu principal (aba Expedição) e Talentos (aba Talentos). */
 import type { GameData, TalentStat } from '../data/types';
 import type { PlayerData, PlayerProfile, TalentId } from '../meta/profile';
-import { button, el, icon, ICONS, show } from './dom';
+import { artIcon, button, el, icon, ICONS, show } from './dom';
 import { chapterName, t, talentDesc, talentName } from './strings';
 
 export type MenuTab = 'play' | 'talents';
@@ -150,7 +150,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
         buy.disabled = !can;
         if (cost !== null) buy.setAttribute('aria-label', t('talents.buyLabel', { name: talentName(id), cost }));
         return el('div', { className: `rs-card rs-talent rs-talent-${id}`, attrs: { 'data-ui': `talent-${id}` } }, [
-          el('span', { className: 'rs-talent-dot', attrs: { 'aria-hidden': 'true' } }),
+          artIcon(def?.iconKey ?? '', 'rs-talent-dot rs-art'),
           el('div', { className: 'rs-talent-info' }, [
             el('div', { className: 'rs-row' }, [
               el('span', { className: 'rs-talent-name', text: talentName(id) }),
