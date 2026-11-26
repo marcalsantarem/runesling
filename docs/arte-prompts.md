@@ -376,7 +376,7 @@ Generate one square 1:1 image. dark obsidian dungeon stone floor tiles with subt
 - Arquivo a devolver: `art-source/raw/tiles/wall_trim_crypt.png`
 - Anexar no Gemini: nenhuma imagem
 - Fundo: magenta · tamanho final 512 px
-- Situação: pendente
+- Situação: **entregue**
 
 ```text
 Generate one tall vertical 1:4 strip centered in a square 1:1 canvas image. narrow dark forged iron and obsidian stone pillar column with an iron torch bracket holding an unlit torch, cold blue-grey metal (#14182B, edges #2E385C), tall thin vertical proportions about 1 to 4. vertical side wall trim strip for a portrait mobile game arena, seamless when tiled vertically, front orthographic view, dark fantasy 2D game asset, stylized hand-painted illustration, no outer glow, no light bleeding, no text, no UI. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject.
