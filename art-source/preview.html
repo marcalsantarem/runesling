@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RuneSling assets</title>
+<style>
+body{margin:0;padding:16px;background:#0D1020;color:#c9cbe0;font:14px system-ui,sans-serif}
+h1,h2{font-weight:600}main{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:100%}
+figure img{max-width:100%;height:auto}.sheet{outline:1px dashed #3a3f66}
+small{color:#7c80a6}.spr{position:relative;max-width:100%}
+body.hit .hb::after{content:"";position:absolute;inset:4%;border:1px dashed #00e5ff;border-radius:50%}
+</style></head><body>
+<h1>RuneSling — assets</h1>
+<label><input type="checkbox" onchange="document.body.classList.toggle('hit',this.checked)"> mostrar círculo 92% (hitbox) e centro</label>
+<p>Faltando (29): enemy_goblin, enemy_shooter, enemy_bomb, enemy_splitter, enemy_mini, enemy_healer, miniboss_iron, boss_obsidian, obstacle_bumper_rune, obstacle_pillar_obsidian, obstacle_ring_multiplier, icon_bumper_shock, icon_static_crit, icon_storm_orb, icon_fire_splash, icon_ignite, icon_supernova, icon_molten_core, icon_ghost_ball, icon_ricochet_crit, icon_wall_clone, icon_arcane_sight, icon_extra_orb, icon_power_surge, icon_bastion_heal, icon_gold_greed, floor_crypt, wall_trim_crypt, app_icon</p>
+<main>
+<figure data-key="enemy_shield"><div class="spr hb" style="width:256px;height:256px;background:url('../public/assets/atlases/enemies.webp?v=0669dd4c') -2px -2px"></div><figcaption>enemy_shield <small>enemies 256×256</small></figcaption></figure>
+<figure data-key="icon_chain_lightning"><div class="spr hb" style="width:128px;height:128px;background:url('../public/assets/atlases/icons.webp?v=81df7d0a') -2px -2px"></div><figcaption>icon_chain_lightning <small>icons 128×128</small></figcaption></figure>
+<figure data-key="icon_chain_lightning"><img src="../public/assets/icons/icon_chain_lightning.webp?v=f87711a0" alt="icon_chain_lightning"><figcaption>icon_chain_lightning <small>icons/icon_chain_lightning.webp</small></figcaption></figure>
+</main>
+<h2>Atlases</h2>
+<main><figure><img class="sheet" src="../public/assets/atlases/enemies.webp?v=0669dd4c" alt="atlas enemies"><figcaption>atlas enemies 512×512</figcaption></figure>
+<figure><img class="sheet" src="../public/assets/atlases/icons.webp?v=81df7d0a" alt="atlas icons"><figcaption>atlas icons 256×256</figcaption></figure></main>
+</body></html>

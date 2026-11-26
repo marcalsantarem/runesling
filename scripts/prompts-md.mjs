@@ -1,6 +1,6 @@
 // Gera docs/arte-prompts.md a partir de scripts/assets-manifest.json (AG08, BRF-023).
 // Uso: node scripts/prompts-md.mjs
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -9,6 +9,9 @@ const m = JSON.parse(readFileSync(join(root, 'scripts/assets-manifest.json'), 'u
 const anchors = m.items.filter((i) => i.variations);
 const batch = m.items.filter((i) => !i.variations);
 const bgOf = (i) => i.bgColor ?? m.presets[i.preset].bgColor ?? 'nenhum';
+const has = (f) => f && existsSync(join(root, f));
+const status = (i) =>
+  i.anchorFor && has(i.anchorFor) ? '**escolhida e entregue** (âncora salva)' : has(i.file) ? '**entregue**' : 'pendente';
 const L = [];
 L.push('# RuneSling — prompts de arte (Gemini)', '');
 L.push('> Gerado por `node scripts/prompts-md.mjs` a partir de `scripts/assets-manifest.json`. Não edite à mão.', '');
@@ -17,13 +20,13 @@ L.push(`Total: ${anchors.length} âncoras (${anchors.reduce((n, i) => n + i.vari
 L.push('## 1. Âncoras (gerar primeiro, sem imagem anexa)', '');
 L.push('Gere as 4 variações de cada âncora, escolha uma e salve a escolhida no caminho de âncora indicado. A escolhida também serve como o próprio asset (devolva com o nome do arquivo).', '');
 for (const i of anchors) {
-  L.push(`### \`${i.key}\``, '', `- Arquivo a devolver: \`${i.file}\``, `- Âncora escolhida vira: \`${i.anchorFor}\``, `- Fundo: ${bgOf(i)}`, '');
+  L.push(`### \`${i.key}\``, '', `- Arquivo a devolver: \`${i.file}\``, `- Âncora escolhida vira: \`${i.anchorFor}\``, `- Fundo: ${bgOf(i)}`, `- Situação: ${status(i)}`, '');
   i.variations.forEach((v, n) => L.push(`**Variação ${String.fromCharCode(65 + n)}**`, '', '```text', v, '```', ''));
 }
 L.push('## 2. Lote (anexar a âncora indicada como imagem de referência)', '');
 for (const i of batch) {
   const a = m.presets[i.preset].anchor;
-  L.push(`### \`${i.key}\``, '', `- Arquivo a devolver: \`${i.file}\``, `- Anexar no Gemini: ${a ? '`' + a + '`' : 'nenhuma imagem'}`, `- Fundo: ${bgOf(i)} · tamanho final ${m.presets[i.preset].size} px`, '', '```text', i.geminiPrompt, '```', '');
+  L.push(`### \`${i.key}\``, '', `- Arquivo a devolver: \`${i.file}\``, `- Anexar no Gemini: ${a ? '`' + a + '`' : 'nenhuma imagem'}`, `- Fundo: ${bgOf(i)} · tamanho final ${m.presets[i.preset].size} px`, `- Situação: ${status(i)}`, '', '```text', i.geminiPrompt, '```', '');
 }
 writeFileSync(join(root, 'docs/arte-prompts.md'), L.join('\n'));
 console.log(`docs/arte-prompts.md: ${m.items.length} chaves`);
