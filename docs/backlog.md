@@ -61,7 +61,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-034 | PWA se atualiza sozinho: recarregar quando houver versão nova e checar atualização periodicamente (o aparelho do dono ficou preso numa versão antiga) (tam. P) | M4 | AG07 | feita |
 | T-042 | Tirar do build a fonte do ícone do app (`app_icon.png`, 1,1 MB, só serve para gerar os ícones) e conferir o peso do build (dist em 3,8 MB, limite 4 MB) (tam. P) | M4 | AG07 + AG08 | feita (dist 2,1 MB) |
 | T-043 | Largura da moldura lateral (hoje 10 px): dono decide depois de testar no celular (tam. P) | M4 | AG01 | adiada pelo dono |
-| T-030 | Validação do M4 e tag v0.5.0 (tam. P) | M4 | AG03 + AG00 | em andamento |
+| T-030 | Validação do M4 e tag v0.5.0 (tam. P) | M4 | AG03 + AG00 | feita (passa com ressalvas; falta a tag) |
 
 ## M5 (v0.6.0): Nova UI
 
@@ -72,5 +72,6 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-037 | Menu e Talentos na direção A, primeiro com peças em CSS como no mockup (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
 | T-038 | HUD, Draft, Fim de run e Pausa na direção A, com animações de UI (entrada dos modais, toque nos botões, cartas do Draft) (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
 | T-039 | Processar as peças de UI geradas pelo dono e trocar o CSS provisório por elas (depende das imagens) (tam. M) | M5 | AG08 + AG02 | a fazer |
+| T-044 | Ressalvas do QA do M4 na UI: "+" do ouro parece botão sem ação (M4-01); capturar e revisar a tela de derrota nova (M4-02) (tam. P) | M5 | AG02 | a fazer |
 | T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | a fazer |
 | T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | a fazer |
