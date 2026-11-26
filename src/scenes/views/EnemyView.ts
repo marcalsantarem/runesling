@@ -151,7 +151,7 @@ export class EnemyView {
     if (def.shoot) {
       this.root.add(scene.add.graphics().fillStyle(COLOR.crimson, 1).fillCircle(r - 2, -r + 2, 8.5));
       this.cdText = scene.add
-        .text(r - 2, -r + 2.5, '', { fontFamily: FONT_UI_STACK, fontSize: '9.5px', fontStyle: '900', color: CSS.white, resolution: res })
+        .text(r - 2, -r + 2.5, '', { fontFamily: FONT_UI_STACK, fontSize: '9.5px', fontStyle: '800', color: CSS.white, resolution: res })
         .setOrigin(0.5);
       this.root.add(this.cdText);
     } else {

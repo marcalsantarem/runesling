@@ -72,7 +72,7 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
   const orbs = stat(t('hud.orbs'), 'hud-orbs');
   const crit = stat(t('hud.crit'), 'hud-crit');
   const recallBtn = button('rs-btn-ghost', t('hud.recall'), () => h.onRecall(), { 'data-ui': 'hud-recall' });
-  const speedBtn = button('rs-btn-ghost rs-btn-speed', t('hud.speed', { speed: 1 }), () => h.onToggleSpeed(), {
+  const speedBtn = button('rs-btn-ghost rs-btn-speed', t('hud.speed.1'), () => h.onToggleSpeed(), {
     'data-ui': 'hud-speed',
   });
   const bottom = el('div', { className: 'rs-hud-bar rs-hud-bottom' }, [
@@ -120,8 +120,9 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     atk.value.textContent = String(s.atk);
     orbs.value.textContent = String(s.orbs);
     crit.value.textContent = t('hud.critValue', { pct: pct(s.crit) });
-    speedBtn.textContent = t('hud.speed', { speed: s.speed });
-    speedBtn.setAttribute('aria-label', t('hud.speedLabel', { speed: s.speed }));
+    const speedText = t(`hud.speed.${s.speed}`);
+    speedBtn.textContent = speedText;
+    speedBtn.setAttribute('aria-label', t('hud.speedLabel', { speed: speedText }));
     speedBtn.classList.toggle('is-on', s.speed === 2);
     show(recallBtn, s.phase === 'flight');
     renderRunes(s.perks);
@@ -147,7 +148,8 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     lastPerks = '';
     hpFill.style.width = '100%';
     for (const n of [hpText, waveText, goldText, atk.value, orbs.value, crit.value]) n.textContent = '';
-    speedBtn.textContent = t('hud.speed', { speed: 1 });
+    speedBtn.textContent = t('hud.speed.1');
+    speedBtn.setAttribute('aria-label', t('hud.speedLabel', { speed: t('hud.speed.1') }));
     speedBtn.classList.remove('is-on');
     show(recallBtn, false);
     renderRunes([]);

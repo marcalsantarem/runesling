@@ -95,6 +95,22 @@ describe('RunController — fluxo pelo bus', () => {
     expect(log['run:state']!.length).toBeLessThan(frames / 3);
   });
 
+  it('decisão 27: normal = 2 ciclos por frame, rápido = 3 (rules.speed.multipliers)', () => {
+    const { run } = setup();
+    expect(data.rules.speed.multipliers).toEqual([2, 3]);
+    const calls: number[] = [];
+    const orig = run.match.step.bind(run.match);
+    run.match.step = (k?: number) => {
+      calls.push(k ?? 1);
+      orig(k);
+    };
+    run.launch(-Math.PI / 2, 10);
+    run.frame();
+    run.toggleSpeed();
+    run.frame();
+    expect(calls).toEqual([2, 3]);
+  });
+
   it('ui:toggleSpeed, ui:pause e ui:recall', () => {
     const { bus, log, run } = setup();
     bus.emit('ui:toggleSpeed', {});

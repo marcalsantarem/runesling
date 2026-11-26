@@ -84,3 +84,6 @@ Scripts e capturas fora do repositório, em `/tmp/claude-0/-home-user-runesling/
 6. JOGAR de novo e conferir que tudo começa do zero (onda 1, HP cheio, 1×).
 7. Ligar o modo avião, reabrir o site (ou o app instalado) e ver se abre e joga.
 8. Anotar: o HUD cobre inimigos? Os efeitos (flash, números, tremida) aparecem bem? O jogo fica fluido?
+
+## Reteste (AG00, 2026-11-26)
+T-022 (BRF-021) e T-023 (BRF-022): M3-01, M3-02 e M3-03 corrigidos; decisões 27 (velocidade) e 28 (recolher automático) aplicadas com testes. Typecheck limpo, suíte 197/197, build ok; fluxo Menu → JOGAR → mira → Draft sem erros no navegador (390×844). Restante menor: "×2" desenhado no anel (`RingView.ts:32`) sem chave de string.

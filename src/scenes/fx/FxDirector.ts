@@ -5,6 +5,7 @@
  */
 import type { CombatEvent } from '../../core/CombatResolver';
 import type { RandomSource } from '../../match/rng';
+import { t as str } from '../../ui/strings';
 import { COLOR } from '../views/palette';
 import { Shake, shakeFor } from './fxMath';
 import { BeamPool, FloatTextPool, ParticlePool, WavePool } from './pools';
@@ -53,7 +54,7 @@ export class FxDirector {
       case 'blocked': {
         t.hit(ev.enemyId, false);
         const r = t.radius(ev.enemyId) || DEFAULT_RADIUS;
-        this.floats.spawn(ev.x, ev.y + r + 6, 'ESCUDO', COLOR.cyan, 10);
+        this.floats.spawn(ev.x, ev.y + r + 6, str('fx.blocked'), COLOR.cyan, 10);
         break;
       }
       case 'kill':
@@ -92,7 +93,7 @@ export class FxDirector {
 
   /** Orbe cruzou o anel multiplicador. */
   onRingPass(x: number, y: number): void {
-    this.floats.spawn(x, y - 20, '×2!', COLOR.gold, 13);
+    this.floats.spawn(x, y - 20, str('fx.ring'), COLOR.gold, 13);
   }
 
   step(frames: number): void {

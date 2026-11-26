@@ -7,6 +7,7 @@ import type { EventBus } from '../core/EventBus';
 import type { GameEvents, RunPhase as UiPhase, RunSpeed, RunState as UiRunState } from '../core/events';
 import type { ChapterDef, GameData } from '../data/types';
 import type { RunResult } from '../meta/profile';
+import { t } from '../ui/strings';
 import { Match } from './Match';
 import type { RandomSource } from './rng';
 import { finalGold, type RunPhase, type RunState, type TalentBonus } from './RunState';
@@ -43,9 +44,9 @@ export function waveBanner(data: GameData, chapter: ChapterDef, wave: number): s
   const bossId = fixed?.find((id) => data.enemies[id]?.isBoss);
   if (bossId) {
     const name = data.enemies[bossId]!.name.toUpperCase();
-    return wave >= chapter.totalWaves ? `CHEFE FINAL: ${name}` : `MINI-CHEFE: ${name}`;
+    return t(wave >= chapter.totalWaves ? 'run.bannerBoss' : 'run.bannerMiniBoss', { name });
   }
-  return `ONDA ${wave}/${chapter.totalWaves}`;
+  return t('run.bannerWave', { wave, total: chapter.totalWaves });
 }
 
 /** Guarda os campos do último `run:state` emitido para saber se mudou (sem alocar por frame). */
@@ -164,7 +165,7 @@ export class RunController {
   /** Um frame lógico (60 Hz). No-op fora do voo ou em pausa. */
   frame(): void {
     if (this.paused || this.disposed || this.match.state.phase !== 'flight') return;
-    this.match.step(this.speed);
+    this.match.step(this.data.rules.speed.multipliers[this.speed - 1]);
     this.sync();
   }
 

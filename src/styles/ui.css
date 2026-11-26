@@ -204,7 +204,8 @@
 .rs-hud-right { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .rs-rune-strip {
   display: flex; gap: 5px; align-items: center; min-height: 26px;
-  overflow-x: auto; scrollbar-width: none; pointer-events: auto; touch-action: pan-x;
+  overflow-x: auto; scrollbar-width: none;
+  pointer-events: none; /* M3-01: só os botões do HUD pegam toque; o arrasto sobre a faixa mira */
 }
 .rs-rune-strip::-webkit-scrollbar { display: none; }
 .rs-rune-hint { font-size: 10.5px; color: var(--rs-muted); font-weight: 600; white-space: nowrap; }

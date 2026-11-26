@@ -46,9 +46,11 @@ describe('fluxo de telas', () => {
     expect(h.q('hud-orbs').textContent).toBe('3');
     expect(h.q('hud-crit').textContent).toBe('15%');
     expect(h.visible('hud-recall')).toBe(false);
+    expect(h.q('hud-speed').textContent).toBe('1×');
     h.bus.emit('run:state', runState({ phase: 'flight', speed: 2 }));
     expect(h.visible('hud-recall')).toBe(true);
-    expect(h.q('hud-speed').textContent).toBe('2×');
+    expect(h.q('hud-speed').textContent).toBe('1,5×');
+    expect(h.q('hud-speed').getAttribute('aria-label')).toBe('Alternar velocidade (atual 1,5×)');
     h.click('hud-recall');
     h.click('hud-speed');
     expect(names()).toEqual(['ui:startRun', 'ui:recall', 'ui:toggleSpeed']);

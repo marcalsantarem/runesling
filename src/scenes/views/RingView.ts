@@ -29,7 +29,7 @@ export class RingView {
     });
     this.img = scene.add.image(c.x, c.y, key).setDisplaySize(s, s).setTint(COLOR.gold);
     scene.add
-      .text(c.x, c.y, '×2', { fontFamily: FONT_UI_STACK, fontSize: '10px', fontStyle: '900', color: CSS.gold, resolution: res })
+      .text(c.x, c.y, '×2', { fontFamily: FONT_UI_STACK, fontSize: '10px', fontStyle: '800', color: CSS.gold, resolution: res })
       .setOrigin(0.5)
       .setAlpha(0.85);
   }

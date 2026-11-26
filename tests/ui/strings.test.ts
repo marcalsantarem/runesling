@@ -38,6 +38,23 @@ describe('strings da UI', () => {
     for (const key of used) expect(table, key).toHaveProperty(key);
   });
 
+  it('textos da cena (contrato com o AG01, M3-02) e velocidade (decisão 27)', () => {
+    expect(t('run.bannerWave', { wave: 4, total: 15 })).toBe('ONDA 4/15');
+    expect(t('run.bannerBoss', { name: 'LICH' })).toBe('CHEFE FINAL: LICH');
+    expect(t('run.bannerMiniBoss', { name: 'OGRO' })).toBe('MINI-CHEFE: OGRO');
+    expect(t('fx.ring')).toBe('×2!');
+    expect(t('fx.blocked')).toBe('ESCUDO');
+    expect(t('hud.speed.1')).toBe('1×');
+    expect(t('hud.speed.2')).toBe('1,5×');
+  });
+
+  it('M3-01: a faixa de runas não captura o toque (a mira passa por ela)', () => {
+    const css = readFileSync(join(__dirname, '../../src/styles/ui.css'), 'utf8');
+    const rule = /\.rs-rune-strip\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    expect(rule).toMatch(/pointer-events:\s*none/);
+    expect(css).not.toMatch(/\.rs-(band|hud-bar|hud-top|hud-bottom|rune-strip)[^{]*\{[^}]*pointer-events:\s*auto/);
+  });
+
   it('chaves dinâmicas de sinergia existem para todas as sinergias', () => {
     for (const s of SYNERGIES) {
       expect(stringTable()).toHaveProperty(`synergy.${s}` satisfies string);
