@@ -92,7 +92,7 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
   ]);
   root.appendChild(container);
   const unwatch = watchLayout(root, container);
-  mountSkin(container);
+  void mountSkin(container);
 
   function refreshPause(): void {
     hud.setPauseEnabled(!draft.visible && !end.visible && !pause.visible);

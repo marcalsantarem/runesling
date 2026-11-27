@@ -1,8 +1,9 @@
 /**
  * Peças de UI da direção A (contrato `_contrato-m5-ui.md`). Cada peça é uma variável CSS em
  * `src/styles/ui-skin.css` com fallback em CSS puro. Quando `public/assets/ui/<chave>.webp` existe
- * (lista `AVAILABLE_ASSETS`), a variável recebe a imagem e o container ganha a classe `skin-<chave>`,
- * que liga o `border-image`/`background` da peça. Sem arquivo: nenhuma requisição, só o fallback.
+ * (lista `AVAILABLE_ASSETS`) e a imagem carrega, a variável recebe a imagem e o container ganha a
+ * classe `skin-<chave>`, que liga o `border-image`/`background` da peça. Sem arquivo ou com erro de
+ * carregamento: só o fallback.
  */
 import { AVAILABLE_ASSETS } from '../core/assetManifest';
 import { assetUrl } from './assetUrl';
@@ -92,12 +93,57 @@ export function applySkin(
   return pieces;
 }
 
-/** Liga as peças existentes; lê `ui.json` só se ele e alguma peça existirem. */
-export function mountSkin(root: HTMLElement, available: readonly string[] = AVAILABLE_ASSETS): void {
-  const pieces = applySkin(root, available);
-  if (pieces.length === 0 || !available.includes('ui/ui.json') || typeof fetch === 'undefined') return;
-  fetch(assetUrl('ui/ui.json'))
-    .then((r) => (r.ok ? (r.json() as Promise<Record<string, SliceInfo>>) : {}))
-    .then((json) => applySkin(root, available, json))
-    .catch(() => undefined);
+/** Carrega a imagem da peça; rejeita em erro de rede ou 404. */
+export type PieceLoader = (url: string) => Promise<void>;
+
+export const loadImage: PieceLoader = (url) =>
+  new Promise<void>((resolve, reject) => {
+    if (typeof Image === 'undefined') {
+      reject(new Error('sem Image'));
+      return;
+    }
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error(`falhou: ${url}`));
+    img.src = url;
+  });
+
+/**
+ * Liga as peças existentes; lê `ui.json` só se ele e alguma peça existirem.
+ * M5-01: a classe `skin-<chave>` (que esconde o fallback CSS) só entra depois que a imagem da peça
+ * carrega. Peça que falha (rede, 404) fica no fallback. Devolve a promessa de todas as tentativas.
+ */
+export function mountSkin(
+  root: HTMLElement,
+  available: readonly string[] = AVAILABLE_ASSETS,
+  load: PieceLoader = loadImage,
+): Promise<UiPiece[]> {
+  const pieces = availablePieces(available);
+  if (pieces.length === 0) return Promise.resolve([]);
+  const loaded: UiPiece[] = [];
+  let slices: Readonly<Record<string, SliceInfo>> = {};
+  const apply = () => {
+    const ok = new Set(loaded);
+    applySkin(root, UI_PIECES.filter((k) => ok.has(k)).map((k) => `ui/${k}.webp`), slices);
+  };
+  const json =
+    available.includes('ui/ui.json') && typeof fetch !== 'undefined'
+      ? fetch(assetUrl('ui/ui.json'))
+          .then((r) => (r.ok ? (r.json() as Promise<Record<string, SliceInfo>>) : {}))
+          .then((j) => {
+            slices = j;
+            if (loaded.length > 0) apply();
+          })
+          .catch(() => undefined)
+      : Promise.resolve();
+  const imgs = pieces.map((k) =>
+    load(piecePath(k)).then(
+      () => {
+        loaded.push(k);
+        apply();
+      },
+      () => undefined,
+    ),
+  );
+  return Promise.all([json, ...imgs]).then(() => UI_PIECES.filter((k) => loaded.includes(k)));
 }

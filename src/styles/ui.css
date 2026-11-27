@@ -930,6 +930,10 @@
   .rs-hud-foot { gap: 4px; }
   .rs-foot-stats { gap: 4px; }
   .rs-recall-slot, .rs-btn-recall { width: 108px; }
+  /* M5-02: sem reticências em 360 px. Dica da faixa quebra em 2 linhas; nome do talento menor. */
+  .rs-rune-hint { flex: 1 1 auto; min-width: 0; white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.2; }
+  .rs-talent-name { font-size: 12px; top: 10px; }
+  .rs-talent-desc { top: 31px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

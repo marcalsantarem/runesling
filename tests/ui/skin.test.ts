@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { loadGameData } from '../../src/data/types';
 import { synergySeal } from '../../src/ui/modals';
-import { applySkin, availablePieces, piecePath, pieceVar, UI_PIECES } from '../../src/ui/skin';
+import { applySkin, availablePieces, mountSkin, piecePath, pieceVar, UI_PIECES } from '../../src/ui/skin';
 import { flush, runState, setup, type Harness } from './helpers';
 
 let h: Harness | undefined;
@@ -40,6 +40,30 @@ describe('Peças de UI da direção A (contrato M5)', () => {
     expect(root.style.getPropertyValue('--ui-panel-slice')).toBe('40 40 40 40');
     expect(root.style.getPropertyValue('--ui-panel-bw')).toBe('20px 20px 20px 20px');
     expect(availablePieces(['ui/ui_ribbon.webp'])).toEqual(['ui_ribbon']);
+  });
+
+  it('M5-01: peça cuja imagem falha (rede, 404) não liga a classe e mantém o fallback CSS', async () => {
+    const root = document.createElement('div');
+    const pending: string[] = [];
+    const load = (url: string) => {
+      pending.push(url);
+      return /ui_btn_primary|ui_panel_dark/.test(url) ? Promise.reject(new Error('404')) : Promise.resolve();
+    };
+    const avail = ['ui/ui_btn_primary.webp', 'ui/ui_panel.webp', 'ui/ui_panel_dark.webp', 'ui/ui_icon_coin.webp'];
+    const p = mountSkin(root, avail, load);
+    // Antes de a imagem carregar, nenhuma peça esconde o fallback.
+    expect(root.className).toBe('');
+    expect(pending).toHaveLength(4);
+    expect(await p).toEqual(['ui_panel', 'ui_icon_coin']);
+    expect(root.classList.contains('skin-ui_panel')).toBe(true);
+    expect(root.classList.contains('skin-ui_icon_coin')).toBe(true);
+    expect(root.classList.contains('skin-ui_btn_primary')).toBe(false);
+    expect(root.classList.contains('skin-ui_panel_dark')).toBe(false);
+    expect(root.style.getPropertyValue('--ui-btn-primary')).toBe('');
+    // Todas as peças falhando: tudo fica no fallback.
+    const all = document.createElement('div');
+    expect(await mountSkin(all, UI_PIECES.map((k) => `ui/${k}.webp`), () => Promise.reject(new Error('rede')))).toEqual([]);
+    expect(all.className).toBe('');
   });
 
   it('T-062: URL da peça na variável é absoluta (WebKit resolve url() de var() pela folha CSS)', () => {
