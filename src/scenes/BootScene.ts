@@ -4,6 +4,7 @@ import type { EventBus } from '../core/EventBus';
 import { queueOptionalAssets } from '../core/assetManifest';
 import { gameBus, type GameEvents } from '../core/events';
 import { FONT_TITLE_STACK, waitForFonts } from '../core/fonts';
+import { watchSceneSettings } from './sceneSettings';
 
 /** Versão do jogo: fonte única em package.json. */
 export const GAME_VERSION: string = version;
@@ -61,7 +62,11 @@ export class BootScene extends Phaser.Scene {
     this.cameras.main.setZoom(renderScale).centerOn(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
 
     const unwire = wireSceneFlow(gameBus, this.scene);
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, unwire);
+    const unwatch = watchSceneSettings(gameBus); // antes do `app:ready`, que a UI responde com `settings:changed`
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      unwire();
+      unwatch();
+    });
 
     void waitForFonts().then(() => {
       this.add

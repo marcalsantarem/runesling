@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { audio } from '../audio';
 import { gameBus } from '../core/events';
 import { loadGameData, type GameData } from '../data/types';
 import { getProfile, type PlayerProfile } from '../meta/profile';
@@ -9,6 +10,9 @@ import { talentBonuses } from '../match/RunState';
 import { BATTLE_SCENE, WORLD_HEIGHT, WORLD_WIDTH } from './BootScene';
 import type { FxTargets } from './fx/FxDirector';
 import { FxLayer } from './fx/FxLayer';
+import { SQUASH_KICK } from './fx/fxMath';
+import { MatchSfx } from './matchSfx';
+import { sceneSettings } from './sceneSettings';
 import { AimView } from './views/AimView';
 import { ArenaView } from './views/ArenaView';
 import { BumperView } from './views/BumperView';
@@ -24,6 +28,8 @@ const CHAPTER_ID = 'chapter_1';
 const FRAME_MS = 1000 / 60;
 /** Teto de frames lógicos por update (evita espiral após travadas/aba em segundo plano). */
 const MAX_FRAMES_PER_UPDATE = 4;
+/** Partículas espectrais no rastro do Orbe Fantasma: uma rajada a cada N frames de voo. */
+const SPECTRAL_TRAIL_FRAMES = 10;
 
 interface Drag {
   sx: number;
@@ -56,6 +62,10 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
   /** Turno já lido do buffer de combate (detecta o Recolher, que encerra o turno fora do laço). */
   private lastTurn = 0;
   private readonly rimCache = new Map<string, number>();
+  private sfx!: MatchSfx;
+  private reducedMotion = false;
+  private flightFrames = 0;
+  private offBus: (() => void)[] = [];
 
   constructor() {
     super(BATTLE_SCENE);
@@ -88,6 +98,15 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
     this.aimView = new AimView(this, this.aimCfg);
     this.orbView = new OrbView(this, this.gameData.rules.maxActiveOrbs, this.res);
     this.fxLayer = new FxLayer(this, new Rng(Date.now() ^ 0x2545f491), this.res);
+    this.sfx = new MatchSfx(audio, WORLD_WIDTH);
+    this.flightFrames = 0;
+    this.applyReducedMotion(sceneSettings.reducedMotion);
+    this.offBus = [
+      gameBus.on('settings:changed', (st) => this.applyReducedMotion(st.reducedMotion)),
+      gameBus.on('run:banner', () => this.sfx.waveStart()),
+    ];
+    // Diagnóstico só no dev (QA de áudio): log de chaves tocadas e a cena.
+    if (import.meta.env.DEV) (globalThis as { __runeslingSfx?: unknown }).__runeslingSfx = { sfx: this.sfx, scene: this };
 
     this.input.on(Phaser.Input.Events.POINTER_DOWN, this.onDown, this);
     this.input.on(Phaser.Input.Events.POINTER_MOVE, this.onMove, this);
@@ -122,6 +141,8 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
 
   private teardown(): void {
     this.alive = false;
+    for (const off of this.offBus) off();
+    this.offBus = [];
     this.run?.dispose();
     this.run = null;
     this.input.off(Phaser.Input.Events.POINTER_DOWN, this.onDown, this);
@@ -153,14 +174,28 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
     d.cy = p.worldY;
     const aim = aimAngle(d.sx, d.sy, d.cx, d.cy, this.aimCfg, this.aim);
     if (!aim) return; // puxão curto cancela
-    if (run.launch(aim.angle, aim.power)) this.orbView.reset();
+    if (run.launch(aim.angle, aim.power)) {
+      this.orbView.reset();
+      this.flightFrames = 0;
+    }
+  }
+
+  /** "Reduzir movimento" (T-049): fx, squash dos inimigos e dos orbes. */
+  private applyReducedMotion(on: boolean): void {
+    this.reducedMotion = on;
+    this.fxLayer.fx.setReducedMotion(on);
+    this.orbView.setReducedMotion(on);
+    for (const v of this.enemies.values()) v.setReducedMotion(on);
   }
 
   // ---------- Laço ----------
   override update(time: number, delta: number): void {
     const run = this.run;
     let frames = 0;
-    if (run && run.state.turn !== this.lastTurn) this.readCombat(); // Recolher (fora do laço)
+    if (run && run.state.turn !== this.lastTurn) {
+      this.sfx.beginFrame();
+      this.readCombat(); // Recolher (fora do laço)
+    }
     if (run && !run.paused) {
       this.acc += delta;
       while (this.acc >= FRAME_MS && frames < MAX_FRAMES_PER_UPDATE) {
@@ -169,6 +204,7 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
         // Fora do voo frame() não roda step(): os buffers são do último passo e não podem ser relidos.
         const flying = run.state.phase === 'flight';
         run.frame();
+        this.sfx.beginFrame();
         if (flying) {
           this.readPhysicsHits();
           this.readCombat();
@@ -206,32 +242,83 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
     }
   }
 
-  /** Acende bumpers/pilar/anel atingidos no último frame lógico. */
+  /** Último frame lógico: acende bumpers/pilar/anel, squash dos orbes, sons e partículas espectrais. */
   private readPhysicsHits(): void {
-    const engine = this.run?.match.engine;
-    if (!engine) return;
+    const run = this.run;
+    if (!run) return;
+    const engine = run.match.engine;
+    const fx = this.fxLayer.fx;
+    const combo = run.state.turnCombo;
     for (let i = 0; i < engine.eventsCount; i++) {
       const ev = engine.getEvent(i);
-      if (ev.type === 'bumperHit') this.bumpers[ev.index]?.flash();
-      else if (ev.type === 'pillarHit') this.pillars[ev.index]?.flash();
-      else if (ev.type === 'ringPass') {
-        const ring = this.rings[ev.index];
-        if (!ring) continue;
-        ring.flash();
-        const def = this.run!.match.arenaDef.rings[ev.index];
-        if (def) this.fxLayer.fx.onRingPass(def.x, def.y);
+      let ghost = false;
+      switch (ev.type) {
+        case 'bumperHit':
+          this.bumpers[ev.index]?.flash();
+          this.orbView.impact(ev.ballId, SQUASH_KICK.orb);
+          break;
+        case 'pillarHit':
+          this.pillars[ev.index]?.flash();
+          this.orbView.impact(ev.ballId, SQUASH_KICK.orb);
+          break;
+        case 'wallHit':
+        case 'floorHit':
+          this.orbView.impact(ev.ballId, SQUASH_KICK.orb);
+          break;
+        case 'ceilingHit':
+          this.orbView.impact(ev.ballId, SQUASH_KICK.orb);
+          if (ev.cloneId >= 0) fx.onSpectral(ev.x, ev.y); // clone do Eco do Teto
+          break;
+        case 'enemyHit':
+          ghost = this.isPierce(ev.ballId);
+          if (ghost && !ev.blocked) fx.onSpectral(ev.x, ev.y);
+          else this.orbView.impact(ev.ballId, SQUASH_KICK.orb);
+          break;
+        case 'ringPass': {
+          const ring = this.rings[ev.index];
+          if (ring) ring.flash();
+          const def = run.match.arenaDef.rings[ev.index];
+          if (def) fx.onRingPass(def.x, def.y);
+          break;
+        }
+      }
+      this.sfx.physics(ev, combo, ghost);
+    }
+    // Rastro espectral do Orbe Fantasma.
+    if (++this.flightFrames % SPECTRAL_TRAIL_FRAMES === 0) {
+      for (let i = 0; i < engine.activeCount; i++) {
+        const b = engine.getBall(i);
+        if (b.pierce) fx.onSpectral(b.x, b.y);
       }
     }
+  }
+
+  private isPierce(ballId: number): boolean {
+    const engine = this.run!.match.engine;
+    for (let i = 0; i < engine.activeCount; i++) {
+      const b = engine.getBall(i);
+      if (b.id === ballId) return b.pierce;
+    }
+    return false;
   }
 
   /** Eventos de saída do CombatResolver → efeitos (decisão 21). */
   private readCombat(): void {
     const run = this.run;
     if (!run) return;
+    const ended = run.state.turn !== this.lastTurn;
     this.lastTurn = run.state.turn;
     const combat = run.match.combat;
     const fx = this.fxLayer.fx;
-    for (let i = 0; i < combat.eventsCount; i++) fx.onCombat(combat.getEvent(i), this);
+    const combo = run.state.turnCombo;
+    for (let i = 0; i < combat.eventsCount; i++) {
+      const ev = combat.getEvent(i);
+      fx.onCombat(ev, this);
+      this.sfx.combat(ev, combo);
+    }
+    // Contador de combo (T-048, pontos do AG09): cobre o fim do voo e o Recolher.
+    fx.combo(run.state.turnCombo);
+    if (ended) fx.comboEnd();
   }
 
   /** Avança e desenha os efeitos; a tremida desloca a câmera em torno do centro do mundo. */
@@ -254,6 +341,10 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
     this.enemies.get(enemyId)?.hit(squash);
   }
 
+  impact(enemyId: number, strength: number): void {
+    this.enemies.get(enemyId)?.impact(strength);
+  }
+
   rimColor(typeId: string): number {
     let c = this.rimCache.get(typeId);
     if (c === undefined) {
@@ -273,7 +364,7 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
     for (const en of run.state.enemies) {
       let v = this.enemies.get(en.id);
       if (!v) {
-        v = new EnemyView(this, en, this.res);
+        v = new EnemyView(this, en, this.res, this.reducedMotion);
         this.enemies.set(en.id, v);
       } else {
         v.update(en, frames);

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { PhysicsEngine } from '../../core/PhysicsEngine';
 import type { Ball } from '../../match/physicsTypes';
+import { SquashSpring } from '../fx/fxMath';
 import { ensureCanvasTexture } from './draw';
 import { CSS } from './palette';
 
@@ -39,6 +40,9 @@ interface Slot {
   count: number;
   next: number;
   kind: OrbKind | null;
+  /** Id do orbe da física neste slot (-1 = vazio) e squash elástico do quique. */
+  id: number;
+  spring: SquashSpring;
 }
 
 /**
@@ -62,13 +66,32 @@ export class OrbView {
       const dots: Phaser.GameObjects.Image[] = [];
       for (let k = 0; k < TRAIL; k++) dots.push(scene.add.image(0, 0, dotKey).setVisible(false).setDepth(DEPTH));
       const head = scene.add.image(0, 0, this.keys.main).setVisible(false).setDepth(DEPTH);
-      this.slots.push({ head, dots, trail: new Float32Array(TRAIL * 2), count: 0, next: 0, kind: null });
+      this.slots.push({ head, dots, trail: new Float32Array(TRAIL * 2), count: 0, next: 0, kind: null, id: -1, spring: new SquashSpring() });
     }
   }
 
   /** Zera os rastros (novo lançamento). */
   reset(): void {
-    for (const s of this.slots) s.count = s.next = 0;
+    for (const s of this.slots) {
+      s.count = s.next = 0;
+      s.id = -1;
+      s.spring.reset();
+    }
+  }
+
+  /** Quique do orbe `ballId` (id da física): squash elástico. Ignora orbe sem slot. */
+  impact(ballId: number, strength: number): void {
+    for (let i = 0; i < this.active; i++) {
+      const s = this.slots[i]!;
+      if (s.id === ballId) {
+        s.spring.kick(strength);
+        return;
+      }
+    }
+  }
+
+  setReducedMotion(on: boolean): void {
+    for (const s of this.slots) s.spring.reduced = on;
   }
 
   /** `frames` > 0: grava um ponto de rastro por frame lógico. */
@@ -78,6 +101,12 @@ export class OrbView {
       const b = engine.getBall(i);
       const s = this.slots[i]!;
       const kind = kindOf(b);
+      if (s.id !== b.id) {
+        // O pool da física compacta ao remover orbes: o slot passou a outro orbe.
+        s.id = b.id;
+        s.spring.reset();
+      }
+      s.spring.step(frames);
       if (s.kind !== kind) {
         s.kind = kind;
         s.head.setTexture(this.keys[kind]);
@@ -102,7 +131,11 @@ export class OrbView {
         d.setPosition(s.trail[idx * 2]!, s.trail[idx * 2 + 1]!).setDisplaySize(rr * 2, rr * 2).setAlpha(k / div).setVisible(true);
       }
       const size = (b.r / (TEX_R - 0.8)) * (TEX_R * 2 + 2);
-      s.head.setPosition(b.x, b.y).setDisplaySize(size, size);
+      // Squash ao longo da velocidade (achata na direção do quique, alarga no través).
+      const sp = s.spring;
+      if (sp.active) s.head.setRotation(Math.atan2(b.vy, b.vx)).setDisplaySize(size * sp.scaleY, size * sp.scaleX);
+      else s.head.setDisplaySize(size, size);
+      s.head.setPosition(b.x, b.y);
       if (!s.head.visible) s.head.setVisible(true);
     }
     for (let i = n; i < this.active; i++) this.hide(this.slots[i]!);
@@ -113,5 +146,7 @@ export class OrbView {
     s.head.setVisible(false);
     for (const d of s.dots) d.setVisible(false);
     s.count = s.next = 0;
+    s.id = -1;
+    s.spring.reset();
   }
 }

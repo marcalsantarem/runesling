@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { FONT_UI_STACK } from '../../core/fonts';
 import type { EnemyDef } from '../../data/types';
 import type { EnemyState } from '../../match/RunState';
-import { hitFlashFrames, SQUASH_PEAK, squashScale } from '../fx/fxMath';
+import { hitFlashFrames, SquashSpring } from '../fx/fxMath';
 import { ensureCanvasTexture, glowTexture } from './draw';
 import { COLOR, CSS, DEFAULT_ENEMY_PALETTE, ENEMY_PALETTES, type EnemyPalette } from './palette';
 import { ATLAS_ENEMIES, hasTexture, medallionScale } from './sprites';
@@ -116,14 +116,15 @@ export class EnemyView {
   private hpDigits = 0;
   private cd = NaN;
   private burning = false;
-  /** Frames de hit-flash restantes e escala do squash (GDD §6.3). */
+  /** Frames de hit-flash restantes e squash elástico (GDD §6.3, decisão 41). */
   private flash = 0;
   private tinted = false;
-  private scale = 1;
+  private readonly spring = new SquashSpring();
   /** Marca de varredura usada pela cena para descartar views de inimigos mortos. */
   seen = 0;
 
-  constructor(scene: Phaser.Scene, en: EnemyState, res: number) {
+  constructor(scene: Phaser.Scene, en: EnemyState, res: number, reducedMotion = false) {
+    this.spring.reduced = reducedMotion;
     const def = en.def;
     const r = def.radius;
     this.id = en.id;
@@ -176,10 +177,18 @@ export class EnemyView {
     return this.def.radius;
   }
 
-  /** Acerto: hit-flash branco (50 ms) e, com `squash`, escala 1.18× voltando exponencialmente. */
-  hit(squash: boolean): void {
+  /** Acerto: hit-flash branco (50 ms). O squash vem de `impact` (o FxDirector chama os dois). */
+  hit(_squash: boolean): void {
     this.flash = FLASH_FRAMES;
-    if (squash) this.scale = SQUASH_PEAK;
+  }
+
+  /** Squash elástico com força (SQUASH_KICK). */
+  impact(strength: number): void {
+    this.spring.kick(strength);
+  }
+
+  setReducedMotion(on: boolean): void {
+    this.spring.reduced = on;
   }
 
   update(en: EnemyState, frames: number): void {
@@ -226,9 +235,10 @@ export class EnemyView {
       else this.body.clearTint();
     }
     if (white) this.flash = Math.max(0, this.flash - frames);
-    if (this.scale !== 1 || this.root.scale !== 1) {
-      this.scale = squashScale(this.scale, frames);
-      this.root.setScale(this.scale);
+    const sp = this.spring;
+    if (sp.active || this.root.scaleX !== 1 || this.root.scaleY !== 1) {
+      sp.step(frames);
+      this.root.setScale(sp.scaleX, sp.scaleY);
     }
   }
 
