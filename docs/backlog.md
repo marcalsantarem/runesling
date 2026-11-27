@@ -115,3 +115,17 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-070 | Versão 0.8.0 (tam. P) | M7 | AG07 | a fazer |
 | T-071 | Validação do M7 (coerência da bíblia com GDD e dados; suíte uma vez) e tag v0.8.0 (tam. P) | M7 | AG03 + AG00 | a fazer |
 
+## M8 (v0.9.0): Retenção — equipamentos e fusão (branch `M8`)
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-075 | Catálogo e regras: `items.json` (6 espaços × 3 itens, 5 raridades, números por raridade, runa do Épico, efeito do Lendário), chances de raridade, preço do baú, cor do Incomum; contrato de dados para AG01/AG02 (decisões 62–69) (tam. M) | M8 | AG04 | a fazer |
+| T-076 | Nomes dos 18 itens (e do mestre de cada Lendário) coerentes com `docs/narrativa.md` (decisões 64 e 66) (tam. P) | M8 | AG06 | a fazer |
+| T-077 | Lógica de meta: inventário empilhado no save (com migração), equipar/desequipar, fusão 3→1, sorteio de raridade, baú, bônus dos itens na largada da run (tam. M) | M8 | AG04 | a fazer |
+| T-078 | Partida: drop ao vencer onda 7 e chefe, runa inicial do Épico, efeitos dos Lendários (tam. M) | M8 | AG01 | a fazer |
+| T-079 | UI: tela Equipamentos (espaços, inventário ×N, Fundir), baú no menu, itens ganhos no Fim de run, ícones provisórios (tam. M) | M8 | AG02 | a fazer |
+| T-080 | Prompts dos 18 ícones de item e das molduras de raridade, para o dono gerar no Gemini (tam. P) | M8 | AG08 | a fazer |
+| T-081 | Processar os ícones enviados pelo dono e trocar os provisórios (tam. P) | M8 | AG08 | a fazer (espera imagens) |
+| T-082 | Versão 0.9.0 (tam. P) | M8 | AG07 | a fazer |
+| T-083 | Validação do M8 e tag v0.9.0 (tam. P) | M8 | AG03 + AG00 | a fazer |
+
