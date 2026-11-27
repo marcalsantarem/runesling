@@ -1,4 +1,4 @@
-// Gera docs/arte-prompts.md a partir de scripts/assets-manifest.json (AG08, BRF-023; seção 3 UI: BRF-033, estilo validado: BRF-044).
+// Gera docs/arte-prompts.md a partir de scripts/assets-manifest.json (AG08, BRF-023; seção 3 UI: BRF-033, estilo validado: BRF-044; seção 4 itens: BRF-071).
 // Uso: node scripts/prompts-md.mjs
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -7,10 +7,12 @@ import { dirname, join } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const m = JSON.parse(readFileSync(join(root, 'scripts/assets-manifest.json'), 'utf8'));
 const isUi = (i) => m.presets[i.preset]?.kind === 'ui';
-const anchors = m.items.filter((i) => i.variations);
+const isItem = (i) => m.presets[i.preset]?.kind === 'icon';
+const anchors = m.items.filter((i) => i.variations && !isItem(i));
+const gear = m.items.filter((i) => isItem(i) && !i.deprecated);
 const ui = m.items.filter((i) => isUi(i) && !i.deprecated);
 const dropped = m.items.filter((i) => isUi(i) && i.deprecated);
-const batch = m.items.filter((i) => !i.variations && !isUi(i));
+const batch = m.items.filter((i) => !i.variations && !isUi(i) && !isItem(i));
 const bgOf = (i) => i.bgColor ?? m.presets[i.preset].bgColor ?? 'nenhum';
 const has = (f) => f && existsSync(join(root, f));
 const status = (i) =>
@@ -19,7 +21,7 @@ const L = [];
 L.push('# RuneSling — prompts de arte (Gemini)', '');
 L.push('> Gerado por `node scripts/prompts-md.mjs` a partir de `scripts/assets-manifest.json`. Não edite à mão.', '');
 L.push('Como usar: cole o bloco de código inteiro no Gemini, gere, baixe em PNG e devolva com o nome indicado. Guia de estilo: `docs/arte.md`.', '');
-L.push(`Total: ${anchors.length} âncoras (${anchors.reduce((n, i) => n + i.variations.length, 0)} variações) + ${batch.length} itens do lote + ${ui.length} peças de UI = ${m.items.length - dropped.length} chaves (mais ${dropped.length} marcada(s) "não usar").`, '');
+L.push(`Total: ${anchors.length} âncoras (${anchors.reduce((n, i) => n + i.variations.length, 0)} variações) + ${batch.length} itens do lote + ${ui.length} peças de UI + ${gear.length} ícones de itens = ${m.items.length - dropped.length} chaves (mais ${dropped.length} marcada(s) "não usar").`, '');
 L.push('## 1. Âncoras (gerar primeiro, sem imagem anexa)', '');
 L.push('Gere as 4 variações de cada âncora, escolha uma e salve a escolhida no caminho de âncora indicado. A escolhida também serve como o próprio asset (devolva com o nome do arquivo).', '');
 for (const i of anchors) {
@@ -59,6 +61,28 @@ if (dropped.length) {
   L.push('### 3.6 Não usar', '', 'Peças que o estilo validado tornou desnecessárias: não gere. Ficam no manifesto só como registro, fora do pipeline.', '');
   for (const i of dropped) L.push(`- \`${i.key}\`: ${i.usage ?? 'não usar'}`);
   L.push('');
+}
+if (gear.length) {
+  L.push('## 4. Ícones de itens (M8, decisões 64, 68 e 70)', '');
+  L.push(`Um ícone por item (\`item_<id>\`), o objeto sozinho na cor e no material da escola. O mesmo ícone serve para as 5 raridades: a raridade é a borda em CSS (decisão 70), então o desenho não tem moldura nem cor de raridade. Ordem: gere as 4 variações da âncora de item (4.1, com a âncora de ícone anexa), salve a escolhida em \`${m.anchors.item}\` e anexe-a nos outros 17 (4.2), na ordem da lista. Depois: \`npm run assets:ingest -- <pasta>\` e \`npm run assets:all\` gravam \`public/assets/icons/item_<id>.webp\` (128×128).`, '');
+  const line = (i) => {
+    const p = m.presets[i.preset];
+    const a = i.anchor ?? p.anchor;
+    L.push(`#### \`${i.key}\``, '', `- Uso: ${i.usage ?? '—'}`, `- Arquivo a devolver: \`${i.file}\``);
+    if (i.anchorFor) L.push(`- Âncora escolhida vira: \`${i.anchorFor}\``);
+    L.push(`- Anexar no Gemini: ${a ? '`' + a + '`' : 'nenhuma imagem'}`, `- Fundo: ${bgOf(i)} · tamanho final ${p.size}×${p.size} px${i.removeEnclosedBg ? ' · miolo vazado' : ''}`, `- Situação: ${status(i)}`, '');
+  };
+  L.push('### 4.1 Âncora de item (gerar primeiro)', '');
+  for (const i of gear.filter((i) => i.variations)) {
+    line(i);
+    i.variations.forEach((v, n) => L.push(`**Variação ${String.fromCharCode(65 + n)}**`, '', '```text', v, '```', ''));
+  }
+  L.push('### 4.2 Lote dos itens', '');
+  for (const i of gear.filter((i) => !i.variations)) {
+    line(i);
+    L.push('```text', i.geminiPrompt, '```', '');
+  }
+  L.push('### 4.3 Moldura de raridade', '', 'Não precisa de imagem: a célula do item já tem aro em CSS (`box-shadow` com `--rs-rarity`, cores da decisão 70) sobre o fundo escuro. Uma peça de ferro tingida por CSS exigiria máscara ou filtro e brigaria com esse aro; nenhum prompt aqui.', '');
 }
 writeFileSync(join(root, 'docs/arte-prompts.md'), L.join('\n'));
 console.log(`docs/arte-prompts.md: ${m.items.length - dropped.length} chaves (+${dropped.length} não usar)`);

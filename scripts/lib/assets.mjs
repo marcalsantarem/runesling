@@ -493,6 +493,10 @@ export async function buildAll(paths, log = console) {
       if (!atlases.has(it.atlas)) atlases.set(it.atlas, []);
       atlases.get(it.atlas).push({ key: it.key, buffer: buf });
       if (it.standaloneIcon) write(`icons/${it.key}.webp`, await sharp(buf).webp({ quality: WEBP_QUALITY, alphaQuality: 100 }).toBuffer());
+    } else if (it.kind === 'icon') {
+      // Ícone avulso de item (T-080): só public/assets/icons/<chave>.webp, fora dos atlases (usado só no HTML).
+      const buf = await normalizeSprite(it.cut, w);
+      write(`icons/${it.key}.webp`, await sharp(buf).webp({ quality: WEBP_QUALITY, alphaQuality: 100 }).toBuffer());
     } else if (it.kind === 'app') {
       const base = it.removeBg
         ? await normalizeSprite(it.cut, w)

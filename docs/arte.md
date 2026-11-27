@@ -32,3 +32,9 @@ Fonte: GDD §6.1 e §8; decisões 29–32. Prompts prontos: [`arte-prompts.md`](
 1. Gerar as 4 variações de `enemy_shield` e `icon_chain_lightning` (seção 1 do `arte-prompts.md`), sem anexo.
 2. O dono escolhe; salvar em `art-source/anchors/medallion_anchor.png` e `icon_anchor.png`.
 3. No lote, anexar a âncora indicada em cada item. O Gemini não garante o tamanho: o pipeline faz trim, centraliza e redimensiona.
+
+## Ícones de itens (M8, T-080)
+- 18 chaves `item_<id>` (preset `item_icon`, seção 4 do `arte-prompts.md`): o objeto sozinho (cajado, orbe, anel, amuleto, capa, botas) no material e na cor da escola, 128 px, sem moldura e sem cor de raridade (a raridade é o aro em CSS, decisão 70).
+- Âncora própria: `item_staff_lightning` (4 variações, anexando `icon_anchor.png`); a escolhida vira `art-source/anchors/item_anchor.png` e é anexada nos outros 17.
+- Fundo: Elétrica em `magenta`, Ígnea e Espectral em `white`; anel e amuleto em `white` usam `removeEnclosedBg` (miolo vazado).
+- Pipeline: `art-source/raw/items/` → `public/assets/icons/item_<id>.webp`, fora dos atlases (só HTML). Moldura de raridade não tem imagem.

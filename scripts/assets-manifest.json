@@ -4,7 +4,8 @@
   "anchors": {
     "medallion": "art-source/anchors/medallion_anchor.png",
     "icon": "art-source/anchors/icon_anchor.png",
-    "ui": "art-source/anchors/ui_anchor.png"
+    "ui": "art-source/anchors/ui_anchor.png",
+    "item": "art-source/anchors/item_anchor.png"
   },
   "presets": {
     "enemy_medallion": {
@@ -107,6 +108,17 @@
       "suffix": "dark fantasy 2D game background art for a portrait mobile game, stylized hand-painted illustration, matte, soft even top lighting, low contrast, fills the whole canvas edge to edge, no border, no frame, no outer glow, no bright spot, no text, no letters, no numbers, no UI, no characters",
       "outputDir": "art-source/raw/ui",
       "note": "Fundo de tela inteira (sem recorte). Anexar floor_crypt como referencia de pedra. Processamento: T-039."
+    },
+    "item_icon": {
+      "anchor": "art-source/anchors/item_anchor.png",
+      "atlas": null,
+      "kind": "icon",
+      "size": 128,
+      "circularMask": false,
+      "removeBg": true,
+      "suffix": "RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers",
+      "outputDir": "art-source/raw/items",
+      "bgColor": "white"
     }
   },
   "items": [
@@ -1020,6 +1032,198 @@
       "group": "deprecated",
       "deprecated": true,
       "usage": "Não usar: a UI validada não tem espada (fora do pipeline)."
+    },
+    {
+      "key": "item_staff_lightning",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Cajado Tempestuoso (staff, lightning); mesmo ícone em todas as raridades.",
+      "prompt": "a long wizard staff lying diagonally from the lower left to the upper right corner, dark forged iron shaft wrapped in worn leather, the head is three iron prongs gripping a cyan storm crystal crackling with tiny lightning sparks (#00CEC9 to #0984E3)",
+      "bgColor": "magenta",
+      "file": "art-source/raw/items/item_staff_lightning.png",
+      "anchor": "art-source/anchors/icon_anchor.png",
+      "anchorFor": "art-source/anchors/item_anchor.png",
+      "variations": [
+        "Generate one square 1:1 image. a long wizard staff lying diagonally from the lower left to the upper right corner, dark forged iron shaft wrapped in worn leather, the head is three iron prongs gripping a cyan storm crystal crackling with tiny lightning sparks (#00CEC9 to #0984E3). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.",
+        "Generate one square 1:1 image. a long wizard staff lying diagonally from the lower left to the upper right corner, dark forged iron shaft wrapped in worn leather, the head is three iron prongs gripping a cyan storm crystal crackling with tiny lightning sparks (#00CEC9 to #0984E3). Variation: thicker and shorter staff, bigger crystal head, fewer small details. RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.",
+        "Generate one square 1:1 image. a long wizard staff lying diagonally from the lower left to the upper right corner, dark forged iron shaft wrapped in worn leather, the head is three iron prongs gripping a cyan storm crystal crackling with tiny lightning sparks (#00CEC9 to #0984E3). Variation: ornate iron prongs and two thin runic rings on the shaft, more detailed head. RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.",
+        "Generate one square 1:1 image. a long wizard staff lying diagonally from the lower left to the upper right corner, dark forged iron shaft wrapped in worn leather, the head is three iron prongs gripping a cyan storm crystal crackling with tiny lightning sparks (#00CEC9 to #0984E3). Variation: flat bold shapes, minimal detail, maximum readability at very small size. RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject."
+      ],
+      "geminiPrompt": "Generate one square 1:1 image. a long wizard staff lying diagonally from the lower left to the upper right corner, dark forged iron shaft wrapped in worn leather, the head is three iron prongs gripping a cyan storm crystal crackling with tiny lightning sparks (#00CEC9 to #0984E3). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject."
+    },
+    {
+      "key": "item_staff_fire",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Cajado de Brasa (staff, fire); mesmo ícone em todas as raridades.",
+      "prompt": "a long wizard staff lying diagonally from the lower left to the upper right corner, charred black wood shaft with iron bands, the head is a forge-claw holding a glowing orange ember stone split by molten magma cracks (#FF9F43 to #992D0C)",
+      "bgColor": "white",
+      "file": "art-source/raw/items/item_staff_fire.png",
+      "geminiPrompt": "Generate one square 1:1 image. a long wizard staff lying diagonally from the lower left to the upper right corner, charred black wood shaft with iron bands, the head is a forge-claw holding a glowing orange ember stone split by molten magma cracks (#FF9F43 to #992D0C). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_staff_spectral",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Cajado Espectral (staff, spectral); mesmo ícone em todas as raridades.",
+      "prompt": "a long wizard staff lying diagonally from the lower left to the upper right corner, pale old bone and dark iron shaft, the head is a crescent hook holding a translucent violet ghost flame (#9C6BFF to #3E1F73)",
+      "bgColor": "white",
+      "file": "art-source/raw/items/item_staff_spectral.png",
+      "geminiPrompt": "Generate one square 1:1 image. a long wizard staff lying diagonally from the lower left to the upper right corner, pale old bone and dark iron shaft, the head is a crescent hook holding a translucent violet ghost flame (#9C6BFF to #3E1F73). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_orb_lightning",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Orbe de Faísca (orb, lightning); mesmo ícone em todas as raridades.",
+      "prompt": "a round orb resting on a small three-claw dark iron stand, a clear glass sphere with small cyan sparks and one branching lightning bolt inside (#00CEC9 to #0984E3)",
+      "bgColor": "magenta",
+      "file": "art-source/raw/items/item_orb_lightning.png",
+      "geminiPrompt": "Generate one square 1:1 image. a round orb resting on a small three-claw dark iron stand, a clear glass sphere with small cyan sparks and one branching lightning bolt inside (#00CEC9 to #0984E3). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_orb_fire",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Orbe de Magma (orb, fire); mesmo ícone em todas as raridades.",
+      "prompt": "a round orb resting on a small three-claw dark iron stand, a heavy sphere of black obsidian rock with glowing orange magma cracks (#FF9F43 to #992D0C)",
+      "bgColor": "white",
+      "file": "art-source/raw/items/item_orb_fire.png",
+      "geminiPrompt": "Generate one square 1:1 image. a round orb resting on a small three-claw dark iron stand, a heavy sphere of black obsidian rock with glowing orange magma cracks (#FF9F43 to #992D0C). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_orb_spectral",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Orbe do Além (orb, spectral); mesmo ícone em todas as raridades.",
+      "prompt": "a round orb resting on a small three-claw dark iron stand, a translucent violet crystal sphere with a soft wisp of spirit mist swirling inside, small bone details on the stand (#9C6BFF to #3E1F73)",
+      "bgColor": "white",
+      "file": "art-source/raw/items/item_orb_spectral.png",
+      "geminiPrompt": "Generate one square 1:1 image. a round orb resting on a small three-claw dark iron stand, a translucent violet crystal sphere with a soft wisp of spirit mist swirling inside, small bone details on the stand (#9C6BFF to #3E1F73). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_ring_lightning",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Anel Estático (ring, lightning); mesmo ícone em todas as raridades.",
+      "prompt": "one thick ring seen at a slight three-quarter angle, the open hole in the middle clearly showing the plain background, dark iron band engraved with a zigzag rune, set with a faceted cyan crystal holding a tiny spark (#00CEC9 to #0984E3)",
+      "bgColor": "magenta",
+      "file": "art-source/raw/items/item_ring_lightning.png",
+      "geminiPrompt": "Generate one square 1:1 image. one thick ring seen at a slight three-quarter angle, the open hole in the middle clearly showing the plain background, dark iron band engraved with a zigzag rune, set with a faceted cyan crystal holding a tiny spark (#00CEC9 to #0984E3). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_ring_fire",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Anel de Cinzas (ring, fire); mesmo ícone em todas as raridades.",
+      "prompt": "one thick ring seen at a slight three-quarter angle, the open hole in the middle clearly showing the plain background, blackened iron band with ash-grey cracks, set with a glowing orange ember stone (#FF9F43 to #992D0C)",
+      "bgColor": "white",
+      "removeEnclosedBg": true,
+      "file": "art-source/raw/items/item_ring_fire.png",
+      "geminiPrompt": "Generate one square 1:1 image. one thick ring seen at a slight three-quarter angle, the open hole in the middle clearly showing the plain background, blackened iron band with ash-grey cracks, set with a glowing orange ember stone (#FF9F43 to #992D0C). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_ring_spectral",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Anel Errante (ring, spectral); mesmo ícone em todas as raridades.",
+      "prompt": "one thick ring seen at a slight three-quarter angle, the open hole in the middle clearly showing the plain background, thin twisted dark silver band looping like a wandering path, set with a smooth violet moonstone (#9C6BFF to #3E1F73)",
+      "bgColor": "white",
+      "removeEnclosedBg": true,
+      "file": "art-source/raw/items/item_ring_spectral.png",
+      "geminiPrompt": "Generate one square 1:1 image. one thick ring seen at a slight three-quarter angle, the open hole in the middle clearly showing the plain background, thin twisted dark silver band looping like a wandering path, set with a smooth violet moonstone (#9C6BFF to #3E1F73). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_amulet_lightning",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Amuleto Para-raios (amulet, lightning); mesmo ícone em todas as raridades.",
+      "prompt": "one pendant amulet hanging from a short loop of dark iron chain, the inside of the chain loop clearly showing the plain background, the pendant is a small iron lightning rod with a cyan crystal at its tip, charged with tiny sparks (#00CEC9 to #0984E3)",
+      "bgColor": "magenta",
+      "file": "art-source/raw/items/item_amulet_lightning.png",
+      "geminiPrompt": "Generate one square 1:1 image. one pendant amulet hanging from a short loop of dark iron chain, the inside of the chain loop clearly showing the plain background, the pendant is a small iron lightning rod with a cyan crystal at its tip, charged with tiny sparks (#00CEC9 to #0984E3). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_amulet_fire",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Amuleto da Forja (amulet, fire); mesmo ícone em todas as raridades.",
+      "prompt": "one pendant amulet hanging from a short loop of dark iron chain, the inside of the chain loop clearly showing the plain background, the pendant is a round iron medallion embossed with a tiny anvil, a glowing orange magma core in its center (#FF9F43 to #992D0C)",
+      "bgColor": "white",
+      "removeEnclosedBg": true,
+      "file": "art-source/raw/items/item_amulet_fire.png",
+      "geminiPrompt": "Generate one square 1:1 image. one pendant amulet hanging from a short loop of dark iron chain, the inside of the chain loop clearly showing the plain background, the pendant is a round iron medallion embossed with a tiny anvil, a glowing orange magma core in its center (#FF9F43 to #992D0C). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_amulet_spectral",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Amuleto do Véu (amulet, spectral); mesmo ícone em todas as raridades.",
+      "prompt": "one pendant amulet hanging from a short loop of dark iron chain, the inside of the chain loop clearly showing the plain background, the pendant is a teardrop violet crystal partly wrapped by a thin translucent veil of cloth (#9C6BFF to #3E1F73)",
+      "bgColor": "white",
+      "removeEnclosedBg": true,
+      "file": "art-source/raw/items/item_amulet_spectral.png",
+      "geminiPrompt": "Generate one square 1:1 image. one pendant amulet hanging from a short loop of dark iron chain, the inside of the chain loop clearly showing the plain background, the pendant is a teardrop violet crystal partly wrapped by a thin translucent veil of cloth (#9C6BFF to #3E1F73). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_cloak_lightning",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Capa de Tormenta (cloak, lightning); mesmo ícone em todas as raridades.",
+      "prompt": "one wizard cloak shown from the front, hanging open with a hood and a high collar, dark storm-grey cloth with cyan lightning patterns along the hem and a dark iron clasp (#00CEC9 to #0984E3)",
+      "bgColor": "magenta",
+      "file": "art-source/raw/items/item_cloak_lightning.png",
+      "geminiPrompt": "Generate one square 1:1 image. one wizard cloak shown from the front, hanging open with a hood and a high collar, dark storm-grey cloth with cyan lightning patterns along the hem and a dark iron clasp (#00CEC9 to #0984E3). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_cloak_fire",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Capa Chamuscada (cloak, fire); mesmo ícone em todas as raridades.",
+      "prompt": "one wizard cloak shown from the front, hanging open with a hood and a high collar, dark charcoal cloth with scorched, burnt and torn edges, glowing orange embers along the hem, a dark iron clasp (#FF9F43 to #992D0C)",
+      "bgColor": "white",
+      "file": "art-source/raw/items/item_cloak_fire.png",
+      "geminiPrompt": "Generate one square 1:1 image. one wizard cloak shown from the front, hanging open with a hood and a high collar, dark charcoal cloth with scorched, burnt and torn edges, glowing orange embers along the hem, a dark iron clasp (#FF9F43 to #992D0C). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_cloak_spectral",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Capa da Névoa (cloak, spectral); mesmo ícone em todas as raridades.",
+      "prompt": "one wizard cloak shown from the front, hanging open with a hood and a high collar, deep violet cloth that fades into soft translucent mist at the hem, a dark silver clasp (#9C6BFF to #3E1F73)",
+      "bgColor": "white",
+      "file": "art-source/raw/items/item_cloak_spectral.png",
+      "geminiPrompt": "Generate one square 1:1 image. one wizard cloak shown from the front, hanging open with a hood and a high collar, deep violet cloth that fades into soft translucent mist at the hem, a dark silver clasp (#9C6BFF to #3E1F73). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_boots_lightning",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Botas do Relâmpago (boots, lightning); mesmo ícone em todas as raridades.",
+      "prompt": "one pair of boots seen from the side, the right boot slightly in front of the left, dark leather and iron boots with small iron wings at the heels and cyan lightning runes on the shins (#00CEC9 to #0984E3)",
+      "bgColor": "magenta",
+      "file": "art-source/raw/items/item_boots_lightning.png",
+      "geminiPrompt": "Generate one square 1:1 image. one pair of boots seen from the side, the right boot slightly in front of the left, dark leather and iron boots with small iron wings at the heels and cyan lightning runes on the shins (#00CEC9 to #0984E3). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_boots_fire",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Botas de Lava (boots, fire); mesmo ícone em todas as raridades.",
+      "prompt": "one pair of boots seen from the side, the right boot slightly in front of the left, heavy dark iron sabatons whose soles and toe plates glow with orange molten lava cracks (#FF9F43 to #992D0C)",
+      "bgColor": "white",
+      "file": "art-source/raw/items/item_boots_fire.png",
+      "geminiPrompt": "Generate one square 1:1 image. one pair of boots seen from the side, the right boot slightly in front of the left, heavy dark iron sabatons whose soles and toe plates glow with orange molten lava cracks (#FF9F43 to #992D0C). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
+    },
+    {
+      "key": "item_boots_spectral",
+      "preset": "item_icon",
+      "group": "items",
+      "usage": "Botas Silentes (boots, spectral); mesmo ícone em todas as raridades.",
+      "prompt": "one pair of boots seen from the side, the right boot slightly in front of the left, soft dark leather boots wrapped in violet cloth bands, a faint violet mist at the soles (#9C6BFF to #3E1F73)",
+      "bgColor": "white",
+      "file": "art-source/raw/items/item_boots_spectral.png",
+      "geminiPrompt": "Generate one square 1:1 image. one pair of boots seen from the side, the right boot slightly in front of the left, soft dark leather boots wrapped in violet cloth bands, a faint violet mist at the soles (#9C6BFF to #3E1F73). RPG equipment item icon, stylized hand-painted dark fantasy 2D game icon, one single object shown whole, high contrast, crisp readable silhouette at 40 pixels, forged dark iron details, the glowing accent only in the colors given, no frame, no border, no rarity color, no background plate, no outer glow, no light bleeding outside the object, no cast shadow, centered, filling about 85 percent of the canvas, no text, no letters, no numbers. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference: match its rendering, brush texture, metal construction, lighting direction, contrast, level of detail and how much of the canvas the object fills exactly, but draw the new object described above. Do not copy its subject."
     }
   ]
 }

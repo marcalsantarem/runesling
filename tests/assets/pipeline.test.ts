@@ -188,6 +188,7 @@ describe('esteira ponta a ponta', { timeout: 60_000 }, () => {
         floor_tile: { atlas: null, size: 512, circularMask: false, removeBg: false, bgColor: null, outputDir: 'art-source/raw/tiles' },
         wall_trim: { atlas: null, size: 512, circularMask: false, removeBg: true, outputDir: 'art-source/raw/tiles', bgColor: 'white' },
         app_icon: { atlas: null, size: 1024, circularMask: false, removeBg: false, bgColor: '#0D1020', outputDir: 'art-source/raw/app' },
+        item_icon: { kind: 'icon', atlas: null, size: 128, circularMask: false, removeBg: true, outputDir: 'art-source/raw/items', bgColor: 'white' },
       },
       items: [
         { key: 'enemy_goblin', preset: 'enemy_medallion', bgColor: 'white', file: 'art-source/raw/enemies/enemy_goblin.png' },
@@ -198,6 +199,7 @@ describe('esteira ponta a ponta', { timeout: 60_000 }, () => {
         { key: 'floor_crypt', preset: 'floor_tile', file: 'art-source/raw/tiles/floor_crypt.png' },
         { key: 'wall_trim_crypt', preset: 'wall_trim', file: 'art-source/raw/tiles/wall_trim_crypt.png' },
         { key: 'app_icon', preset: 'app_icon', file: 'art-source/raw/app/app_icon.png' },
+        { key: 'item_ring_fire', preset: 'item_icon', removeEnclosedBg: true, file: 'art-source/raw/items/item_ring_fire.png' },
       ],
     };
     mkdirSync(join(root, 'scripts'), { recursive: true });
@@ -213,6 +215,7 @@ describe('esteira ponta a ponta', { timeout: 60_000 }, () => {
     await sharp(await synth({ bg: '#ffffff', w: 600, h: 200, shape: '<rect x="20" y="60" width="560" height="80" fill="#3a3550"/>' })).png().toFile(join(inbox, 'wall_trim_crypt.png'));
     await sharp(await disk('#0D1020', '#d4a017')).png().toFile(join(inbox, 'app_icon.png'));
     await sharp(await disk('#ffffff', '#000')).png().toFile(join(inbox, 'enemy_unknown.png'));
+    await sharp(await disk('#ffffff', '#5a2a10')).png().toFile(join(inbox, 'item_ring_fire.png'));
     paths = resolvePaths({ root });
   });
 
@@ -220,7 +223,8 @@ describe('esteira ponta a ponta', { timeout: 60_000 }, () => {
 
   it('ingestão normaliza em PNG, avisa desconhecidas e faltantes', async () => {
     const r = await ingest([join(root, 'inbox')], paths, quiet);
-    expect(r.ingested).toHaveLength(7);
+    expect(r.ingested).toHaveLength(8);
+    expect(existsSync(join(root, 'art-source/raw/items/item_ring_fire.png'))).toBe(true);
     expect(r.unknown.map((f) => f.split('/').pop())).toEqual(['enemy_unknown.png']);
     expect(r.missing).toEqual(['icon_ignite']);
     const meta = await sharp(join(root, 'art-source/raw/enemies/enemy_goblin.png')).metadata();
@@ -230,11 +234,11 @@ describe('esteira ponta a ponta', { timeout: 60_000 }, () => {
 
   it('recorte incremental por hash', async () => {
     const first = await cutAll(paths, {}, quiet);
-    expect(first.cut).toHaveLength(5);
+    expect(first.cut).toHaveLength(6);
     expect(first.copied.sort()).toEqual(['app_icon', 'floor_crypt']);
     expect(first.missing).toEqual(['icon_ignite']);
     const second = await cutAll(paths, {}, quiet);
-    expect(second.skipped).toHaveLength(7);
+    expect(second.skipped).toHaveLength(8);
     await sharp(await synth({ bg: '#ffffff', shape: '<circle cx="200" cy="200" r="120" fill="#123"/>' })).png().toFile(join(root, 'art-source/raw/enemies/enemy_goblin.png'));
     const third = await cutAll(paths, {}, quiet);
     expect(third.cut).toEqual(['enemy_goblin']);
@@ -256,6 +260,10 @@ describe('esteira ponta a ponta', { timeout: 60_000 }, () => {
     expect(Object.keys(icons.frames)).toEqual(['icon_chain_lightning']);
     const icon = await sharp(out('icons/icon_chain_lightning.webp')).metadata();
     expect([icon.format, icon.width, icon.height]).toEqual(['webp', 128, 128]);
+    // Ícone de item (T-080): só o arquivo avulso em icons/, fora dos atlases.
+    const item = await sharp(out('icons/item_ring_fire.webp')).metadata();
+    expect([item.format, item.width, item.height, item.hasAlpha]).toEqual(['webp', 128, 128, true]);
+    expect(Object.keys(icons.frames)).not.toContain('item_ring_fire');
     const floor = await sharp(out('tiles/floor_crypt.webp')).metadata();
     expect([floor.width, floor.height]).toEqual([512, 512]);
     const wall = await sharp(out('tiles/wall_trim_crypt.webp')).metadata();
@@ -445,5 +453,36 @@ describe('peças de UI (T-039)', { timeout: 60_000 }, () => {
     expect(px(2, 2)[3]).toBe(0); // fundo
     const btn = await rgba(await sharp(out('ui/ui_btn_primary.webp')).png().toBuffer());
     expect(btn.px(192, 48)[3]).toBe(255);
+  });
+});
+
+describe('ícones de itens no manifesto (T-080)', () => {
+  const root = fileURLToPath(new URL('../..', import.meta.url));
+  const raw = JSON.parse(readFileSync(join(root, 'scripts/assets-manifest.json'), 'utf8')) as {
+    anchors: Record<string, string>;
+    items: { key: string; preset: string; anchorFor?: string; variations?: string[]; geminiPrompt: string }[];
+  };
+  const data = JSON.parse(readFileSync(join(root, 'src/data/items.json'), 'utf8')) as { items: Record<string, { iconKey: string }> };
+
+  it('uma chave item_<id> por item do catálogo, gravada em public/assets/icons sem atlas', () => {
+    const { items } = loadManifest(resolvePaths({ root }));
+    const gear = items.filter((i) => i.preset === 'item_icon');
+    expect(gear.map((i) => i.key).sort()).toEqual(Object.values(data.items).map((i) => i.iconKey).sort());
+    for (const i of gear) {
+      expect([i.kind, i.atlas, i.size, i.category]).toEqual(['icon', null, 128, 'items']);
+      expect(i.raw.endsWith(`art-source/raw/items/${i.key}.png`)).toBe(true);
+    }
+  });
+
+  it('âncora de item primeiro; prompts sem moldura, sem cor de raridade e sem brilho externo pedido', () => {
+    const gear = raw.items.filter((i) => i.preset === 'item_icon');
+    expect(gear[0]!.key).toBe('item_staff_lightning');
+    expect(gear[0]!.anchorFor).toBe(raw.anchors.item);
+    expect(gear[0]!.variations).toHaveLength(4);
+    for (const i of gear) {
+      expect(i.geminiPrompt).toContain('no frame');
+      expect(i.geminiPrompt).toContain('no rarity color');
+      expect(i.geminiPrompt).not.toMatch(/with (an )?outer glow/i);
+    }
   });
 });
