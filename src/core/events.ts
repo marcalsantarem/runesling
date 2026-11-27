@@ -35,6 +35,8 @@ export type GameEvents = {
   'run:banner': { text: string };
   'draft:open': { choices: PerkId[] };
   'run:ended': { won: boolean; wave: number; goldEarned: number };
+  // UI → todos (T-049): ajustes efetivos, emitidos no início e a cada mudança. `reducedMotion` já é o valor efetivo.
+  'settings:changed': { muted: boolean; sfxVolume: number; reducedMotion: boolean };
   // UI → Jogo
   'ui:startRun': Empty;
   'ui:toggleSpeed': Empty;

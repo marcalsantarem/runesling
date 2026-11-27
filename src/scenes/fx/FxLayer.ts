@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
-import { FONT_UI_STACK } from '../../core/fonts';
+import { FONT_TITLE_STACK, FONT_UI_STACK } from '../../core/fonts';
 import type { RandomSource } from '../../match/rng';
 import { ensureCanvasTexture } from '../views/draw';
+import { t as str } from '../../ui/strings';
 import { FxDirector } from './FxDirector';
 
 /** Ondas sob os inimigos (5), feixes sobre eles, partículas e números acima dos orbes (10). */
@@ -9,6 +10,12 @@ const DEPTH_WAVES = 4;
 const DEPTH_BEAMS = 6;
 const DEPTH_PARTS = 11;
 const DEPTH_FLOATS = 12;
+/** Contador de combo acima de tudo do mundo; brilho aditivo por cima do texto nítido. */
+const DEPTH_COMBO = 13;
+const COMBO_PX = 26;
+const COMBO_LABEL_PX = 11;
+/** Escala do texto de brilho sobre o nítido. */
+const COMBO_GLOW_SCALE = 1;
 const LINE_W = 3;
 /** Passada de brilho (bloom leve): traço largo e fraco sob o traço nítido, em mistura aditiva. */
 const GLOW_W = 9;
@@ -40,6 +47,10 @@ export class FxLayer {
   private readonly css = new Map<number, string>();
   private drawn = { waves: 0, beams: 0, parts: 0 };
   private readonly zig = new Float32Array(ZIG_POINTS * 2);
+  private readonly comboNum: Phaser.GameObjects.Text;
+  private readonly comboGlow: Phaser.GameObjects.Text;
+  private readonly comboLabel: Phaser.GameObjects.Text;
+  private comboVersion = -1;
 
   constructor(scene: Phaser.Scene, rng: RandomSource, res: number) {
     this.rng = rng;
@@ -75,6 +86,15 @@ export class FxLayer {
           .setVisible(false),
       );
     }
+    const title = (px: number, weight: string) =>
+      scene.add
+        .text(0, 0, '', { fontFamily: FONT_TITLE_STACK, fontSize: `${px}px`, fontStyle: weight, color: '#ffffff', resolution: res })
+        .setOrigin(0.5, 0.5)
+        .setDepth(DEPTH_COMBO)
+        .setVisible(false);
+    this.comboNum = title(COMBO_PX, '900').setStroke('#070912', 4);
+    this.comboGlow = title(COMBO_PX, '900').setBlendMode(ADD);
+    this.comboLabel = title(COMBO_LABEL_PX, '700').setText(str('fx.combo')).setStroke('#070912', 3);
   }
 
   /** Redesenha o estado atual dos pools (chamar depois de fx.step). */
@@ -164,6 +184,36 @@ export class FxLayer {
       }
       t.setPosition(f.x[i]!, f.y[i]!).setAlpha(f.alpha(i));
     }
+
+    this.renderCombo();
+  }
+
+  private renderCombo(): void {
+    const c = this.fx.comboCounter;
+    const num = this.comboNum;
+    const glow = this.comboGlow;
+    const label = this.comboLabel;
+    if (!c.visible) {
+      if (num.visible) {
+        num.setVisible(false);
+        glow.setVisible(false);
+        label.setVisible(false);
+      }
+      return;
+    }
+    if (this.comboVersion !== c.version) {
+      this.comboVersion = c.version;
+      const txt = c.ending ? `${str('fx.combo')} ×${c.value}!` : `×${c.value}`;
+      const css = this.cssOf(c.color);
+      num.setText(txt).setColor(css).setVisible(true);
+      glow.setText(txt).setColor(css).setVisible(true);
+      label.setColor(css).setVisible(!c.ending);
+    }
+    const s = c.scale;
+    const a = c.alpha;
+    num.setPosition(c.x, c.y).setScale(s).setAlpha(a);
+    glow.setPosition(c.x, c.y).setScale(s * COMBO_GLOW_SCALE).setAlpha(c.glow);
+    if (!c.ending) label.setPosition(c.x, c.y - (COMBO_PX * 0.5 + COMBO_LABEL_PX * 0.5 + 1) * s).setScale(Math.sqrt(s)).setAlpha(a * 0.9);
   }
 
   private cssOf(col: number): string {

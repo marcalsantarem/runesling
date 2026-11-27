@@ -1,6 +1,8 @@
 /** Modais da partida: Draft de runas, Fim de run e Pausa. */
 import type { GameData, PerkId, Synergy } from '../data/types';
-import { artIcon, atlasFrame, el, icon, ICONS, plate, ribbon, setPlateLabel, show } from './dom';
+import { artIcon, atlasFrame, el, icon, ICONS, plate, ribbon, show } from './dom';
+import type { PlayerSettings } from '../meta/profile';
+import { createSettingsControls, type SettingsHandlers } from './settings';
 import { perkDesc, perkName, synergyName, t } from './strings';
 
 export interface ModalView {
@@ -17,10 +19,11 @@ function modalShell(key: string, children: (HTMLElement | null)[], bodyClass = '
   return node;
 }
 
-/** Duração do destaque da carta escolhida antes de o Draft sumir (0 com `prefers-reduced-motion`). */
+/** Duração do destaque da carta escolhida antes de o Draft sumir (0 com movimento reduzido). */
 export const DRAFT_PICK_MS = 260;
 
-function reducedMotion(): boolean {
+/** Preferência do sistema por menos movimento. */
+export function systemPrefersReducedMotion(): boolean {
   return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
@@ -37,7 +40,12 @@ export interface DraftView extends ModalView {
   open(choices: readonly PerkId[], owned?: readonly PerkId[]): void;
 }
 
-export function createDraft(game: GameData, onPick: (id: PerkId) => void): DraftView {
+/** `reducedMotion`: valor efetivo de "Reduzir movimento" (padrão: o do sistema). */
+export function createDraft(
+  game: GameData,
+  onPick: (id: PerkId) => void,
+  reducedMotion: () => boolean = systemPrefersReducedMotion,
+): DraftView {
   const list = el('div', { className: 'rs-draft-list' });
   const root = modalShell(
     'modal-draft',
@@ -76,7 +84,7 @@ export function createDraft(game: GameData, onPick: (id: PerkId) => void): Draft
           'button',
           {
             className: `rs-btn rs-draft-card rs-syn-${syn}`,
-            attrs: { type: 'button', 'data-perk': id },
+            attrs: { type: 'button', 'data-perk': id, 'data-sfx': 'pick' },
             onClick: () => {
               if (picked) return;
               picked = true;
@@ -182,7 +190,7 @@ export function createEnd(onMenu: () => void, onAgain: () => void, game?: GameDa
       ]),
       el('div', { className: 'rs-modal-actions' }, [
         plate('gold', t('end.again'), onAgain, { size: 'lg', className: 'rs-btn-wide', attrs: { 'data-ui': 'end-again' } }),
-        plate('iron', t('end.menu'), onMenu, { attrs: { 'data-ui': 'end-menu' } }),
+        plate('iron', t('end.menu'), onMenu, { attrs: { 'data-ui': 'end-menu', 'data-sfx': 'ui_back' } }),
       ]),
     ],
     'rs-modal-bare rs-end-body',
@@ -215,34 +223,34 @@ export function createEnd(onMenu: () => void, onAgain: () => void, game?: GameDa
 // ---------- Pausa ----------
 export interface PauseView extends ModalView {
   open(): void;
-  setMuted(muted: boolean): void;
+  setSettings(settings: PlayerSettings): void;
 }
 
-export function createPause(h: { onResume(): void; onQuit(): void; onToggleSound(): void }): PauseView {
-  const soundBtn = plate('iron', t('pause.soundOn'), () => h.onToggleSound(), { attrs: { 'data-ui': 'pause-sound' } });
+export interface PauseHandlers extends SettingsHandlers {
+  onResume(): void;
+  onQuit(): void;
+}
+
+export function createPause(h: PauseHandlers): PauseView {
+  const controls = createSettingsControls('pause', h);
   const root = modalShell(
     'modal-pause',
     [
       ribbon(t('pause.title'), 'rs-ribbon-big rs-modal-ribbon').node,
       el('div', { className: 'rs-modal-stack' }, [
         plate('gold', t('pause.resume'), () => h.onResume(), { size: 'lg', className: 'rs-btn-wide', attrs: { 'data-ui': 'pause-resume' } }),
-        soundBtn,
-        plate('iron', t('pause.quit'), () => h.onQuit(), { attrs: { 'data-ui': 'pause-quit' } }),
+        ...controls.nodes,
+        plate('iron', t('pause.quit'), () => h.onQuit(), { attrs: { 'data-ui': 'pause-quit', 'data-sfx': 'ui_back' } }),
       ]),
     ],
     'rs-modal-panel rs-pause-body',
   );
   root.classList.add('rs-modal-center');
 
-  function setMuted(muted: boolean): void {
-    setPlateLabel(soundBtn, muted ? t('pause.soundOff') : t('pause.soundOn'));
-    soundBtn.setAttribute('aria-pressed', String(!muted));
-  }
-
   return {
     root,
     open: () => show(root, true),
-    setMuted,
+    setSettings: (s) => controls.update(s),
     hide: () => show(root, false),
     get visible() {
       return !root.hidden;

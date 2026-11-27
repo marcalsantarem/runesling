@@ -67,6 +67,7 @@ const ptBR = {
 
   'fx.ring': '×2!',
   'fx.blocked': 'ESCUDO',
+  'fx.combo': 'COMBO',
 
   'draft.title': 'ESCOLHA UMA RUNA',
   'draft.subtitle': 'Combine sinergias Elétrica, Ígnea ou Espectral.',
@@ -96,6 +97,13 @@ const ptBR = {
   'pause.quit': 'SAIR DA RUN',
   'pause.soundOn': 'SOM: LIGADO',
   'pause.soundOff': 'SOM: DESLIGADO',
+
+  'settings.volume': 'VOLUME DOS EFEITOS',
+  'settings.volumeValue': '{pct}%',
+  'settings.motion': 'REDUZIR MOVIMENTO',
+  'settings.motion.system': 'SISTEMA',
+  'settings.motion.on': 'LIGADO',
+  'settings.motion.off': 'DESLIGADO',
 
   'sound.label': 'Ligar ou desligar o som',
   'gold.label': 'Ouro',

@@ -6,8 +6,22 @@ import { talentCost as talentCostFormula } from './formulas';
 
 export type TalentId = keyof typeof talentsJson;
 
+/** Preferência de "Reduzir movimento": seguir o sistema, sempre ligado ou sempre desligado. */
+export type ReducedMotionPref = 'system' | 'on' | 'off';
+export const REDUCED_MOTION_PREFS: readonly ReducedMotionPref[] = ['system', 'on', 'off'];
+
 export interface PlayerSettings {
   readonly muted: boolean;
+  /** Volume dos efeitos, 0–1 (decisão 42). */
+  readonly sfxVolume: number;
+  readonly reducedMotion: ReducedMotionPref;
+}
+
+export const DEFAULT_SETTINGS: PlayerSettings = Object.freeze<PlayerSettings>({ muted: false, sfxVolume: 0.8, reducedMotion: 'system' });
+
+/** Movimento reduzido efetivo: `on`, ou `system` com `prefers-reduced-motion` do sistema. */
+export function effectiveReducedMotion(pref: ReducedMotionPref, systemPrefers: boolean): boolean {
+  return pref === 'on' || (pref === 'system' && systemPrefers);
 }
 
 export interface PlayerData {
@@ -50,11 +64,13 @@ function freeze(d: PlayerData): Readonly<PlayerData> {
 function defaults(data: GameData): PlayerData {
   const talents = {} as Record<TalentId, number>;
   for (const id of talentIds(data)) talents[id] = 0;
-  return { gold: STARTING_GOLD, bestWave: 0, cleared: false, talents, settings: { muted: false } };
+  return { gold: STARTING_GOLD, bestWave: 0, cleared: false, talents, settings: { ...DEFAULT_SETTINGS } };
 }
 
 const isNonNegInt = (v: unknown): v is number =>
   typeof v === 'number' && Number.isInteger(v) && v >= 0;
+
+const isVolume = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 1;
 
 /** Saneia dados lidos do storage: campo inválido volta ao padrão; níveis limitados a [0, máx]. */
 function sanitize(raw: unknown, data: GameData): PlayerData {
@@ -76,8 +92,13 @@ function sanitize(raw: unknown, data: GameData): PlayerData {
     bestWave: isNonNegInt(r.bestWave) ? r.bestWave : base.bestWave,
     cleared: typeof r.cleared === 'boolean' ? r.cleared : base.cleared,
     talents,
+    // Save antigo (só `muted`) ganha os padrões dos campos novos.
     settings: {
       muted: typeof settingsRaw.muted === 'boolean' ? settingsRaw.muted : base.settings.muted,
+      sfxVolume: isVolume(settingsRaw.sfxVolume) ? settingsRaw.sfxVolume : base.settings.sfxVolume,
+      reducedMotion: REDUCED_MOTION_PREFS.includes(settingsRaw.reducedMotion as ReducedMotionPref)
+        ? (settingsRaw.reducedMotion as ReducedMotionPref)
+        : base.settings.reducedMotion,
     },
   };
 }
@@ -159,13 +180,21 @@ export class PlayerProfile {
     });
   }
 
+  /** Volume fora de 0–1 é limitado; valor inválido é ignorado. */
   async updateSettings(partial: Partial<PlayerSettings>): Promise<void> {
+    const p: { -readonly [K in keyof PlayerSettings]?: PlayerSettings[K] } = { ...partial };
+    if (p.sfxVolume !== undefined) {
+      if (Number.isFinite(p.sfxVolume)) p.sfxVolume = Math.min(1, Math.max(0, p.sfxVolume));
+      else delete p.sfxVolume;
+    }
+    if (p.reducedMotion !== undefined && !REDUCED_MOTION_PREFS.includes(p.reducedMotion)) delete p.reducedMotion;
+    partial = p;
     await this.commit({ ...this.state, settings: { ...this.state.settings, ...partial } });
   }
 
   /**
    * Volta ao estado inicial (ouro inicial, talentos zerados, melhor onda 0, capítulo não conquistado)
-   * e grava no save. Mantém as configurações de som. Usado pelo botão temporário da T-061.
+   * e grava no save. Mantém as configurações (som, volume, movimento). Usado pelo botão temporário da T-061.
    */
   async reset(): Promise<void> {
     await this.commit({ ...defaults(this.game), settings: { ...this.state.settings } });

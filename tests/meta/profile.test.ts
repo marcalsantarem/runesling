@@ -5,6 +5,7 @@ import {
   PROFILE_SAVE_VERSION,
   STARTING_GOLD,
   getProfile,
+  effectiveReducedMotion,
   resetProfileForTests,
 } from '../../src/meta/profile';
 
@@ -33,7 +34,7 @@ describe('PlayerProfile', () => {
       bestWave: 0,
       cleared: false,
       talents: { atk: 0, hp: 0, balls: 0, crit: 0, gold: 0 },
-      settings: { muted: false },
+      settings: { muted: false, sfxVolume: 0.8, reducedMotion: 'system' },
     });
     expect(STARTING_GOLD).toBe(40);
     expect(Object.isFrozen(p.data())).toBe(true);
@@ -124,7 +125,7 @@ describe('PlayerProfile', () => {
       bestWave: 0,
       cleared: false,
       talents: { atk: 10, hp: 0, balls: 0, crit: 2, gold: 0 },
-      settings: { muted: false },
+      settings: { muted: false, sfxVolume: 0.8, reducedMotion: 'system' },
     });
   });
 
@@ -169,12 +170,44 @@ describe('PlayerProfile', () => {
       bestWave: 0,
       cleared: false,
       talents: { atk: 0, hp: 0, balls: 0, crit: 0, gold: 0 },
-      settings: { muted: true },
+      settings: { muted: true, sfxVolume: 0.8, reducedMotion: 'system' },
     };
     expect(p.data()).toEqual(expected);
     expect(Object.isFrozen(p.data())).toBe(true);
     expect(seen).toEqual([STARTING_GOLD]);
     expect((await load(storage)).data()).toEqual(expected);
+  });
+
+  it('save antigo (só muted) migra para volume 0.8 e movimento do sistema (T-049)', async () => {
+    const storage = new MemoryStorage();
+    storage.items.set(KEY, { version: PROFILE_SAVE_VERSION, savedAt: 0, data: { gold: 70, settings: { muted: true } } });
+    expect((await load(storage)).data().settings).toEqual({ muted: true, sfxVolume: 0.8, reducedMotion: 'system' });
+    storage.items.set(KEY, {
+      version: PROFILE_SAVE_VERSION,
+      savedAt: 0,
+      data: { settings: { muted: false, sfxVolume: 3, reducedMotion: 'talvez' } },
+    });
+    expect((await load(storage)).data().settings).toEqual({ muted: false, sfxVolume: 0.8, reducedMotion: 'system' });
+  });
+
+  it('volume e movimento reduzido gravam, com volume limitado a 0–1 (T-049)', async () => {
+    const storage = new MemoryStorage();
+    const p = await load(storage);
+    await p.updateSettings({ sfxVolume: 0.35, reducedMotion: 'on' });
+    expect((await load(storage)).data().settings).toEqual({ muted: false, sfxVolume: 0.35, reducedMotion: 'on' });
+    await p.updateSettings({ sfxVolume: 4 });
+    expect(p.data().settings.sfxVolume).toBe(1);
+    await p.updateSettings({ sfxVolume: Number.NaN });
+    expect(p.data().settings.sfxVolume).toBe(1);
+    await p.updateSettings({ sfxVolume: -1 });
+    expect(p.data().settings.sfxVolume).toBe(0);
+  });
+
+  it('movimento reduzido efetivo: on, ou system + preferência do sistema', () => {
+    expect(effectiveReducedMotion('on', false)).toBe(true);
+    expect(effectiveReducedMotion('off', true)).toBe(false);
+    expect(effectiveReducedMotion('system', true)).toBe(true);
+    expect(effectiveReducedMotion('system', false)).toBe(false);
   });
 
   it('getProfile devolve um singleton', async () => {

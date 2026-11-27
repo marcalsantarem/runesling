@@ -2,7 +2,30 @@ import type { SaveStorage } from '../../src/core/SaveManager';
 import { EventBus } from '../../src/core/EventBus';
 import type { GameEventName, GameEvents, RunState } from '../../src/core/events';
 import { PlayerProfile } from '../../src/meta/profile';
-import { mountUI, type UIHandle } from '../../src/ui';
+import { mountUI, type UiAudio, type UIHandle } from '../../src/ui';
+
+/** Áudio falso: registra o que tocou (respeitando mudo e volume 0, como o motor real). */
+export class FakeAudio implements UiAudio {
+  readonly played: string[] = [];
+  muted = false;
+  volume = 1;
+  unlockAttached = 0;
+  attachUnlock(): () => void {
+    this.unlockAttached++;
+    return () => {};
+  }
+  play(key: Parameters<UiAudio['play']>[0]): number | null {
+    if (this.muted || this.volume <= 0) return null;
+    this.played.push(key);
+    return 1;
+  }
+  setVolume(v: number): void {
+    this.volume = v;
+  }
+  setMuted(m: boolean): void {
+    this.muted = m;
+  }
+}
 
 export class MemoryStorage implements SaveStorage {
   readonly items = new Map<string, unknown>();
@@ -24,6 +47,9 @@ export interface Harness {
   ui: UIHandle;
   profile: PlayerProfile;
   emitted: { name: GameEventName; payload: unknown }[];
+  /** Avisos `settings:changed`, em ordem. */
+  settings: GameEvents['settings:changed'][];
+  audio: FakeAudio;
   q<T extends HTMLElement = HTMLElement>(key: string): T;
   visible(key: string): boolean;
   click(key: string): void;
@@ -31,14 +57,17 @@ export interface Harness {
 
 const UI_EVENTS: GameEventName[] = ['ui:startRun', 'ui:toggleSpeed', 'ui:recall', 'ui:pickPerk', 'ui:pause', 'ui:quitRun'];
 
-export async function setup(): Promise<Harness> {
+export async function setup(opts: { storage?: SaveStorage } = {}): Promise<Harness> {
   document.body.innerHTML = '<div id="ui-root"></div>';
   const root = document.getElementById('ui-root') as HTMLElement;
   const bus = new EventBus<GameEvents>();
   const emitted: Harness['emitted'] = [];
   for (const name of UI_EVENTS) bus.on(name, (payload) => emitted.push({ name, payload }));
-  const profile = await PlayerProfile.load({ storage: new MemoryStorage(), key: 'test.ui' });
-  const ui = mountUI(root, { bus, profile: Promise.resolve(profile) });
+  const settings: Harness['settings'] = [];
+  bus.on('settings:changed', (p) => settings.push(p));
+  const audio = new FakeAudio();
+  const profile = await PlayerProfile.load({ storage: opts.storage ?? new MemoryStorage(), key: 'test.ui' });
+  const ui = mountUI(root, { bus, profile: Promise.resolve(profile), audio });
   await ui.ready;
   const q = <T extends HTMLElement = HTMLElement>(key: string): T => {
     const node = root.querySelector<T>(`[data-ui="${key}"]`);
@@ -51,7 +80,7 @@ export async function setup(): Promise<Harness> {
     return true;
   };
   const click = (key: string) => q(key).click();
-  return { bus, root, ui, profile, emitted, q, visible, click };
+  return { bus, root, ui, profile, emitted, settings, audio, q, visible, click };
 }
 
 export function runState(over: Partial<RunState> = {}): RunState {

@@ -15,6 +15,7 @@ import {
   shakeFor,
   SQUASH_KICK,
 } from './fxMath';
+import { ComboCounter } from './combo';
 import { BeamPool, FloatTextPool, PART, ParticlePool, type PartKind, WavePool } from './pools';
 
 /** O que o diretor precisa saber/acionar nos inimigos (implementado pela cena). */
@@ -46,6 +47,8 @@ export class FxDirector {
   readonly beams = new BeamPool(FX_CAPACITY.beams);
   readonly floats = new FloatTextPool(FX_CAPACITY.floats);
   readonly shake = new Shake();
+  /** Contador de combo do voo (T-048). */
+  readonly comboCounter = new ComboCounter();
   private readonly rng: RandomSource;
   private reduced = false;
 
@@ -57,6 +60,8 @@ export class FxDirector {
   setReducedMotion(on: boolean): void {
     this.reduced = on;
     this.shake.reduced = on;
+    this.comboCounter.reduced = on;
+    if (on) this.comboCounter.pulse = 0;
     if (on) this.shake.reset();
     this.particles.limit = on ? PARTICLE_LIVE_REDUCED : PARTICLE_LIVE_MAX;
   }
@@ -164,6 +169,19 @@ export class FxDirector {
     this.burst(x, y, COLOR.violet, 8, 3, PART.spectral);
   }
 
+  /**
+   * Combo do turno (`run.state.turnCombo`), a cada frame de voo; idempotente e só pulsa quando sobe.
+   * Aparece a partir do 2º acerto. `x`/`y` opcionais movem a âncora (padrão: centro da arena).
+   */
+  combo(n: number, x?: number, y?: number): void {
+    this.comboCounter.set(n, x, y);
+  }
+
+  /** Fim do turno: mostra o fecho ("COMBO ×n!") e some. */
+  comboEnd(): void {
+    this.comboCounter.end();
+  }
+
   step(frames: number): void {
     if (frames <= 0) return;
     this.particles.step(frames);
@@ -171,6 +189,7 @@ export class FxDirector {
     this.beams.step(frames);
     this.floats.step(frames);
     this.shake.step(frames, this.rng);
+    this.comboCounter.step(frames);
   }
 
   clear(): void {
@@ -179,6 +198,7 @@ export class FxDirector {
     this.beams.clear();
     this.floats.clear();
     this.shake.reset();
+    this.comboCounter.reset();
   }
 }
 

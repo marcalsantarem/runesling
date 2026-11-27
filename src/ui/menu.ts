@@ -4,7 +4,8 @@
  */
 import type { GameData, TalentStat } from '../data/types';
 import type { PlayerData, PlayerProfile, TalentId } from '../meta/profile';
-import { artIcon, atlasFrame, el, icon, iconButton, ICONS, plate, ribbon, setPlateLabel, show } from './dom';
+import { createSettingsControls, type SettingsHandlers } from './settings';
+import { artIcon, atlasFrame, el, icon, iconButton, ICONS, plate, ribbon, show } from './dom';
 import { chapterName, enemyName, t, talentDesc, talentName } from './strings';
 
 // TEMP T-061: remover antes do M7. Flag única do botão "Resetar save" da tela inicial.
@@ -18,9 +19,8 @@ export interface MenuView {
   setTab(tab: MenuTab): void;
 }
 
-export interface MenuHandlers {
+export interface MenuHandlers extends SettingsHandlers {
   onPlay(): void;
-  onToggleSound(): void;
   onBuy(id: TalentId): void;
   /** TEMP T-061: remover antes do M7. */
   onResetSave?(): void;
@@ -205,7 +205,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
   });
   navTalents.appendChild(talentsDot);
   const soundBtn = iconButton(ICONS.soundOn, t('sound.label'), () => h.onToggleSound(), {
-    attrs: { 'data-ui': 'menu-sound' },
+    attrs: { 'data-ui': 'menu-sound', 'data-sfx': 'none' },
     piece: 'ui_icon_sound',
     size: 22,
     className: 'rs-ib-sm',
@@ -232,7 +232,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
             show(resetModal, false);
             h.onResetSave?.();
           }, { attrs: { 'data-ui': 'reset-confirm' } }),
-          plate('gold', t('reset.cancel'), () => show(resetModal, false), { attrs: { 'data-ui': 'reset-cancel' } }),
+          plate('gold', t('reset.cancel'), () => show(resetModal, false), { attrs: { 'data-ui': 'reset-cancel', 'data-sfx': 'ui_back' } }),
         ]),
       ]),
     ],
@@ -269,7 +269,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
   const crit = startStat(t('menu.stat.crit'), 'menu-crit');
   const talentsPanel = el('div', { className: 'rs-panel rs-panel-talents', attrs: { 'data-ui': 'tab-talents' } }, [
     el('div', { className: 'rs-menu-top' }, [
-      iconButton(ICONS.back, t('talents.back'), () => setTab('play'), { attrs: { 'data-ui': 'talents-back' }, piece: 'ui_icon_back', square: true }),
+      iconButton(ICONS.back, t('talents.back'), () => setTab('play'), { attrs: { 'data-ui': 'talents-back', 'data-sfx': 'ui_back' }, piece: 'ui_icon_back', square: true }),
       el('div', { className: 'rs-spacer' }),
       talentsGold.node,
     ]),
@@ -284,8 +284,8 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     ]),
   ]);
 
-  // ---------- Configurações (engrenagem): por ora só o som (decisão 23) ----------
-  const settingsSound = plate('iron', t('pause.soundOn'), () => h.onToggleSound(), { attrs: { 'data-ui': 'settings-sound' } });
+  // ---------- Configurações (engrenagem): som, volume e movimento (decisões 23 e 42) ----------
+  const controls = createSettingsControls('settings', h);
   const settings = el(
     'section',
     { className: 'rs-modal rs-modal-center', attrs: { 'data-ui': 'modal-settings', role: 'dialog', 'aria-modal': 'true' } },
@@ -293,8 +293,8 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
       el('div', { className: 'rs-modal-body rs-modal-panel' }, [
         ribbon(t('settings.title'), 'rs-ribbon-big rs-modal-ribbon').node,
         el('div', { className: 'rs-modal-stack' }, [
-          settingsSound,
-          plate('gold', t('settings.close'), () => show(settings, false), { attrs: { 'data-ui': 'settings-close' } }),
+          ...controls.nodes,
+          plate('gold', t('settings.close'), () => show(settings, false), { attrs: { 'data-ui': 'settings-close', 'data-sfx': 'ui_back' } }),
         ]),
       ]),
     ],
@@ -400,8 +400,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
       data.settings.muted ? icon(ICONS.soundOff, 22, 'ui_icon_sound_off') : icon(ICONS.soundOn, 22, 'ui_icon_sound'),
     );
     soundBtn.setAttribute('aria-pressed', String(!data.settings.muted));
-    setPlateLabel(settingsSound, data.settings.muted ? t('pause.soundOff') : t('pause.soundOn'));
-    settingsSound.setAttribute('aria-pressed', String(!data.settings.muted));
+    controls.update(data.settings);
     bestValue.textContent = t('menu.stat.bestWaveValue', { wave: data.bestWave, total: totalWaves });
     plaque.setAttribute('aria-label', t('menu.bestLabel', { wave: data.bestWave, total: totalWaves }));
     plaque.classList.toggle('is-cleared', data.cleared);
