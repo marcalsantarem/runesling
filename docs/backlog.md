@@ -100,5 +100,5 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-049 | Configurações: volume dos efeitos (o liga/desliga já existe) e "reduzir movimento" (decisão 42) (tam. P) | M6 | AG02 + AG04 | feita |
 | T-066 | Ligar os ganchos novos do fx na cena: impacto com força e squash elástico (`SquashSpring`) no inimigo e no orbe, efeito espectral no Orbe Fantasma e no Eco do Teto (tam. P) | M6 | AG01 | feita |
 | T-067 | Fecho "COMBO ×N!" aparece sob o banner da onda: reposicionar ou adiar o fecho quando houver banner (tam. P) | M6 | AG09 | feita |
-| T-050 | Versão 0.7.0 (tam. P) | M6 | AG07 | a fazer |
+| T-050 | Versão 0.7.0 (tam. P) | M6 | AG07 | em andamento |
 | T-051 | Validação do M6 e tag v0.7.0 (tam. P) | M6 | AG03 + AG00 | a fazer |
