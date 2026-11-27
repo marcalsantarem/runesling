@@ -155,7 +155,7 @@ describe('Menu e Talentos na direção A', () => {
 });
 
 describe('Partida na direção A', () => {
-  it('selo de sinergia: nova, n-ésima e nenhum no Núcleo', () => {
+  it('selo de sinergia: nova, n-ésima e nenhum na Arcana', () => {
     const game = loadGameData();
     expect(synergySeal('fire', [], game)).toBe('Nova sinergia');
     expect(synergySeal('lightning', ['chain_lightning'], game)).toBe('2ª da sinergia');

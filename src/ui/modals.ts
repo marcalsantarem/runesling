@@ -27,7 +27,7 @@ export function systemPrefersReducedMotion(): boolean {
   return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-/** Selo da carta: 1ª runa da sinergia ou n-ésima (a sinergia Núcleo não tem selo). */
+/** Selo da carta: 1ª runa da sinergia ou n-ésima (a sinergia Arcana não tem selo). */
 export function synergySeal(synergy: Synergy, owned: readonly PerkId[], game: GameData): string | null {
   if (synergy === 'core') return null;
   const n = owned.filter((id) => game.perks[id]?.synergy === synergy).length;

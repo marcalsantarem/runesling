@@ -79,7 +79,7 @@ const ptBR = {
   'synergy.lightning': 'Elétrica',
   'synergy.fire': 'Ígnea',
   'synergy.spectral': 'Espectral',
-  'synergy.core': 'Núcleo',
+  'synergy.core': 'Arcana',
 
   'end.victory': 'CRIPTA CONQUISTADA',
   'end.defeat': 'BARREIRA ROMPIDA',
