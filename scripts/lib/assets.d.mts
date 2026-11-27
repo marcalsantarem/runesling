@@ -18,6 +18,7 @@ export interface ResolvedItem {
   removeBg: boolean;
   bgColor: string | null;
   removeEnclosedBg: boolean;
+  nineSlice: [number, number, number, number] | null;
   raw: string;
   cut: string;
   standaloneIcon: boolean;
@@ -63,6 +64,12 @@ export function normalizeSprite(
   input: Buffer | string,
   size: number,
   opts?: { circularMask?: boolean; margin?: number },
+): Promise<Buffer>;
+export function normalizeUiPiece(
+  input: Buffer | string,
+  w: number,
+  h: number,
+  slice?: [number, number, number, number] | null,
 ): Promise<Buffer>;
 export function packAtlas(
   frames: { key: string; buffer: Buffer }[],

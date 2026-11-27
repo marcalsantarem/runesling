@@ -11,6 +11,7 @@ import {
   ingest,
   loadManifest,
   normalizeSprite,
+  normalizeUiPiece,
   packAtlas,
   resolvePaths,
   type AssetPaths,
@@ -348,5 +349,68 @@ describe("manifesto real: peças de UI no estilo validado (T-058)", () => {
     expect(live[0]!.anchorFor).toBe(raw.anchors.ui);
     for (const i of live.slice(1).filter((x) => x.preset === "ui_piece"))
       expect(i.anchor ?? raw.anchors.ui).toBe(raw.anchors.ui);
+  });
+});
+
+describe('peças de UI (T-039)', { timeout: 60_000 }, () => {
+  let root: string;
+  let paths: AssetPaths;
+  const out = (p: string) => join(root, 'public/assets', p);
+
+  beforeAll(async () => {
+    root = mkdtempSync(join(tmpdir(), 'runesling-ui-'));
+    const manifest = {
+      presets: {
+        ui_piece: { kind: 'ui', atlas: null, size: 256, removeBg: true, bgColor: 'white', nineSlice: [32, 32, 32, 32], outputDir: 'art-source/raw/ui' },
+        ui_scene: { kind: 'ui', atlas: null, size: 720, removeBg: false, bgColor: null, nineSlice: null, outputDir: 'art-source/raw/ui' },
+      },
+      items: [
+        { key: 'ui_btn_primary', preset: 'ui_piece', file: 'art-source/raw/ui/ui_btn_primary.png', size: [384, 96], nineSlice: [40, 40, 40, 40] },
+        { key: 'ui_map_node', preset: 'ui_piece', bgColor: 'magenta', file: 'art-source/raw/ui/ui_map_node.png', size: [256, 256], nineSlice: null },
+        { key: 'ui_map_bg', preset: 'ui_scene', file: 'art-source/raw/ui/ui_map_bg.png', size: [72, 128] },
+        { key: 'ui_gem_fire', preset: 'ui_piece', file: 'art-source/raw/ui/ui_gem_fire.png', size: [128, 128], nineSlice: null },
+      ],
+    };
+    mkdirSync(join(root, 'scripts'), { recursive: true });
+    mkdirSync(join(root, 'art-source/raw/ui'), { recursive: true });
+    writeFileSync(join(root, 'scripts/assets-manifest.json'), JSON.stringify(manifest));
+    const raw = (k: string) => join(root, 'art-source/raw/ui', `${k}.png`);
+    await sharp(await synth({ bg: '#ffffff', w: 600, h: 300, shape: '<rect x="30" y="80" width="540" height="140" fill="#c89a3a"/>' })).png().toFile(raw('ui_btn_primary'));
+    // Aro com miolo vazado em magenta: o chroma key tira o fundo e o miolo.
+    await sharp(await synth({ bg: '#ff00ff', shape: '<circle cx="200" cy="200" r="150" fill="none" stroke="#3a4050" stroke-width="50"/>' })).png().toFile(raw('ui_map_node'));
+    await sharp(await synth({ bg: '#101828', w: 200, h: 360, shape: '<rect x="20" y="20" width="80" height="80" fill="#303850"/>' })).png().toFile(raw('ui_map_bg'));
+    paths = resolvePaths({ root });
+    await cutAll(paths, {}, quiet);
+  });
+
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+
+  it('normalizeUiPiece: tamanho exato, com e sem 9-slice', async () => {
+    const src = await synth({ bg: '#00000000', w: 300, h: 100, shape: '<rect x="10" y="10" width="280" height="80" fill="#456"/>' });
+    const a = await sharp(await normalizeUiPiece(src, 256, 128, [32, 32, 32, 32])).metadata();
+    expect([a.width, a.height]).toEqual([256, 128]);
+    const b = await sharp(await normalizeUiPiece(src, 128, 128, null)).metadata();
+    expect([b.width, b.height]).toEqual([128, 128]);
+  });
+
+  it('grava em ui/ (não em tiles/), escreve ui.json e não quebra com peça faltando', async () => {
+    const r = await buildAll(paths, quiet);
+    expect(r.missing).toEqual(['ui_gem_fire']);
+    expect(existsSync(out('tiles'))).toBe(false);
+    for (const [k, w, h] of [['ui_btn_primary', 384, 96], ['ui_map_node', 256, 256], ['ui_map_bg', 72, 128]] as const) {
+      const m = await sharp(out(`ui/${k}.webp`)).metadata();
+      expect([m.format, m.width, m.height]).toEqual(['webp', w, h]);
+    }
+    const json = JSON.parse(readFileSync(out('ui/ui.json'), 'utf8'));
+    expect(json).toEqual({
+      ui_btn_primary: { slice: [40, 40, 40, 40], width: 384, height: 96 },
+      ui_map_bg: { slice: null, width: 72, height: 128 },
+      ui_map_node: { slice: null, width: 256, height: 256 },
+    });
+    const { px } = await rgba(await sharp(out('ui/ui_map_node.webp')).png().toBuffer());
+    expect(px(128, 128)[3]).toBe(0); // miolo vazado
+    expect(px(2, 2)[3]).toBe(0); // fundo
+    const btn = await rgba(await sharp(out('ui/ui_btn_primary.webp')).png().toBuffer());
+    expect(btn.px(192, 48)[3]).toBe(255);
   });
 });
