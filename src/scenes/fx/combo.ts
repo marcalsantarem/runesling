@@ -38,6 +38,16 @@ export const COMBO_END_RISE = 0.55;
 export const COMBO_END_POP = 0.45;
 /** Frames finais do fecho em que o alfa cai até 0. */
 const END_FADE = 24;
+/**
+ * Faixa do anúncio de onda (fita HTML centrada no campo, 54 px CSS, ~1,8 s): em mundo lógico,
+ * y 260 ± 36 (folga para telas estreitas). Com o banner ativo, o fecho desce para
+ * COMBO_SAFE_Y, abaixo da faixa (o contador ao vivo não muda): mesmo no pop máximo e após a subida, o texto não a alcança.
+ */
+export const BANNER_BAND_TOP = 224;
+export const BANNER_BAND_BOTTOM = 296;
+export const COMBO_SAFE_Y = 356;
+/** Duração do banner em frames (BANNER_MS 1800 da UI a 60 FPS). */
+export const BANNER_FRAMES = 108;
 
 /** Índice da faixa do combo `n` (−1 abaixo de COMBO_MIN). */
 export function comboTier(n: number): number {
@@ -73,6 +83,23 @@ export class ComboCounter {
   /** Sobe a cada mudança de texto/cor (o desenho só refaz o texto quando muda). */
   version = 0;
   reduced = false;
+  /** Frames restantes do banner de onda (0 = sem banner). */
+  bannerLeft = 0;
+
+  /** Banner de onda apareceu: por `frames`, o combo fica abaixo da faixa (se o fecho já começou, desce na hora). */
+  banner(frames = BANNER_FRAMES): void {
+    this.bannerLeft = Math.max(0, frames);
+    if (this.ending) this.avoidBanner();
+  }
+
+  get bannerActive(): boolean {
+    return this.bannerLeft > 0;
+  }
+
+  /** Com banner ativo, põe a âncora abaixo da faixa. */
+  private avoidBanner(): void {
+    if (this.bannerLeft > 0 && this.y < COMBO_SAFE_Y) this.y = COMBO_SAFE_Y;
+  }
 
   /** Combo atual do turno; idempotente para o mesmo `n`. Pulsa só quando sobe. */
   set(n: number, x?: number, y?: number): void {
@@ -105,6 +132,7 @@ export class ComboCounter {
       this.state = COMBO_STATE.ending;
       this.endLeft = COMBO_END_FRAMES;
       this.pulse = this.reduced ? 0 : COMBO_END_POP;
+      this.avoidBanner();
       this.version++;
     } else if (this.state === COMBO_STATE.hidden) {
       this.value = 0;
@@ -112,6 +140,7 @@ export class ComboCounter {
   }
 
   step(frames: number): void {
+    if (frames > 0 && this.bannerLeft > 0) this.bannerLeft = Math.max(0, this.bannerLeft - frames);
     if (frames <= 0 || this.state === COMBO_STATE.hidden) return;
     if (this.pulse > 0) {
       this.pulse *= Math.pow(COMBO_PULSE_DECAY, frames);

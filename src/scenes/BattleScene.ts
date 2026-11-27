@@ -103,7 +103,10 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
     this.applyReducedMotion(sceneSettings.reducedMotion);
     this.offBus = [
       gameBus.on('settings:changed', (st) => this.applyReducedMotion(st.reducedMotion)),
-      gameBus.on('run:banner', () => this.sfx.waveStart()),
+      gameBus.on('run:banner', () => {
+        this.sfx.waveStart();
+        this.fxLayer.fx.bannerShown();
+      }),
     ];
     // Diagnóstico só no dev (QA de áudio): log de chaves tocadas e a cena.
     if (import.meta.env.DEV) (globalThis as { __runeslingSfx?: unknown }).__runeslingSfx = { sfx: this.sfx, scene: this };

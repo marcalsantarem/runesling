@@ -182,6 +182,14 @@ export class FxDirector {
     this.comboCounter.end();
   }
 
+  /**
+   * Banner de onda na tela (T-067): o fecho do combo desce para baixo da fita por ~1,8 s.
+   * Chamar no `run:banner` da cena; vale antes ou depois do `comboEnd()` no mesmo frame.
+   */
+  bannerShown(frames?: number): void {
+    this.comboCounter.banner(frames);
+  }
+
   step(frames: number): void {
     if (frames <= 0) return;
     this.particles.step(frames);
@@ -199,6 +207,7 @@ export class FxDirector {
     this.floats.clear();
     this.shake.reset();
     this.comboCounter.reset();
+    this.comboCounter.bannerLeft = 0;
   }
 }
 

@@ -13,6 +13,10 @@ import {
   comboBaseScale,
   comboColor,
   comboTier,
+  BANNER_BAND_BOTTOM,
+  BANNER_FRAMES,
+  COMBO_END_RISE,
+  COMBO_SAFE_Y,
 } from '../../src/scenes/fx/combo';
 import { FxDirector } from '../../src/scenes/fx/FxDirector';
 import { COLOR } from '../../src/scenes/views/palette';
@@ -137,5 +141,63 @@ describe('fx — contador de combo', () => {
     fx.clear();
     expect(fx.comboCounter.visible).toBe(false);
     expect(fx.comboCounter.value).toBe(0);
+  });
+
+  describe('fecho sob o banner de onda (T-067)', () => {
+    // Meia altura do texto (26 px) na escala máxima: o fecho nunca encosta na faixa.
+    const HALF = (26 * COMBO_SCALE_MAX) / 2;
+    const clearOfBand = (c: ComboCounter) => {
+      let minTop = Infinity;
+      for (let i = 0; i < COMBO_END_FRAMES && c.visible; i++) {
+        minTop = Math.min(minTop, c.y - (26 * c.scale) / 2);
+        c.step(1);
+      }
+      return minTop;
+    };
+
+    it('banner antes do comboEnd: o fecho nasce abaixo da faixa e não a alcança', () => {
+      const c = new ComboCounter();
+      c.set(12);
+      c.banner();
+      expect(c.y).toBe(COMBO_Y); // contador ao vivo não muda
+      c.end();
+      expect(c.y).toBe(COMBO_SAFE_Y);
+      expect(clearOfBand(c)).toBeGreaterThan(BANNER_BAND_BOTTOM);
+    });
+
+    it('banner depois do comboEnd: o fecho em curso desce na hora', () => {
+      const c = new ComboCounter();
+      c.set(7);
+      c.end();
+      c.step(1);
+      c.banner();
+      expect(c.y).toBe(COMBO_SAFE_Y);
+      expect(COMBO_SAFE_Y - COMBO_END_RISE * COMBO_END_FRAMES - HALF).toBeGreaterThan(BANNER_BAND_BOTTOM);
+    });
+
+    it('sem banner (ou depois dele) o fecho fica no lugar de sempre', () => {
+      const c = new ComboCounter();
+      c.set(5);
+      c.end();
+      expect(c.y).toBe(COMBO_Y);
+      c.banner();
+      c.reset();
+      c.step(BANNER_FRAMES);
+      expect(c.bannerActive).toBe(false);
+      c.set(5);
+      c.end();
+      expect(c.y).toBe(COMBO_Y);
+    });
+
+    it('FxDirector.bannerShown liga o desvio e clear desliga', () => {
+      const fx = new FxDirector(new Rng(3));
+      fx.bannerShown();
+      expect(fx.comboCounter.bannerActive).toBe(true);
+      fx.combo(9);
+      fx.comboEnd();
+      expect(fx.comboCounter.y).toBe(COMBO_SAFE_Y);
+      fx.clear();
+      expect(fx.comboCounter.bannerActive).toBe(false);
+    });
   });
 });
