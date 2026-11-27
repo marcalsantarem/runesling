@@ -99,6 +99,26 @@
     "width": 256,
     "height": 256
   },
+  "ui_gem_core": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_gem_fire": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_gem_lightning": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_gem_spectral": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
   "ui_hud_bar": {
     "slice": [
       20,
@@ -107,6 +127,61 @@
       0
     ],
     "width": 512,
+    "height": 128
+  },
+  "ui_icon_back": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_check": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_coin": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_gear": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_heart": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_lock": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_pause": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_recall": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_sound": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_sound_off": {
+    "slice": null,
+    "width": 128,
+    "height": 128
+  },
+  "ui_icon_star": {
+    "slice": null,
+    "width": 128,
     "height": 128
   },
   "ui_map_bg": {
@@ -172,6 +247,11 @@
       80
     ],
     "width": 512,
+    "height": 96
+  },
+  "ui_socket": {
+    "slice": null,
+    "width": 96,
     "height": 96
   }
 }

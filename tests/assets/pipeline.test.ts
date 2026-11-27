@@ -329,6 +329,19 @@ describe("manifesto real: peças de UI no estilo validado (T-058)", () => {
     expect(items.find((i) => i.key === "ui_map_bg")!.removeBg).toBe(false);
   });
 
+  it("parte 2 (BRF-047): ícones com a mesma margem, miolos vazados e som liga/desliga no mesmo recorte", () => {
+    const { items } = loadManifest(resolvePaths({ root }));
+    const by = (k: string) => items.find((i) => i.key === k)!;
+    const icons = items.filter((i) => i.key.startsWith("ui_icon_"));
+    expect(icons).toHaveLength(11);
+    expect(new Set(icons.map((i) => i.margin))).toEqual(new Set([0.06]));
+    expect(by("ui_icon_gear").removeEnclosedBg).toBe(true);
+    expect(by("ui_icon_lock").removeEnclosedBg).toBe(true);
+    expect(by("ui_icon_sound").trimGroup).toBe("sound");
+    expect(by("ui_icon_sound_off").trimGroup).toBe("sound");
+    expect(by("ui_gem_lightning").bgColor).toBe("magenta");
+  });
+
   it("cada peça tem arquivo em raw/ui, tamanho, 9-slice coerente e prompt sem brilho externo pedido", () => {
     for (const i of ui) {
       expect(i.file).toBe(`art-source/raw/ui/${i.key}.png`);
@@ -391,6 +404,26 @@ describe('peças de UI (T-039)', { timeout: 60_000 }, () => {
     expect([a.width, a.height]).toEqual([256, 128]);
     const b = await sharp(await normalizeUiPiece(src, 128, 128, null)).metadata();
     expect([b.width, b.height]).toEqual([128, 128]);
+  });
+
+  it('normalizeUiPiece: margem uniforme na peça inteira e caixa de trim compartilhada alinha a parte comum', async () => {
+    const sq = await synth({ bg: '#00000000', w: 200, h: 200, shape: '<rect x="40" y="40" width="120" height="120" fill="#456"/>', blur: 0.3 });
+    const m = await alphaBox(await normalizeUiPiece(sq, 128, 128, null, { margin: 0.1 }));
+    for (const v of [m.x0, m.y0, 127 - m.x1, 127 - m.y1]) expect(Math.abs(v - 13)).toBeLessThanOrEqual(1);
+    // "Som liga/desliga": mesmo bloco à esquerda, extensões diferentes à direita.
+    const on = await synth({ bg: '#00000000', w: 300, h: 200, shape: '<rect x="20" y="40" width="100" height="120" fill="#456"/><rect x="200" y="60" width="80" height="80" fill="#456"/>', blur: 0.3 });
+    const off = await synth({ bg: '#00000000', w: 300, h: 200, shape: '<rect x="20" y="40" width="100" height="120" fill="#456"/><rect x="160" y="80" width="40" height="40" fill="#456"/>', blur: 0.3 });
+    const box = { left: 19, top: 39, width: 263, height: 122 };
+    const leftBlock = async (b: Buffer) => {
+      const { data, info } = await rgba(b);
+      let x1 = -1;
+      for (let x = 0; x < 64; x++) if (data[(64 * info.width + x) * 4 + 3]! > 128) x1 = x;
+      return x1;
+    };
+    const a = await normalizeUiPiece(on, 128, 128, null, { margin: 0.06, box });
+    const c = await normalizeUiPiece(off, 128, 128, null, { margin: 0.06, box });
+    expect(await leftBlock(c)).toBe(await leftBlock(a));
+    expect((await alphaBox(c)).x0).toBe((await alphaBox(a)).x0);
   });
 
   it('grava em ui/ (não em tiles/), escreve ui.json e não quebra com peça faltando', async () => {

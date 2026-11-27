@@ -19,6 +19,8 @@ export interface ResolvedItem {
   bgColor: string | null;
   removeEnclosedBg: boolean;
   nineSlice: [number, number, number, number] | null;
+  margin: number;
+  trimGroup: string | null;
   raw: string;
   cut: string;
   standaloneIcon: boolean;
@@ -70,6 +72,7 @@ export function normalizeUiPiece(
   w: number,
   h: number,
   slice?: [number, number, number, number] | null,
+  opts?: { margin?: number; box?: { left: number; top: number; width: number; height: number } },
 ): Promise<Buffer>;
 export function packAtlas(
   frames: { key: string; buffer: Buffer }[],

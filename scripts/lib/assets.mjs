@@ -71,6 +71,10 @@ export function loadManifest(paths) {
       bgColor: bg ?? null,
       removeEnclosedBg: (it.removeEnclosedBg ?? preset.removeEnclosedBg) === true,
       nineSlice: it.nineSlice !== undefined ? it.nineSlice : (preset.nineSlice ?? null),
+      // Peça inteira de UI: margem transparente (fração do lado) e grupo de trim compartilhado
+      // (mesmo recorte para peças que precisam alinhar, ex.: som liga/desliga).
+      margin: it.margin ?? preset.margin ?? 0,
+      trimGroup: it.trimGroup ?? null,
       raw: resolve(paths.raw, rel),
       cut: resolve(paths.cut, rel),
       standaloneIcon: preset.atlas === 'icons',
@@ -361,13 +365,20 @@ export async function normalizeSprite(input, size, opts = {}) {
  * esticando/comprimindo bordas e miolo. Sem 9-slice (peça inteira): cabe em w×h, centrada,
  * com transparência em volta. PNG.
  */
-export async function normalizeUiPiece(input, w, h, slice = null) {
-  const box = await alphaBBox(input);
+export async function normalizeUiPiece(input, w, h, slice = null, opts = {}) {
+  const box = opts.box ?? (await alphaBBox(input));
   if (!box) throw new Error('imagem sem pixels opacos');
   const trimmed = await sharp(input).ensureAlpha().extract(box).png().toBuffer();
   if (!slice) {
-    return sharp(trimmed)
-      .resize(w, h, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 }, kernel: 'lanczos3' })
+    const m = opts.margin ?? 0;
+    const iw = Math.max(1, Math.round(w * (1 - 2 * m)));
+    const ih = Math.max(1, Math.round(h * (1 - 2 * m)));
+    const fitted = await sharp(trimmed)
+      .resize(iw, ih, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 }, kernel: 'lanczos3' })
+      .png()
+      .toBuffer();
+    return sharp({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+      .composite([{ input: fitted, left: Math.round((w - iw) / 2), top: Math.round((h - ih) / 2) }])
       .png()
       .toBuffer();
   }
@@ -451,6 +462,20 @@ export async function buildAll(paths, log = console) {
   const written = [];
   const missing = [];
   const uiJson = {};
+  // trimGroup: caixa de recorte = união das caixas das peças do grupo (precisam ter o mesmo tamanho).
+  const groupBox = new Map();
+  for (const it of items) {
+    if (it.kind !== 'ui' || !it.trimGroup || !existsSync(it.cut)) continue;
+    const b = await alphaBBox(it.cut);
+    if (!b) continue;
+    const g = groupBox.get(it.trimGroup);
+    if (!g) groupBox.set(it.trimGroup, b);
+    else {
+      const x0 = Math.min(g.left, b.left), y0 = Math.min(g.top, b.top);
+      const x1 = Math.max(g.left + g.width, b.left + b.width), y1 = Math.max(g.top + g.height, b.top + b.height);
+      groupBox.set(it.trimGroup, { left: x0, top: y0, width: x1 - x0, height: y1 - y0 });
+    }
+  }
   const write = (rel, buf) => {
     const f = outFile(paths, rel);
     ensureDir(f);
@@ -476,7 +501,10 @@ export async function buildAll(paths, log = console) {
     } else if (it.kind === 'ui') {
       // Peças de UI (T-039): public/assets/ui/<chave>.webp + insets em ui.json.
       const buf = it.removeBg
-        ? await normalizeUiPiece(it.cut, w, h, it.nineSlice)
+        ? await normalizeUiPiece(it.cut, w, h, it.nineSlice, {
+            margin: it.margin,
+            box: it.trimGroup ? groupBox.get(it.trimGroup) : undefined,
+          })
         : await sharp(it.cut).resize(w, h, { fit: 'cover' }).png().toBuffer();
       write(`ui/${it.key}.webp`, await sharp(buf).webp({ quality: WEBP_QUALITY, alphaQuality: 100, effort: 6 }).toBuffer());
       uiJson[it.key] = { slice: it.nineSlice ?? null, width: w, height: h };
