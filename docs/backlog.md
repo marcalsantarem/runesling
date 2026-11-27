@@ -82,6 +82,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-058 | Atualizar os prompts das peças de UI para o estilo validado (botão placa de ferro, fundo e nós do mapa, escudo rachado da derrota) antes de o dono gerar (tam. P) | M5 | AG08 | feita |
 | T-060 | Refazer `ui_card_fire`, `ui_card_spectral` e `ui_card_core` no mesmo estilo da `ui_card_lightning` (geradas em IAs diferentes; dono refaz depois) (tam. P) | M5 | AG08 | adiada pelo dono |
 | T-061 | Botão temporário na tela inicial para resetar o save (testar derrota); remover antes do M7 (tam. P) | M5 | AG02 + AG04 | feita (remover antes do M7) |
+| T-062 | Peças de UI não aparecem no Safari/iPhone: URL relativa em variável CSS (tam. P) | M5 | AG02 | em andamento |
 | T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | a fazer |
 | T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | a fazer |
 
