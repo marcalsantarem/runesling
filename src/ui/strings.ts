@@ -2,13 +2,15 @@
  * Textos da UI (decisão 22): pt-BR agora, pronto para inglês no M6.
  * Nenhum outro arquivo da UI tem texto solto: tudo passa por `t()` ou pelos acessores de conteúdo abaixo.
  */
-import { loadGameData, type PerkId, type Synergy } from '../data/types';
+import { loadGameData, type ItemRarity, type PerkId, type Synergy } from '../data/types';
+import { itemName as itemNameFor } from '../meta/items';
 
 const ptBR = {
   'app.title': 'RUNESLING',
   'app.subtitle': 'Capítulo {n} · {name}',
 
   'menu.tab.talents': 'TALENTOS',
+  'menu.tab.items': 'EQUIPAMENTOS',
   'menu.play': 'JOGAR',
   'menu.chapter': 'Capítulo {n}',
   'menu.locked': 'TRANCADO',
@@ -42,6 +44,46 @@ const ptBR = {
   'talents.max': 'MÁX',
   'talents.buyLabel': 'Comprar {name} por {cost} de ouro',
 
+  'items.title': 'EQUIPAMENTOS',
+  'items.subtitle': 'Toque no item para equipar; no espaço, para tirar',
+  'items.back': 'Voltar',
+  'items.empty': 'Nenhum item ainda. Vença o mini-chefe ou o chefe, ou abra um baú.',
+  'items.stack': '×{count}',
+  'items.slot.staff': 'Cajado',
+  'items.slot.orb': 'Orbe',
+  'items.slot.ring': 'Anel',
+  'items.slot.amulet': 'Amuleto',
+  'items.slot.cloak': 'Capa',
+  'items.slot.boots': 'Botas',
+  'items.slotEmpty': '{slot}: vazio',
+  'items.slotLabel': '{slot}: {name} ({rarity}). Toque para tirar',
+  'items.itemLabel': '{name} ({rarity}), {bonus}, {count} no inventário. Toque para equipar',
+  'items.rarity.common': 'Comum',
+  'items.rarity.uncommon': 'Incomum',
+  'items.rarity.rare': 'Raro',
+  'items.rarity.epic': 'Épico',
+  'items.rarity.legendary': 'Lendário',
+  'items.stat.atk': '+{v} ATK',
+  'items.stat.maxHp': '+{v} HP',
+  'items.stat.critChance': '+{v}% CRIT',
+  'items.stat.goldMult': '+{v}% ouro',
+  'items.stat.schoolDamage.lightning': '+{v}% dano elétrico',
+  'items.stat.schoolDamage.fire': '+{v}% dano ígneo',
+  'items.stat.schoolDamage.spectral': '+{v}% dano espectral',
+  'items.stat.shotBlockChance': '{v}% de anular tiros',
+  'items.epicRune': 'Runa: {name}',
+  'items.bonusTitle': 'Bônus equipado',
+  'items.bonusNone': 'Nada equipado',
+  'items.fuse': 'FUNDIR',
+  'items.fuseTitle': 'FUNDIR',
+  'items.fuseBody': '{n} iguais viram 1 da raridade seguinte. Itens equipados não contam.',
+  'items.fuseLabel': 'Fundir {count} {from} em 1 {to}',
+  'items.chest': '{price}',
+  'items.chestName': 'BAÚ',
+  'items.chestLabel': 'Abrir um baú por {price} de ouro',
+  'items.chestTitle': 'BAÚ ABERTO',
+  'items.close': 'FECHAR',
+
   'hud.hp': '{hp}/{max}',
   'hud.wave': 'ONDA {wave}/{total}',
   'hud.waveLabel': 'ONDA',
@@ -55,6 +97,8 @@ const ptBR = {
   'hud.speedLabel': 'Alternar velocidade (atual {speed})',
   'hud.recall': 'RECOLHER',
   'hud.pause': 'Pausar',
+  'hud.itemDrop': 'ITEM GANHO',
+  'hud.itemDrops': '{count} ITENS GANHOS',
   'hud.runesEmpty': 'Arraste na arena para mirar e solte para lançar',
   'hud.runeCount': '{name} ×{count}',
   'hud.runeStack': '×{count}',
@@ -89,6 +133,7 @@ const ptBR = {
   'end.waveValue': '{wave}/{total}',
   'end.gold': 'OURO GANHO',
   'end.goldValue': '+{gold}',
+  'end.items': 'ITENS GANHOS',
   'end.menu': 'MENU',
   'end.again': 'JOGAR DE NOVO',
 
@@ -169,4 +214,13 @@ export function enemyName(id: string): string {
 
 export function chapterName(id: string): string {
   return loadGameData().chapters[id]?.name ?? id;
+}
+
+export function itemName(id: string, rarity: ItemRarity): string {
+  const it = loadGameData().items.items[id];
+  return it ? itemNameFor(it, rarity) : id;
+}
+
+export function itemLegendaryDesc(id: string): string {
+  return loadGameData().items.items[id]?.legendary.desc ?? '';
 }

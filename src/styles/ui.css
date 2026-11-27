@@ -421,9 +421,12 @@
 .rs-plaque.is-cleared { border-color: #3a2606; box-shadow: inset 0 1px 0 #6a7290, 0 3px 0 #05060a, 0 0 0 2px rgba(254, 202, 87, .5); }
 /* Rodapé: JOGAR, Talentos, som e ajustes */
 .rs-menu-foot { position: relative; flex: none; width: 100%; max-width: 390px; height: 128px; margin: 0 auto; z-index: 2; }
-.rs-btn-play { position: absolute; left: 9.2%; top: 0; }
-.rs-talents-slot { position: absolute; right: 9.2%; top: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.rs-ib-label { font: 800 9px var(--rs-font-ui); letter-spacing: .16em; color: var(--rs-label); text-shadow: 0 1px 0 #000; }
+.rs-btn-play { position: absolute; left: 4.6%; top: 0; width: 206px; }
+/* Equipamentos e Talentos lado a lado (T-079) */
+.rs-nav-slots { position: absolute; right: 4.6%; top: 10px; display: flex; gap: 14px; }
+.rs-talents-slot { position: relative; width: 52px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.rs-ib-label { font: 800 9px var(--rs-font-ui); letter-spacing: .16em; color: var(--rs-label); text-shadow: 0 1px 0 #000; white-space: nowrap; }
+.rs-items-slot .rs-ib-label { font-size: 8px; letter-spacing: .06em; }
 .rs-menu-tools { position: absolute; left: 10.2%; top: 82px; display: flex; gap: 10px; }
 /* TEMP T-061: remover antes do M7. Botão "Resetar save" discreto no canto inferior direito. */
 .rs-btn-reset { position: absolute; right: 6%; top: 84px; width: 104px; height: 44px; font: 800 10px var(--rs-font-ui); letter-spacing: .08em; opacity: .75; }
@@ -522,6 +525,143 @@
 .rs-startp-row { display: flex; justify-content: space-around; margin-top: 4px; }
 .rs-startp-row span { display: flex; flex-direction: column; align-items: center; font: 800 9px var(--rs-font-ui); letter-spacing: .14em; color: var(--rs-label); }
 .rs-startp-row b { font: 900 20px var(--rs-font-title); color: var(--rs-cream); text-shadow: 0 2px 0 #000; }
+
+/* ---------- Equipamentos (T-079, decisões 68 e 70) ---------- */
+.rs-school-lightning { --rs-school: var(--rs-cyan); }
+.rs-school-fire { --rs-school: var(--rs-magma); }
+.rs-school-spectral { --rs-school: var(--rs-violet); }
+.rs-school-core { --rs-school: var(--rs-gold); }
+.rs-item-art {
+  position: relative; display: grid; place-items: center; flex: none;
+  width: 44px; height: 44px; border-radius: 10px;
+  color: var(--rs-school);
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--rs-school) 28%, #191c27), #0c0e16 75%);
+}
+.rs-item-art.has-art { background: none; }
+.rs-item-art.has-art .rs-item-glyph { display: none; }
+.rs-item-glyph { filter: drop-shadow(0 2px 0 #000); }
+.rs-item-glyph svg { width: 70%; height: 70%; }
+.rs-item-glyph { width: 100%; height: 100%; display: grid; place-items: center; }
+.rs-item-name { display: block; font: 900 12px/1.2 var(--rs-font-title); color: var(--rs-rarity, var(--rs-cream)); text-shadow: 0 2px 0 #000; }
+.rs-item-rarity { display: block; font: 800 9px var(--rs-font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--rs-rarity, var(--rs-label)); }
+.rs-item-line { display: block; font: 600 10.5px/1.3 var(--rs-font-ui); color: var(--rs-body); }
+.rs-item-legend { color: var(--rs-cream); font-style: italic; }
+
+.rs-panel-items { padding-bottom: max(16px, calc(var(--rs-safe-bottom) + 4px)); }
+.rs-eq-head { padding: 8px 24px 0; }
+.rs-eq-head .rs-ribbon { width: calc(100% - 72px); }
+.rs-eq-head .rs-caption { font-size: 12px; white-space: nowrap; }
+.rs-eq-doll { flex: none; position: relative; z-index: 2; width: 100%; max-width: 390px; height: 252px; margin: 8px auto 0; }
+.rs-eq-glow { position: absolute; left: 50%; top: 50%; width: 190px; height: 190px; margin: -95px 0 0 -95px; border-radius: 50%; background: radial-gradient(circle, rgba(156, 107, 255, .22), transparent 68%); }
+.rs-eq-mage { position: absolute; left: 50%; top: 50%; width: 120px; height: 200px; margin: -100px 0 0 -60px; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .7)); }
+.rs-eq-col { position: absolute; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: space-between; }
+.rs-eq-col-l { left: 9%; }
+.rs-eq-col-r { right: 9%; }
+.rs-eq-slotwrap { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+.rs-eq-slot-name { font: 800 9px var(--rs-font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--rs-label); text-shadow: 0 1px 0 #000; }
+.rs-eq-slot {
+  width: 58px; height: 58px; padding: 0; border-radius: 14px;
+  display: grid; place-items: center;
+  background: var(--rs-stone-in);
+  box-shadow: 0 0 0 2px var(--rs-ink), 0 0 0 4.5px var(--rs-rarity, #3b4157), 0 0 0 6px var(--rs-ink), inset 0 4px 8px rgba(0, 0, 0, .7), 0 5px 0 4px #05060a;
+}
+.rs-eq-slot:not(.is-empty) { box-shadow: 0 0 0 2px var(--rs-ink), 0 0 0 4.5px var(--rs-rarity), 0 0 0 6px var(--rs-ink), 0 0 14px color-mix(in srgb, var(--rs-rarity) 45%, transparent), 0 5px 0 4px #05060a; }
+.rs-eq-slot.is-empty { color: #3b4157; }
+.rs-eq-slot.is-empty .rs-item-glyph { filter: none; opacity: .8; }
+.rs-eq-slot:disabled { cursor: default; }
+.rs-eq-slot.is-down:not(:disabled), .rs-eq-slot:active:not(:disabled) { transform: translateY(2px); }
+.rs-eq-slot-art { width: 46px; height: 46px; }
+.rs-eq-bonus {
+  flex: none; position: relative; z-index: 2; margin: 8px 14px 0; min-height: 50px; padding: 6px 10px;
+  border-radius: 12px; background: var(--rs-recess);
+  box-shadow: inset 0 0 0 2px var(--rs-ink), inset 0 3px 6px rgba(0, 0, 0, .8), 0 0 0 1.5px #4a5168;
+  text-align: center;
+}
+.rs-eq-bonus > small { display: block; font: 800 9px var(--rs-font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--rs-label); }
+.rs-eq-bonus-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 6px; margin-top: 4px; }
+.rs-eq-bonus-chip { font: 800 10.5px var(--rs-font-ui); color: var(--rs-cream); padding: 2px 7px; border-radius: 8px; box-shadow: inset 0 0 0 1.5px var(--rs-rarity); white-space: nowrap; }
+.rs-eq-bonus-legend { display: block; margin-top: 4px; font: italic 600 10.5px/1.3 var(--rs-font-ui); color: var(--rs-rarity); }
+.rs-eq-bonus-none { display: block; margin-top: 4px; font: 600 12px var(--rs-font-ui); color: var(--rs-label); }
+.rs-eq-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: max-content; align-content: start; gap: 10px;
+  padding: 12px 14px 8px; position: relative; z-index: 2;
+}
+.rs-eq-grid.is-empty { display: flex; align-items: center; justify-content: center; }
+.rs-eq-empty { max-width: 280px; text-align: center; font: 600 13px/1.45 var(--rs-font-ui); color: var(--rs-label); }
+.rs-eq-cell {
+  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 3px;
+  min-width: 0; height: auto; min-height: 112px; padding: 8px 7px 9px; border-radius: 12px;
+  text-align: left; white-space: normal;
+  background: var(--rs-stone-in);
+  box-shadow: 0 0 0 2px var(--rs-ink), 0 0 0 4px var(--rs-rarity), 0 0 0 5.5px var(--rs-ink), inset 0 0 18px color-mix(in srgb, var(--rs-rarity) 16%, transparent), 0 5px 0 3px #05060a;
+}
+.rs-eq-cell.is-down, .rs-eq-cell:active { transform: translateY(2px); }
+.rs-eq-cell-top { position: relative; display: flex; justify-content: center; margin-bottom: 2px; }
+.rs-eq-cell-art { width: 48px; height: 48px; }
+.rs-eq-count {
+  position: absolute; right: -2px; top: -4px; min-width: 26px; height: 20px; padding: 0 5px; border-radius: 10px;
+  font: 900 11px/16px var(--rs-font-ui); font-style: normal; text-align: center; color: #fff;
+  background: var(--rs-ink); border: 2px solid var(--rs-rarity, #4a5168);
+}
+.rs-eq-cell .rs-item-name { font-size: 11px; overflow-wrap: anywhere; }
+.rs-eq-cell .rs-item-line { font-size: 10px; }
+.rs-eq-actions { flex: none; position: relative; z-index: 2; display: flex; gap: 12px; padding: 10px 14px 0; }
+.rs-eq-actions .rs-plate { flex: 1 1 0; min-width: 0; height: 56px; font-size: 17px; }
+.rs-eq-chest .rs-plate-lbl .rs-icon:last-child { margin-left: -2px; }
+
+/* Modais Fundir e Baú */
+.rs-fuse-body { gap: 16px; max-height: 100%; }
+.rs-fuse-list { width: 100%; display: flex; flex-direction: column; gap: 12px; max-height: min(52cqh, 420px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 6px 4px; }
+.rs-fuse-row {
+  flex: none; display: grid; grid-template-columns: 56px 18px minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 8px;
+  padding: 10px; border-radius: 12px; background: var(--rs-stone-in);
+  box-shadow: 0 0 0 2px var(--rs-ink), 0 0 0 3.5px #4a5168, inset 0 4px 8px rgba(0, 0, 0, .6);
+  text-align: left;
+}
+.rs-fuse-from { position: relative; display: grid; place-items: center; }
+.rs-fuse-art { width: 50px; height: 50px; box-shadow: 0 0 0 2px var(--rs-ink), 0 0 0 4px var(--rs-rarity); }
+.rs-fuse-arrow { width: 0; height: 0; border: 8px solid transparent; border-left: 11px solid var(--rs-gold); justify-self: center; }
+.rs-fuse-go { grid-column: 1 / -1; height: 48px; font-size: 16px; }
+.rs-item-card { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 8px 10px; border-radius: 12px; background: var(--rs-recess); box-shadow: inset 0 0 0 2px var(--rs-rarity), 0 0 16px color-mix(in srgb, var(--rs-rarity) 35%, transparent); text-align: left; }
+.rs-item-card-art { width: 52px; height: 52px; }
+.rs-item-card-tx { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rs-item-card .rs-item-name { font-size: 14px; }
+.rs-chest-result { width: min(320px, 100%); display: flex; flex-direction: column; gap: 12px; }
+.rs-chest-result .rs-item-card { padding: 14px; animation: rs-rise-in .4s cubic-bezier(.2, 1.3, .4, 1); }
+.rs-chest-result .rs-item-card-art { width: 72px; height: 72px; }
+.rs-chest-result .rs-item-card .rs-item-name { font-size: 17px; }
+
+/* Chip de item (aviso do HUD e Fim de run) */
+.rs-item-chip { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 3px 9px 3px 3px; border-radius: 10px; background: rgba(12, 14, 22, .9); box-shadow: inset 0 0 0 1.5px var(--rs-rarity); }
+.rs-item-chip-art { width: 28px; height: 28px; border-radius: 7px; }
+.rs-item-chip-name { font: 800 12px var(--rs-font-ui); color: var(--rs-rarity); text-shadow: 0 1px 0 #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rs-item-toast {
+  position: absolute; left: 50%; top: calc(max(var(--rs-field-y), calc(var(--rs-safe-top) + var(--rs-top-h))) + 10px); transform: translateX(-50%);
+  width: max-content; max-width: calc(100% - 32px);
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 8px 12px; border-radius: 12px; pointer-events: none;
+  background: rgba(6, 7, 15, .88); box-shadow: 0 0 0 2px var(--rs-ink), 0 0 0 3.5px var(--rs-gold-dark), 0 8px 16px rgba(0, 0, 0, .6);
+}
+.rs-item-toast > small { font: 800 10px var(--rs-font-ui); letter-spacing: .16em; color: var(--rs-gold); }
+.rs-item-toast.is-shown { animation: rs-fade-in .25s ease-out; }
+.rs-end-items { width: min(328px, 100%); display: flex; flex-direction: column; align-items: center; gap: 6px; flex: none; }
+.rs-end-items > small { font: 800 11px var(--rs-font-ui); letter-spacing: .14em; color: var(--rs-label); }
+.rs-end-items-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+
+@media (max-height: 700px) {
+  .rs-eq-head .rs-caption { display: none; }
+  .rs-eq-doll { height: 206px; margin-top: 2px; }
+  .rs-eq-slotwrap { gap: 7px; }
+  .rs-eq-slot { width: 46px; height: 46px; border-radius: 12px; }
+  .rs-eq-slot-art { width: 38px; height: 38px; }
+  .rs-eq-slot-name { font-size: 8px; }
+  .rs-eq-mage { transform: scale(.82); }
+}
+@media (max-width: 370px) {
+  .rs-btn-play { width: 190px; }
+  .rs-eq-col-l { left: 5%; }
+  .rs-eq-col-r { right: 5%; }
+}
 
 /* ---------- Partida (HUD): faixas de pedra acima e abaixo do campo 360×520 ---------- */
 .rs-hud { pointer-events: none; z-index: 0; }

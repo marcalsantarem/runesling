@@ -171,6 +171,8 @@ export const ICONS = {
     '<defs><linearGradient id="rs-g-shield" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#88FFFF"/><stop offset=".5" stop-color="#00CEC9"/><stop offset="1" stop-color="#0984E3"/></linearGradient></defs><path fill="url(#rs-g-shield)" d="M12 2 20.5 5v6.5c0 5-3.6 9-8.5 10.5C7.1 20.5 3.5 16.5 3.5 11.5V5z"/><path d="M12 3.5 10.6 8 13.2 10.5 10.3 13.8 12.6 16.4 11.2 21" fill="none" stroke="#0A0B10" stroke-width="1.6" stroke-linejoin="round"/><path d="M10.6 8 7.5 9.2M13.2 10.5 16.6 9.6M10.3 13.8 7.4 15" fill="none" stroke="#0A0B10" stroke-width="1.1"/>',
   recall:
     '<path d="M12 4v10m0 0l-4-4m4 4l4-4M5 19h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',
+  chest:
+    '<path fill="#8a5a2b" d="M3 10h18v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path fill="#b07438" d="M3 10a9 5 0 0 1 18 0z"/><path fill="none" stroke="var(--rs-gold)" stroke-width="1.8" d="M3 10h18M7 6.2V21M17 6.2V21"/><rect x="10" y="11.5" width="4" height="4.5" rx="1" fill="var(--rs-gold)" stroke="#3a2606" stroke-width="1"/>',
   skull:
     '<path fill="currentColor" d="M12 2C7 2 3.5 5.6 3.5 10.2c0 2.7 1.2 4.6 3 5.8V19a1 1 0 0 0 1 1h1.5v-2h1.5v2h3v-2h1.5v2h1.5a1 1 0 0 0 1-1v-3c1.8-1.2 3-3.1 3-5.8C20.5 5.6 17 2 12 2zm-3.5 11a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm7 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>',
 } as const;

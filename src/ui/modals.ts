@@ -1,5 +1,7 @@
 /** Modais da partida: Draft de runas, Fim de run e Pausa. */
-import type { GameData, PerkId, Synergy } from '../data/types';
+import type { ItemDrop } from '../core/events';
+import { loadGameData, type GameData, type PerkId, type Synergy } from '../data/types';
+import { itemChip } from './equipment';
 import { artIcon, atlasFrame, el, icon, ICONS, plate, ribbon, show } from './dom';
 import type { PlayerSettings } from '../meta/profile';
 import { createSettingsControls, type SettingsHandlers } from './settings';
@@ -140,7 +142,7 @@ export function createDraft(
 
 // ---------- Fim de run ----------
 export interface EndView extends ModalView {
-  open(r: { won: boolean; wave: number; totalWaves: number; goldEarned: number }): void;
+  open(r: { won: boolean; wave: number; totalWaves: number; goldEarned: number; items?: readonly ItemDrop[] }): void;
 }
 
 export function createEnd(onMenu: () => void, onAgain: () => void, game?: GameData): EndView {
@@ -160,6 +162,12 @@ export function createEnd(onMenu: () => void, onAgain: () => void, game?: GameDa
   const sub = el('p', { className: 'rs-modal-sub rs-end-sub' });
   const wave = el('b', { attrs: { 'data-ui': 'end-wave' } });
   const gold = el('b', { className: 'rs-text-gold', attrs: { 'data-ui': 'end-gold' } });
+  // Itens ganhos na run (T-079, `run:ended.items`); some quando não veio nenhum.
+  const endItemsRow = el('div', { className: 'rs-end-items-row' });
+  const endItems = el('div', { className: 'rs-end-items', attrs: { 'data-ui': 'end-items' } }, [
+    el('small', { text: t('end.items') }),
+    endItemsRow,
+  ]);
   const rivets = ['tl', 'tr', 'bl', 'br'].map((p) => el('i', { className: `rs-rv4 rs-rv4-${p}`, attrs: { 'aria-hidden': 'true' } }));
   const root = modalShell(
     'modal-end',
@@ -188,6 +196,7 @@ export function createEnd(onMenu: () => void, onAgain: () => void, game?: GameDa
           ]),
         ]),
       ]),
+      endItems,
       el('div', { className: 'rs-modal-actions' }, [
         plate('gold', t('end.again'), onAgain, { size: 'lg', className: 'rs-btn-wide', attrs: { 'data-ui': 'end-again' } }),
         plate('iron', t('end.menu'), onMenu, { attrs: { 'data-ui': 'end-menu', 'data-sfx': 'ui_back' } }),
@@ -197,7 +206,11 @@ export function createEnd(onMenu: () => void, onAgain: () => void, game?: GameDa
   );
   root.classList.add('rs-modal-end');
 
-  function open(r: { won: boolean; wave: number; totalWaves: number; goldEarned: number }): void {
+  function open(r: { won: boolean; wave: number; totalWaves: number; goldEarned: number; items?: readonly ItemDrop[] }): void {
+    const items = r.items ?? [];
+    const data = game ?? loadGameData();
+    endItemsRow.replaceChildren(...items.map((i) => itemChip(data, i)));
+    show(endItems, items.length > 0);
     title.textContent = r.won ? t('end.victory') : t('end.defeat');
     titleRibbon.node.classList.toggle('is-victory', r.won);
     titleRibbon.node.classList.toggle('is-defeat', !r.won);

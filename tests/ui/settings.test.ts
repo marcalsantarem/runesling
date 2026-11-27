@@ -63,9 +63,9 @@ describe('sons da UI (T-046)', () => {
   it('Fim de run: victory ou defeat', async () => {
     await inRun();
     h.audio.played.length = 0;
-    h.bus.emit('run:ended', { won: true, wave: 15, goldEarned: 10 });
+    h.bus.emit('run:ended', { won: true, wave: 15, goldEarned: 10, items: [] });
     h.click('end-again');
-    h.bus.emit('run:ended', { won: false, wave: 3, goldEarned: 1 });
+    h.bus.emit('run:ended', { won: false, wave: 3, goldEarned: 1, items: [] });
     expect(h.audio.played).toEqual(['victory', 'ui_tap', 'defeat']);
   });
 

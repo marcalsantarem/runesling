@@ -4,6 +4,7 @@
  */
 import type { GameData, TalentStat } from '../data/types';
 import type { PlayerData, PlayerProfile, TalentId } from '../meta/profile';
+import { createEquipment } from './equipment';
 import { createSettingsControls, type SettingsHandlers } from './settings';
 import { artIcon, atlasFrame, el, icon, iconButton, ICONS, plate, ribbon, show } from './dom';
 import { chapterName, enemyName, t, talentDesc, talentName } from './strings';
@@ -11,7 +12,7 @@ import { chapterName, enemyName, t, talentDesc, talentName } from './strings';
 // TEMP T-061: remover antes do M7. Flag única do botão "Resetar save" da tela inicial.
 export const TEMP_RESET_SAVE = true;
 
-export type MenuTab = 'play' | 'talents';
+export type MenuTab = 'play' | 'talents' | 'items';
 
 export interface MenuView {
   readonly root: HTMLElement;
@@ -204,6 +205,11 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     className: 'rs-ib-talents',
   });
   navTalents.appendChild(talentsDot);
+  const navItems = iconButton(ICONS.sword, t('menu.tab.items'), () => setTab('items'), {
+    attrs: { 'data-ui': 'nav-items' },
+    piece: 'ui_icon_sword',
+    className: 'rs-ib-items',
+  });
   const soundBtn = iconButton(ICONS.soundOn, t('sound.label'), () => h.onToggleSound(), {
     attrs: { 'data-ui': 'menu-sound', 'data-sfx': 'none' },
     piece: 'ui_icon_sound',
@@ -242,9 +248,15 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
   const foot = el('div', { className: 'rs-menu-foot' }, [
     playBtn,
     resetBtn,
-    el('div', { className: 'rs-talents-slot' }, [
-      navTalents,
-      el('span', { className: 'rs-ib-label', text: t('menu.tab.talents'), attrs: { 'aria-hidden': 'true' } }),
+    el('div', { className: 'rs-nav-slots' }, [
+      el('div', { className: 'rs-talents-slot rs-items-slot' }, [
+        navItems,
+        el('span', { className: 'rs-ib-label', text: t('menu.tab.items'), attrs: { 'aria-hidden': 'true' } }),
+      ]),
+      el('div', { className: 'rs-talents-slot' }, [
+        navTalents,
+        el('span', { className: 'rs-ib-label', text: t('menu.tab.talents'), attrs: { 'aria-hidden': 'true' } }),
+      ]),
     ]),
     el('div', { className: 'rs-menu-tools' }, [soundBtn, gearBtn]),
   ]);
@@ -284,6 +296,9 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     ]),
   ]);
 
+  // ---------- Equipamentos (T-079) ----------
+  const equipment = createEquipment(game, () => setTab('play'));
+
   // ---------- Configurações (engrenagem): som, volume e movimento (decisões 23 e 42) ----------
   const controls = createSettingsControls('settings', h);
   const settings = el(
@@ -308,8 +323,10 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     el('div', { className: 'rs-mapbg', attrs: { 'aria-hidden': 'true' } }),
     playPanel,
     talentsPanel,
+    equipment.root,
     el('div', { className: 'rs-deco-frame', attrs: { 'aria-hidden': 'true' } }),
     settings,
+    ...equipment.overlays,
     TEMP_RESET_SAVE ? resetModal : null,
   ]);
 
@@ -322,6 +339,8 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     tab = next;
     show(playPanel, tab === 'play');
     show(talentsPanel, tab === 'talents');
+    show(equipment.root, tab === 'items');
+    equipment.reset();
     show(resetModal, false); // TEMP T-061
     if (tab === 'talents') talentList.scrollTop = 0;
   }
@@ -388,6 +407,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
   function render(data: Readonly<PlayerData> | null, profile: PlayerProfile | null): void {
     playBtn.disabled = !data;
     fit();
+    equipment.render(data, profile);
     if (!data || !profile) {
       gold.value.textContent = t('common.empty');
       talentsGold.value.textContent = t('common.empty');

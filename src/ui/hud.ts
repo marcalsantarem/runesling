@@ -1,7 +1,8 @@
 /** HUD da partida: faixa superior (HP, onda, ouro, pausa), faixa de runas, barra inferior e banner. */
-import type { RunState } from '../core/events';
+import type { ItemDrop, RunState } from '../core/events';
 import type { GameData, PerkId } from '../data/types';
 import { artIcon, el, icon, iconButton, ICONS, plate, setPlateLabel, show } from './dom';
+import { itemChip } from './equipment';
 import { pct } from './menu';
 import { perkName, t } from './strings';
 
@@ -16,11 +17,14 @@ export interface HudView {
   update(state: RunState): void;
   reset(): void;
   banner(text: string): void;
+  /** Aviso curto de item ganho (`run:itemDrop`); não bloqueia o toque. */
+  itemDrop(items: readonly ItemDrop[]): void;
   setPauseEnabled(enabled: boolean): void;
   destroy(): void;
 }
 
 export const BANNER_MS = 1800;
+export const ITEM_TOAST_MS = 2600;
 
 /** Agrupa runas repetidas, mantendo a ordem da primeira escolha. */
 export function groupPerks(perks: readonly PerkId[]): { id: PerkId; count: number }[] {
@@ -101,13 +105,18 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     bannerText,
   ]);
 
+  const toastEl = el('div', { className: 'rs-item-toast', attrs: { 'data-ui': 'hud-item-toast', role: 'status' } });
+  show(toastEl, false);
+
   const root = el('section', { className: 'rs-screen rs-hud', attrs: { 'data-ui': 'screen-hud' } }, [
     topBand,
     bannerEl,
+    toastEl,
     bottomBand,
   ]);
 
   let bannerTimer: ReturnType<typeof setTimeout> | undefined;
+  let toastTimer: ReturnType<typeof setTimeout> | undefined;
   let lastPerks = '';
 
   function renderRunes(perks: readonly PerkId[]): void {
@@ -176,8 +185,28 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     bannerTimer = setTimeout(hideBanner, BANNER_MS);
   }
 
+  function hideToast(): void {
+    if (toastTimer !== undefined) clearTimeout(toastTimer);
+    toastTimer = undefined;
+    toastEl.classList.remove('is-shown');
+    show(toastEl, false);
+  }
+
+  function itemDrop(items: readonly ItemDrop[]): void {
+    if (items.length === 0) return;
+    hideToast();
+    toastEl.replaceChildren(
+      el('small', { text: items.length > 1 ? t('hud.itemDrops', { count: items.length }) : t('hud.itemDrop') }),
+      ...items.map((i) => itemChip(game, i)),
+    );
+    show(toastEl, true);
+    toastEl.classList.add('is-shown');
+    toastTimer = setTimeout(hideToast, ITEM_TOAST_MS);
+  }
+
   function reset(): void {
     hideBanner();
+    hideToast();
     lastPerks = '';
     hpFill.style.width = '100%';
     for (const n of [hpText, waveNum, waveTotal, goldText, atk.value, orbs.value, crit.value]) n.textContent = '';
@@ -196,5 +225,16 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
   }
 
   reset();
-  return { root, update, reset, banner, setPauseEnabled, destroy: hideBanner };
+  return {
+    root,
+    update,
+    reset,
+    banner,
+    itemDrop,
+    setPauseEnabled,
+    destroy: () => {
+      hideBanner();
+      hideToast();
+    },
+  };
 }

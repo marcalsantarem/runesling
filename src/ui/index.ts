@@ -218,11 +218,14 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
       sfx.play('draft_open');
       refreshPause();
     }),
-    bus.on('run:ended', ({ won, wave, goldEarned }) => {
+    bus.on('run:itemDrop', ({ items }) => {
+      if (screen === 'run') hud.itemDrop(items);
+    }),
+    bus.on('run:ended', ({ won, wave, goldEarned, items }) => {
       if (screen !== 'run') return;
       draft.hide();
       pause.hide();
-      end.open({ won, wave, goldEarned, totalWaves: lastState?.totalWaves ?? defaultTotal });
+      end.open({ won, wave, goldEarned, items, totalWaves: lastState?.totalWaves ?? defaultTotal });
       sfx.play(won ? 'victory' : 'defeat');
       refreshPause();
     }),

@@ -141,7 +141,7 @@ describe('fluxo de telas', () => {
   it('fim de run: vitória e derrota; Menu emite ui:quitRun; Jogar de novo reinicia', async () => {
     await inRun();
     h.bus.emit('run:state', runState({ wave: 9 }));
-    h.bus.emit('run:ended', { won: false, wave: 9, goldEarned: 57 });
+    h.bus.emit('run:ended', { won: false, wave: 9, goldEarned: 57, items: [] });
     expect(h.visible('modal-end')).toBe(true);
     expect(h.q('end-title').textContent).toBe('BARREIRA ROMPIDA');
     // M4-02: derrota usa a mesma fita/emblema da vitória, sem o destaque dourado.
@@ -152,7 +152,7 @@ describe('fluxo de telas', () => {
     h.click('end-again');
     expect(names().slice(-1)).toEqual(['ui:startRun']);
     expect(h.visible('modal-end')).toBe(false);
-    h.bus.emit('run:ended', { won: true, wave: 15, goldEarned: 300 });
+    h.bus.emit('run:ended', { won: true, wave: 15, goldEarned: 300, items: [] });
     expect(h.q('end-title').textContent).toBe('CRIPTA CONQUISTADA');
     h.click('end-menu');
     expect(names().slice(-1)).toEqual(['ui:quitRun']);
@@ -184,7 +184,7 @@ describe('fluxo de telas', () => {
     h = await setup();
     h.bus.emit('app:ready', {});
     h.bus.emit('draft:open', { choices: ['ignite', 'supernova', 'molten_core'] });
-    h.bus.emit('run:ended', { won: false, wave: 1, goldEarned: 0 });
+    h.bus.emit('run:ended', { won: false, wave: 1, goldEarned: 0, items: [] });
     expect(h.visible('modal-draft')).toBe(false);
     expect(h.visible('modal-end')).toBe(false);
     expect(h.ui.screen()).toBe('menu');
