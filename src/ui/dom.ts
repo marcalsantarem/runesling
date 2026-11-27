@@ -1,5 +1,6 @@
 /** Helpers mínimos de DOM da UI (sem framework). Texto sempre por `textContent`. */
 import { AVAILABLE_ASSETS } from '../core/assetManifest';
+import { assetUrl } from './assetUrl';
 
 export interface ElOptions {
   className?: string;
@@ -189,9 +190,8 @@ export function atlasFrame(node: HTMLElement, atlas: string, frame: string): voi
   const tex = `atlases/${atlas}.webp`;
   const json = `atlases/${atlas}.json`;
   if (!availableAssets.has(tex) || !availableAssets.has(json) || typeof fetch === 'undefined') return;
-  const base = import.meta.env.BASE_URL;
   type Atlas = { frames: Record<string, { frame: { x: number; y: number; w: number; h: number } }>; meta: { size: { w: number; h: number } } };
-  fetch(`${base}assets/${json}`)
+  fetch(assetUrl(json))
     .then((r) => (r.ok ? (r.json() as Promise<Atlas>) : null))
     .then((a) => {
       const f = a?.frames[frame]?.frame;
@@ -201,7 +201,7 @@ export function atlasFrame(node: HTMLElement, atlas: string, frame: string): voi
       node.style.setProperty('--fw', String(f.w));
       node.style.setProperty('--aw', String(a.meta.size.w));
       node.style.setProperty('--ah', String(a.meta.size.h));
-      node.style.backgroundImage = `url("${base}assets/${tex}")`;
+      node.style.backgroundImage = `url("${assetUrl(tex)}")`;
       node.classList.add('has-art');
     })
     .catch(() => undefined);

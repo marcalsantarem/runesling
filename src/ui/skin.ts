@@ -5,6 +5,7 @@
  * que liga o `border-image`/`background` da peça. Sem arquivo: nenhuma requisição, só o fallback.
  */
 import { AVAILABLE_ASSETS } from '../core/assetManifest';
+import { assetUrl } from './assetUrl';
 
 export const UI_PIECES = [
   'ui_panel',
@@ -61,7 +62,7 @@ export function pieceVar(key: UiPiece): string {
 }
 
 export function piecePath(key: UiPiece): string {
-  return `${import.meta.env.BASE_URL}assets/ui/${key}.webp`;
+  return assetUrl(`ui/${key}.webp`);
 }
 
 /** Peças cujo arquivo existe em `public/assets/ui/`. */
@@ -95,7 +96,7 @@ export function applySkin(
 export function mountSkin(root: HTMLElement, available: readonly string[] = AVAILABLE_ASSETS): void {
   const pieces = applySkin(root, available);
   if (pieces.length === 0 || !available.includes('ui/ui.json') || typeof fetch === 'undefined') return;
-  fetch(`${import.meta.env.BASE_URL}assets/ui/ui.json`)
+  fetch(assetUrl('ui/ui.json'))
     .then((r) => (r.ok ? (r.json() as Promise<Record<string, SliceInfo>>) : {}))
     .then((json) => applySkin(root, available, json))
     .catch(() => undefined);

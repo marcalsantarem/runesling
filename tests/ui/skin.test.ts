@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { loadGameData } from '../../src/data/types';
 import { synergySeal } from '../../src/ui/modals';
-import { applySkin, availablePieces, pieceVar, UI_PIECES } from '../../src/ui/skin';
+import { applySkin, availablePieces, piecePath, pieceVar, UI_PIECES } from '../../src/ui/skin';
 import { flush, runState, setup, type Harness } from './helpers';
 
 let h: Harness | undefined;
@@ -40,6 +40,18 @@ describe('Peças de UI da direção A (contrato M5)', () => {
     expect(root.style.getPropertyValue('--ui-panel-slice')).toBe('40 40 40 40');
     expect(root.style.getPropertyValue('--ui-panel-bw')).toBe('20px 20px 20px 20px');
     expect(availablePieces(['ui/ui_ribbon.webp'])).toEqual(['ui_ribbon']);
+  });
+
+  it('T-062: URL da peça na variável é absoluta (WebKit resolve url() de var() pela folha CSS)', () => {
+    const root = document.createElement('div');
+    applySkin(root, UI_PIECES.map((k) => `ui/${k}.webp`));
+    for (const k of UI_PIECES) {
+      const m = /^url\("([^"]+)"\)$/.exec(root.style.getPropertyValue(pieceVar(k)));
+      expect(m, k).not.toBeNull();
+      expect(m![1], k).toMatch(/^(https?:\/\/|\/)/);
+      expect(m![1], k).not.toMatch(/assets\/assets\//);
+    }
+    expect(piecePath('ui_panel')).toMatch(/^(https?:\/\/|\/)/);
   });
 
   it('peças novas da T-039 ligadas e runas SVG da placa visíveis por cima da peça', () => {
