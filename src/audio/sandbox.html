@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- Página de teste dos efeitos (fora do build): `npm run dev` e abrir /src/audio/sandbox.html -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RuneSling — Sons</title>
+  <style>
+    body { background: #0D1020; color: #E8E3D3; font: 15px system-ui, sans-serif; margin: 16px; }
+    button { margin: 4px; padding: 10px 12px; background: #1B2140; color: inherit; border: 1px solid #C9A24A; border-radius: 6px; }
+    label { display: block; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>Efeitos sintetizados</h1>
+  <label>Combo: <input id="combo" type="range" min="0" max="20" value="0" /> <span id="cv">0</span></label>
+  <label>Pan: <input id="pan" type="range" min="-1" max="1" step="0.1" value="0" /></label>
+  <label>Volume: <input id="vol" type="range" min="0" max="1" step="0.05" value="1" /></label>
+  <label><input id="mute" type="checkbox" /> Mudo</label>
+  <button id="burst">Rajada (20× impact)</button>
+  <div id="keys"></div>
+  <script type="module">
+    import { audio, SFX_KEYS } from './index.ts';
+    audio.attachUnlock(window);
+    const $ = (id) => document.getElementById(id);
+    const opts = () => ({ combo: Number($('combo').value), pan: Number($('pan').value) });
+    $('combo').oninput = () => ($('cv').textContent = $('combo').value);
+    $('vol').oninput = () => audio.setVolume(Number($('vol').value));
+    $('mute').onchange = () => audio.setMuted($('mute').checked);
+    $('burst').onclick = () => { for (let i = 0; i < 20; i++) setTimeout(() => audio.play('impact', { ...opts(), combo: i }), i * 40); };
+    for (const k of SFX_KEYS) {
+      const b = document.createElement('button');
+      b.textContent = k;
+      b.onclick = () => audio.play(k, opts());
+      $('keys').append(b);
+    }
+  </script>
+</body>
+</html>

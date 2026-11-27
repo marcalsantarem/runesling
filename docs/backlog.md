@@ -93,7 +93,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 
 | Id | Descrição | Marco | Agente(s) | Estado |
 |---|---|---|---|---|
-| T-045 | Motor de som sintetizado (Web Audio): catálogo de efeitos por evento, tom pelo combo, variação ±8%, liberação no 1º toque, volume e mudo (decisão 39) (tam. M) | M6 | AG11 | em andamento |
+| T-045 | Motor de som sintetizado (Web Audio): catálogo de efeitos por evento, tom pelo combo, variação ±8%, liberação no 1º toque, volume e mudo (decisão 39) (tam. M) | M6 | AG11 | feita (falta ouvir no aparelho) |
 | T-046 | Ligar os sons aos eventos da partida e da UI (impacto, bumper, explosão, raio, morte, barreira, draft, botões) (tam. P) | M6 | AG01 + AG02 | a fazer |
 | T-047 | Partículas com brilho aditivo e bloom leve; squash e tremida de tela mais fortes (decisão 41) (tam. M) | M6 | AG09 | em andamento |
 | T-048 | Contador de combo visível durante o voo, com cor e escala crescentes (decisão 41) (tam. P) | M6 | AG09 | a fazer |
