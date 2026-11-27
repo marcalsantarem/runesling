@@ -1,0 +1,6 @@
+# BRF-059 — AG09 — T-067 Fecho do combo sob o banner da onda
+**Leia:** `src/scenes/fx/combo.ts`, `FxDirector.ts`, `FxLayer.ts`; só leitura em `src/scenes/BattleScene.ts` (`readCombat`, chamadas `fx.combo`/`fx.comboEnd`) e onde o `run:banner` é emitido; `src/ui/` só leitura (a fita do banner é HTML sobre o canvas). **Regra:** respostas curtas; sem commit/push/branches.
+**Problema:** ao fim do turno que inicia uma nova onda, o fecho "COMBO ×N!" aparece no centro da arena, embaixo da fita do anúncio de onda (HTML por cima do canvas), e fica escondido.
+**Fazer:** o fecho tem que ser visto. Opções: mostrar o fecho antes do banner (o banner espera ~1 s), ou deslocar o fecho para longe da faixa do banner, ou as duas. Escolha a que fica melhor e justifique. Se precisar de um gancho na cena (ex.: saber se há banner), exponha no fx (ex.: `fx.setBannerActive(bool)`/`fx.comboEnd({ avoidY })`) e descreva exatamente a chamada; não mexa em `src/scenes/BattleScene.ts` nem em `src/ui/`.
+**Permitido:** `src/scenes/fx/`, `tests/fx/`. **Proibido:** o resto.
+**Pronto quando:** `npm test` e `npm run build` passam; captura no scratchpad do fecho visível no fim de uma onda. **Entrega:** até 4 linhas, com a chamada que o AG01 precisa fazer (se houver).
