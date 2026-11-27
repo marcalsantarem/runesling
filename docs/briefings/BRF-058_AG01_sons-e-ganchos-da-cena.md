@@ -8,3 +8,5 @@
 - Testes onde viável (`tests/scenes/` ou `tests/match/`), sem quebrar os existentes.
 **Permitido:** `src/scenes/` (fora de `fx/`, salvo o mínimo para os ganchos), `src/match/` só se indispensável, `tests/`. **Proibido:** `src/ui/`, `src/audio/`, `src/meta/`.
 **Pronto quando:** `npm test` e `npm run build` passam; partida real jogada no Chromium com sons disparando (log de chaves tocadas), squash elástico, partículas espectrais e contador de combo; capturas/gif no scratchpad. **Entrega:** até 5 linhas.
+
+**Pontos de chamada do combo (entrega do AG09, T-048):** em `BattleScene.readCombat()`: (1) logo no início, antes de `this.lastTurn = run.state.turn;`, guardar `const ended = run.state.turn !== this.lastTurn;`; (2) no fim, depois do laço `fx.onCombat`, chamar `fx.combo(run.state.turnCombo); if (ended) fx.comboEnd();`. Cobre o fim do voo e o Recolher. Idempotente (só pulsa quando o número sobe). Posição padrão: centro da arena (180, 300); `x`/`y` opcionais. Conferir se o contador tapa inimigos baixos ou a mira logo após o fecho.
