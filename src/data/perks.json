@@ -55,7 +55,7 @@
     "params": { "clonesPerOrb": 1, "cloneRadius": 6.5, "cloneVxMult": -0.9, "cloneOffsetYPx": 4 }
   },
   "arcane_sight": {
-    "id": "arcane_sight", "name": "Visão Arcana", "desc": "Mira prevê 2 quiques e +20% de Crítico.",
+    "id": "arcane_sight", "name": "Visão Espectral", "desc": "Mira prevê 2 quiques e +20% de Crítico.",
     "synergy": "spectral", "iconKey": "icon_arcane_sight", "repeatable": false, "trigger": "onAcquire",
     "params": { "previewBounces": 2, "critChanceBonus": 0.20 }
   },

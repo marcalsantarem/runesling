@@ -29,7 +29,7 @@
 ## 2. Core Gameplay Loop & Controles
 
 ### 2.1 Fluxo do Turno
-1. **Fase de Mira:** O jogador toca e arrasta em **qualquer ponto da arena** (não precisa tocar exatamente no lançador, evitando que o dedo tampe a visão). Uma linha pontilhada projeta a trajetória com $1$ quique de parede (ou $2$ quiques com o perk *Visão Arcana*).
+1. **Fase de Mira:** O jogador toca e arrasta em **qualquer ponto da arena** (não precisa tocar exatamente no lançador, evitando que o dedo tampe a visão). Uma linha pontilhada projeta a trajetória com $1$ quique de parede (ou $2$ quiques com o perk *Visão Espectral*).
 2. **Disparo:** Ao soltar o dedo, os orbes são lançados em leque simétrico a partir da base $(x_0, y_0)$.
 3. **Voo e Ricochete:** Os orbes colidem com paredes, bumpers, pilares, anéis multiplicadores e inimigos, disparando efeitos elementais, críticos e combos em tempo real.
 4. **Controles Auxiliares em Voo:**
@@ -129,7 +129,7 @@ As runas obtidas durante o Draft pertencem a $3$ sinergias elementais principais
 | `ghost_ball` | Orbe Fantasma | `onLaunch` | O 1º orbe lançado atravessa inimigos sem escudo (com cooldown interno de $14$ frames por inimigo para evitar multi-hit instantâneo). |
 | `ricochet_crit` | Tabela Letal | `onDamageCalc` | Orbes que já quicaram em paredes, bumpers ou pilares causam $2\times$ de dano. |
 | `wall_clone` | Eco do Teto | `onCeilingHit` | O 1º quique de cada orbe principal no teto gera $1$ clone espectral temporário. |
-| `arcane_sight` | Visão Arcana | `onAcquire` | Estende a previsão de mira para $2$ quiques e adiciona $+20\%$ de chance Crítica. |
+| `arcane_sight` | Visão Espectral | `onAcquire` | Estende a previsão de mira para $2$ quiques e adiciona $+20\%$ de chance Crítica. |
 
 ### 4.4 Runas de Núcleo (Repetíveis)
 * **Orbe Adicional (`extra_orb`):** $+1$ orbe em todos os lançamentos.
@@ -157,7 +157,7 @@ $$\text{Custo}(L) = C_{\text{base}} + L \cdot \Delta C$$
 
 | Talento | Efeito por Nível | Nível Máx. | $C_{\text{base}}$ | Passo ($\Delta C$) |
 | :--- | :--- | :---: | :---: | :---: |
-| **Forja Arcana** | $+1\text{ ATK}$ inicial | $10$ | $25$ | $20$ |
+| **Forja Rúnica** | $+1\text{ ATK}$ inicial | $10$ | $25$ | $20$ |
 | **Barreira Rúnica** | $+2\text{ HP}$ Máximo da base | $10$ | $20$ | $18$ |
 | **Maestria de Orbes** | $+1$ Orbe inicial | $3$ | $75$ | $90$ |
 | **Olho do Ricochete** | $+5\%$ Chance Crítica | $8$ | $30$ | $24$ |

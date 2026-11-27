@@ -1,6 +1,6 @@
 {
   "atk": {
-    "id": "atk", "name": "Forja Arcana", "desc": "+1 ATK inicial por nível.", "iconKey": "icon_power_surge",
+    "id": "atk", "name": "Forja Rúnica", "desc": "+1 ATK inicial por nível.", "iconKey": "icon_power_surge",
     "maxLevel": 10, "baseCost": 25, "costStep": 20, "effect": { "stat": "atk", "perLevel": 1 }
   },
   "hp": {
