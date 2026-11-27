@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
@@ -8,7 +9,9 @@ import {
   cutAll,
   cutBackground,
   ingest,
+  loadManifest,
   normalizeSprite,
+  normalizeUiPiece,
   packAtlas,
   resolvePaths,
   type AssetPaths,
@@ -268,5 +271,179 @@ describe('esteira ponta a ponta', { timeout: 60_000 }, () => {
     expect(html).toContain('#0D1020');
     for (const k of ['enemy_goblin', 'boss_obsidian', 'icon_chain_lightning', 'floor_crypt', 'wall_trim_crypt', 'app_icon']) expect(html).toContain(`data-key="${k}"`);
     expect(html).toContain('../public/assets/atlases/enemies.webp');
+  });
+});
+
+describe("manifesto real: peças de UI no estilo validado (T-058)", () => {
+  const NEW_KEYS = [
+    "ui_btn_mini",
+    "ui_btn_round",
+    "ui_btn_square",
+    "ui_ribbon_dark",
+    "ui_pill",
+    "ui_map_bg",
+    "ui_map_node",
+    "ui_map_node_locked",
+    "ui_defeat_shield",
+    "ui_socket",
+    "ui_icon_lock",
+    "ui_icon_back",
+    "ui_icon_check",
+    "ui_icon_recall",
+  ];
+  type UiItem = {
+    key: string;
+    preset: string;
+    file: string;
+    size: [number, number];
+    nineSlice: [number, number, number, number] | null;
+    deprecated?: boolean;
+    bgColor?: string | null;
+    geminiPrompt: string;
+    prompt?: string;
+    anchor?: string;
+    anchorFor?: string;
+  };
+  const root = fileURLToPath(new URL("../..", import.meta.url));
+  const raw = JSON.parse(
+    readFileSync(join(root, "scripts/assets-manifest.json"), "utf8"),
+  ) as {
+    anchors: Record<string, string>;
+    presets: Record<string, { kind?: string }>;
+    items: UiItem[];
+  };
+  const ui = raw.items.filter((i) => raw.presets[i.preset]?.kind === "ui");
+
+  it('carrega com as chaves novas e deixa as "não usar" fora do pipeline', () => {
+    const { items } = loadManifest(resolvePaths({ root }));
+    const keys = items.map((i) => i.key);
+    for (const k of NEW_KEYS) expect(keys).toContain(k);
+    expect(keys).not.toContain("ui_icon_sword");
+    expect(new Set(keys).size).toBe(keys.length);
+    const node = items.find((i) => i.key === "ui_map_node")!;
+    expect([node.kind, node.bgColor, node.size]).toEqual([
+      "ui",
+      "magenta",
+      [256, 256],
+    ]);
+    expect(items.find((i) => i.key === "ui_map_bg")!.removeBg).toBe(false);
+  });
+
+  it("parte 2 (BRF-047): ícones com a mesma margem, miolos vazados e som liga/desliga no mesmo recorte", () => {
+    const { items } = loadManifest(resolvePaths({ root }));
+    const by = (k: string) => items.find((i) => i.key === k)!;
+    const icons = items.filter((i) => i.key.startsWith("ui_icon_"));
+    expect(icons).toHaveLength(11);
+    expect(new Set(icons.map((i) => i.margin))).toEqual(new Set([0.06]));
+    expect(by("ui_icon_gear").removeEnclosedBg).toBe(true);
+    expect(by("ui_icon_lock").removeEnclosedBg).toBe(true);
+    expect(by("ui_icon_sound").trimGroup).toBe("sound");
+    expect(by("ui_icon_sound_off").trimGroup).toBe("sound");
+    expect(by("ui_gem_lightning").bgColor).toBe("magenta");
+  });
+
+  it("cada peça tem arquivo em raw/ui, tamanho, 9-slice coerente e prompt sem brilho externo pedido", () => {
+    for (const i of ui) {
+      expect(i.file).toBe(`art-source/raw/ui/${i.key}.png`);
+      expect(i.size).toHaveLength(2);
+      if (i.nineSlice) {
+        const [t, r, b, l] = i.nineSlice;
+        expect(t + b).toBeLessThan(i.size[1]);
+        expect(l + r).toBeLessThan(i.size[0]);
+      }
+      expect(i.geminiPrompt).toContain(i.prompt ?? "");
+      expect(i.geminiPrompt).not.toMatch(/with (an )?outer glow/i);
+    }
+  });
+
+  it("âncora de UI: ui_btn_primary vem primeiro e vira ui_anchor; as outras anexam ui_anchor", () => {
+    const live = ui.filter((i) => !i.deprecated);
+    expect(live[0]!.key).toBe("ui_btn_primary");
+    expect(live[0]!.anchorFor).toBe(raw.anchors.ui);
+    for (const i of live.slice(1).filter((x) => x.preset === "ui_piece"))
+      expect(i.anchor ?? raw.anchors.ui).toBe(raw.anchors.ui);
+  });
+});
+
+describe('peças de UI (T-039)', { timeout: 60_000 }, () => {
+  let root: string;
+  let paths: AssetPaths;
+  const out = (p: string) => join(root, 'public/assets', p);
+
+  beforeAll(async () => {
+    root = mkdtempSync(join(tmpdir(), 'runesling-ui-'));
+    const manifest = {
+      presets: {
+        ui_piece: { kind: 'ui', atlas: null, size: 256, removeBg: true, bgColor: 'white', nineSlice: [32, 32, 32, 32], outputDir: 'art-source/raw/ui' },
+        ui_scene: { kind: 'ui', atlas: null, size: 720, removeBg: false, bgColor: null, nineSlice: null, outputDir: 'art-source/raw/ui' },
+      },
+      items: [
+        { key: 'ui_btn_primary', preset: 'ui_piece', file: 'art-source/raw/ui/ui_btn_primary.png', size: [384, 96], nineSlice: [40, 40, 40, 40] },
+        { key: 'ui_map_node', preset: 'ui_piece', bgColor: 'magenta', file: 'art-source/raw/ui/ui_map_node.png', size: [256, 256], nineSlice: null },
+        { key: 'ui_map_bg', preset: 'ui_scene', file: 'art-source/raw/ui/ui_map_bg.png', size: [72, 128] },
+        { key: 'ui_gem_fire', preset: 'ui_piece', file: 'art-source/raw/ui/ui_gem_fire.png', size: [128, 128], nineSlice: null },
+      ],
+    };
+    mkdirSync(join(root, 'scripts'), { recursive: true });
+    mkdirSync(join(root, 'art-source/raw/ui'), { recursive: true });
+    writeFileSync(join(root, 'scripts/assets-manifest.json'), JSON.stringify(manifest));
+    const raw = (k: string) => join(root, 'art-source/raw/ui', `${k}.png`);
+    await sharp(await synth({ bg: '#ffffff', w: 600, h: 300, shape: '<rect x="30" y="80" width="540" height="140" fill="#c89a3a"/>' })).png().toFile(raw('ui_btn_primary'));
+    // Aro com miolo vazado em magenta: o chroma key tira o fundo e o miolo.
+    await sharp(await synth({ bg: '#ff00ff', shape: '<circle cx="200" cy="200" r="150" fill="none" stroke="#3a4050" stroke-width="50"/>' })).png().toFile(raw('ui_map_node'));
+    await sharp(await synth({ bg: '#101828', w: 200, h: 360, shape: '<rect x="20" y="20" width="80" height="80" fill="#303850"/>' })).png().toFile(raw('ui_map_bg'));
+    paths = resolvePaths({ root });
+    await cutAll(paths, {}, quiet);
+  });
+
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+
+  it('normalizeUiPiece: tamanho exato, com e sem 9-slice', async () => {
+    const src = await synth({ bg: '#00000000', w: 300, h: 100, shape: '<rect x="10" y="10" width="280" height="80" fill="#456"/>' });
+    const a = await sharp(await normalizeUiPiece(src, 256, 128, [32, 32, 32, 32])).metadata();
+    expect([a.width, a.height]).toEqual([256, 128]);
+    const b = await sharp(await normalizeUiPiece(src, 128, 128, null)).metadata();
+    expect([b.width, b.height]).toEqual([128, 128]);
+  });
+
+  it('normalizeUiPiece: margem uniforme na peça inteira e caixa de trim compartilhada alinha a parte comum', async () => {
+    const sq = await synth({ bg: '#00000000', w: 200, h: 200, shape: '<rect x="40" y="40" width="120" height="120" fill="#456"/>', blur: 0.3 });
+    const m = await alphaBox(await normalizeUiPiece(sq, 128, 128, null, { margin: 0.1 }));
+    for (const v of [m.x0, m.y0, 127 - m.x1, 127 - m.y1]) expect(Math.abs(v - 13)).toBeLessThanOrEqual(1);
+    // "Som liga/desliga": mesmo bloco à esquerda, extensões diferentes à direita.
+    const on = await synth({ bg: '#00000000', w: 300, h: 200, shape: '<rect x="20" y="40" width="100" height="120" fill="#456"/><rect x="200" y="60" width="80" height="80" fill="#456"/>', blur: 0.3 });
+    const off = await synth({ bg: '#00000000', w: 300, h: 200, shape: '<rect x="20" y="40" width="100" height="120" fill="#456"/><rect x="160" y="80" width="40" height="40" fill="#456"/>', blur: 0.3 });
+    const box = { left: 19, top: 39, width: 263, height: 122 };
+    const leftBlock = async (b: Buffer) => {
+      const { data, info } = await rgba(b);
+      let x1 = -1;
+      for (let x = 0; x < 64; x++) if (data[(64 * info.width + x) * 4 + 3]! > 128) x1 = x;
+      return x1;
+    };
+    const a = await normalizeUiPiece(on, 128, 128, null, { margin: 0.06, box });
+    const c = await normalizeUiPiece(off, 128, 128, null, { margin: 0.06, box });
+    expect(await leftBlock(c)).toBe(await leftBlock(a));
+    expect((await alphaBox(c)).x0).toBe((await alphaBox(a)).x0);
+  });
+
+  it('grava em ui/ (não em tiles/), escreve ui.json e não quebra com peça faltando', async () => {
+    const r = await buildAll(paths, quiet);
+    expect(r.missing).toEqual(['ui_gem_fire']);
+    expect(existsSync(out('tiles'))).toBe(false);
+    for (const [k, w, h] of [['ui_btn_primary', 384, 96], ['ui_map_node', 256, 256], ['ui_map_bg', 72, 128]] as const) {
+      const m = await sharp(out(`ui/${k}.webp`)).metadata();
+      expect([m.format, m.width, m.height]).toEqual(['webp', w, h]);
+    }
+    const json = JSON.parse(readFileSync(out('ui/ui.json'), 'utf8'));
+    expect(json).toEqual({
+      ui_btn_primary: { slice: [40, 40, 40, 40], width: 384, height: 96 },
+      ui_map_bg: { slice: null, width: 72, height: 128 },
+      ui_map_node: { slice: null, width: 256, height: 256 },
+    });
+    const { px } = await rgba(await sharp(out('ui/ui_map_node.webp')).png().toBuffer());
+    expect(px(128, 128)[3]).toBe(0); // miolo vazado
+    expect(px(2, 2)[3]).toBe(0); // fundo
+    const btn = await rgba(await sharp(out('ui/ui_btn_primary.webp')).png().toBuffer());
+    expect(btn.px(192, 48)[3]).toBe(255);
   });
 });

@@ -71,7 +71,32 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-036 | Guia de UI da direção A e prompts das peças de UI para o Gemini (molduras 9-slice, botões, fitas, cartas por sinergia, ícones do HUD) (tam. P) | M5 | AG08 | feita |
 | T-037 | Menu e Talentos na direção A, primeiro com peças em CSS como no mockup (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
 | T-038 | HUD, Draft, Fim de run e Pausa na direção A, com animações de UI (entrada dos modais, toque nos botões, cartas do Draft) (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
-| T-039 | Processar as peças de UI geradas pelo dono e trocar o CSS provisório por elas (depende das imagens) (tam. M) | M5 | AG08 + AG02 | a fazer |
-| T-044 | Ressalvas do QA do M4 na UI: "+" do ouro parece botão sem ação (M4-01); capturar e revisar a tela de derrota nova (M4-02) (tam. P) | M5 | AG02 | a fazer |
-| T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | a fazer |
-| T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | a fazer |
+| T-039 | Processar as peças de UI geradas pelo dono e trocar o CSS provisório por elas (depende das imagens) (tam. M) | M5 | AG08 + AG02 | feita (36 peças) |
+| T-044 | Ressalvas do QA do M4 na UI: "+" do ouro parece botão sem ação (M4-01); capturar e revisar a tela de derrota nova (M4-02) (tam. P) | M5 | AG02 | feita |
+| T-052 | Mockups da nova tela inicial: 3 conceitos (cripta viva, mapa de expedição, lançador em destaque) × 2 variações cada (tam. P) | M5 | AG08 | feita (dono escolhe) |
+| T-053 | Mais mockups da tela inicial em outros estilos: acampamento, grimório, arcano neon × 2 variações (tam. P) | M5 | AG08 | feita (dono escolhe) |
+| T-054 | Mockup final da tela inicial: 2a com o título na posição da 2b (tam. P) | M5 | AG08 | feita |
+| T-055 | Botão JOGAR menos genérico (4 variações) e mockups de Partida, Runas (Draft), Fim de run e Talentos no estilo da tela inicial final (tam. M) | M5 | AG08 | feita (dono escolhe o botão) |
+| T-056 | Comportamento de app: sem arrastar além da tela, sem zoom por toque duplo/pinça, sem seleção de texto (decisão 46) (tam. P) | M5 | AG07 + AG02 | feita (falta conferir em iPhone real) |
+| T-057 | Aplicar a UI validada (decisões 44 e 45): tela inicial em mapa, botão placa de ferro, Partida, Runas, Fim de run e Talentos, com peças em CSS (tam. G) | M5 | AG02 | feita (falta conferir no aparelho) |
+| T-058 | Atualizar os prompts das peças de UI para o estilo validado (botão placa de ferro, fundo e nós do mapa, escudo rachado da derrota) antes de o dono gerar (tam. P) | M5 | AG08 | feita |
+| T-060 | Refazer `ui_card_fire`, `ui_card_spectral` e `ui_card_core` no mesmo estilo da `ui_card_lightning` (geradas em IAs diferentes; dono refaz depois) (tam. P) | M5 | AG08 | adiada pelo dono |
+| T-061 | Botão temporário na tela inicial para resetar o save (testar derrota); remover antes do M7 (tam. P) | M5 | AG02 + AG04 | feita (remover antes do M7) |
+| T-062 | Peças de UI não aparecem no Safari/iPhone: URL relativa em variável CSS (tam. P) | M5 | AG02 | feita (falta conferir no iPhone) |
+| T-063 | Recolher sempre visível na barra (desativado quando os orbes estão parados) e faixa de runas zerada ao iniciar nova partida (hoje mostra as da partida anterior até o 1º draft) (tam. P) | M5 | AG02 | feita |
+| T-065 | Ressalvas do QA do M5: fallback CSS da placa se a imagem falhar (M5-01); textos cortados em 360×640 na dica e nos nomes de talentos (M5-02) (tam. P) | M6 | AG02 | a fazer |
+| T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | feita |
+| T-064 | Limitar o jogo na web a uma moldura de celular (largura/altura máximas, centralizada, fundo decorativo nas laterais) para não esticar HUD e barras em monitores grandes; corrigir a fita de onda cortada ("ON...") (tam. P) | M5 | AG07 + AG02 | feita |
+| T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | feita (passa com ressalvas; falta a tag) |
+
+## M6 (v0.7.0): Game feel
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-045 | Motor de som sintetizado (Web Audio): catálogo de efeitos por evento, tom pelo combo, variação ±8%, liberação no 1º toque, volume e mudo (decisão 39) (tam. M) | M6 | AG11 | a fazer |
+| T-046 | Ligar os sons aos eventos da partida e da UI (impacto, bumper, explosão, raio, morte, barreira, draft, botões) (tam. P) | M6 | AG01 + AG02 | a fazer |
+| T-047 | Partículas com brilho aditivo e bloom leve; squash e tremida de tela mais fortes (decisão 41) (tam. M) | M6 | AG09 | a fazer |
+| T-048 | Contador de combo visível durante o voo, com cor e escala crescentes (decisão 41) (tam. P) | M6 | AG09 | a fazer |
+| T-049 | Configurações: volume dos efeitos (o liga/desliga já existe) e "reduzir movimento" (decisão 42) (tam. P) | M6 | AG02 + AG04 | a fazer |
+| T-050 | Versão 0.7.0 (tam. P) | M6 | AG07 | a fazer |
+| T-051 | Validação do M6 e tag v0.7.0 (tam. P) | M6 | AG03 + AG00 | a fazer |

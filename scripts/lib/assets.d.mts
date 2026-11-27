@@ -11,13 +11,16 @@ export interface ResolvedItem {
   key: string;
   preset: string;
   category: string;
-  kind: 'sprite' | 'tile' | 'app';
+  kind: 'sprite' | 'tile' | 'app' | 'ui';
   atlas: string | null;
   size: number | [number, number];
   circularMask: boolean;
   removeBg: boolean;
   bgColor: string | null;
   removeEnclosedBg: boolean;
+  nineSlice: [number, number, number, number] | null;
+  margin: number;
+  trimGroup: string | null;
   raw: string;
   cut: string;
   standaloneIcon: boolean;
@@ -63,6 +66,13 @@ export function normalizeSprite(
   input: Buffer | string,
   size: number,
   opts?: { circularMask?: boolean; margin?: number },
+): Promise<Buffer>;
+export function normalizeUiPiece(
+  input: Buffer | string,
+  w: number,
+  h: number,
+  slice?: [number, number, number, number] | null,
+  opts?: { margin?: number; box?: { left: number; top: number; width: number; height: number } },
 ): Promise<Buffer>;
 export function packAtlas(
   frames: { key: string; buffer: Buffer }[],

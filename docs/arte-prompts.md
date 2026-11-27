@@ -4,7 +4,7 @@
 
 Como usar: cole o bloco de código inteiro no Gemini, gere, baixe em PNG e devolva com o nome indicado. Guia de estilo: `docs/arte.md`.
 
-Total: 2 âncoras (8 variações) + 29 itens do lote + 23 peças de UI = 54 chaves.
+Total: 2 âncoras (8 variações) + 29 itens do lote + 36 peças de UI = 67 chaves (mais 1 marcada(s) "não usar").
 
 ## 1. Âncoras (gerar primeiro, sem imagem anexa)
 
@@ -393,14 +393,94 @@ Generate one tall vertical 1:4 strip centered in a square 1:1 canvas image. narr
 Generate one square 1:1 image. a glowing cyan arcane orb (#00CEC9) resting in a dark forged iron slingshot, gold rune ring (#FECA57) behind it. mobile app icon, square full-bleed composition, stylized hand-painted dark fantasy 2D illustration, one bold central symbol readable at 48 pixels, high contrast, solid dark navy #0D1020 background filling every corner, no transparency, no rounded corners, no border, no text, no letters. Use the attached image only as a style reference: match its rendering, brush texture, rim construction, lighting direction, contrast and level of detail exactly, but draw the new subject described above. Do not copy its subject.
 ```
 
-## 3. Peças de UI (direção A, anexar a âncora indicada)
+## 3. Peças de UI (estilo validado, decisões 44 e 45)
 
-Guia: `docs/ui-guia.md`. Peça isolada, reta, frontal, sem texto. O 9-slice é `[topo, direita, baixo, esquerda]` em px no tamanho final; "não" = peça inteira (gema, ícone).
+Guia: `docs/ui-guia.md`. Peça isolada, reta, frontal, sem texto (texto, runas do botão e ícones por cima são HTML). O 9-slice é `[topo, direita, baixo, esquerda]` em px no tamanho final; "não" = peça inteira. Ordem: gere a âncora de UI (3.1) primeiro, salve a escolhida em `art-source/anchors/ui_anchor.png` e anexe-a em todas as outras peças.
 
-### `ui_panel`
+### 3.1 Âncora de UI (gerar primeiro)
 
-- Arquivo a devolver: `art-source/raw/ui/ui_panel.png`
+Gere 4 vezes, escolha uma, salve a escolhida no caminho de âncora indicado e devolva também com o nome do arquivo.
+
+#### `ui_btn_primary`
+
+- Uso: Botão principal (JOGAR, JOGAR DE NOVO, Continuar): placa ouro de plate() em src/ui/dom.ts. Âncora de UI.
+- Arquivo a devolver: `art-source/raw/ui/ui_btn_primary.png`
+- Âncora escolhida vira: `art-source/anchors/ui_anchor.png`
 - Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Fundo: white · tamanho final 384×96 px · 9-slice: 40, 40, 40, 40
+- Situação: pendente
+
+```text
+Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal riveted iron plate button about 4 to 1 proportion, outer shape is a long rectangle with small 45 degree chamfered corners like a stretched octagon, thick black outline (#0A0B10), a forged dark iron frame band (#8A93B2 top edge, #6A7290, #3B4157, #191C27 bottom) with fine hammered grain, a thin black inset line, then a recessed inner face of hammered polished gold (#FFF0B0 top, #FECA57, #E3A52B, #B87B14 bottom, dark lip #9A6510), bright bevel highlight on the top edge of the face and a dark lip on its bottom edge, two small round polished gold rivets (#FFF6CF to #FECA57 to #8A5A0E, thin black ring) on each short end of the iron frame, one in the upper corner area and one in the lower corner area, nothing in the middle of the ends, inner face plain and empty with no runes, no icon, no engraving, no text. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Safe area for slicing: every ornament (chamfered corners, rivets, end caps) must fit inside 10 percent of the width from each side and 42 percent of the height from the top and from the bottom; the part between is plain. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+### 3.2 Botões, painéis, fitas e HUD
+
+#### `ui_btn_secondary`
+
+- Uso: Botão secundário (MENU, Desistir, 1×): placa ferro de plate().
+- Arquivo a devolver: `art-source/raw/ui/ui_btn_secondary.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 384×96 px · 9-slice: 40, 40, 40, 40
+- Situação: pendente
+
+```text
+Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal riveted iron plate button about 4 to 1 proportion, outer shape is a long rectangle with small 45 degree chamfered corners like a stretched octagon, thick black outline (#0A0B10), a forged dark iron frame band (#8A93B2 top edge, #6A7290, #3B4157, #191C27 bottom) with fine hammered grain, a thin black inset line, then a recessed inner face of dark forged iron slightly darker than the frame (#4A5168 top, #2B3040, #191C27 bottom), bright bevel highlight on the top edge of the face and a dark lip on its bottom edge, two small round polished gold rivets (#FFF6CF to #FECA57 to #8A5A0E, thin black ring) on each short end of the iron frame, one in the upper corner area and one in the lower corner area, nothing in the middle of the ends, inner face plain and empty with no runes, no icon, no engraving, no text. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Safe area for slicing: every ornament (chamfered corners, rivets, end caps) must fit inside 10 percent of the width from each side and 42 percent of the height from the top and from the bottom; the part between is plain. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_btn_action`
+
+- Uso: Botão de ação ciano mini (RECOLHER): placa ciano de plate(), sem rebites.
+- Arquivo a devolver: `art-source/raw/ui/ui_btn_action.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: magenta · tamanho final 256×128 px · 9-slice: 32, 32, 32, 32
+- Situação: pendente
+
+```text
+Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal riveted iron plate button about 2 to 1 proportion, outer shape is a long rectangle with small 45 degree chamfered corners like a stretched octagon, thick black outline (#0A0B10), a forged dark iron frame band (#8A93B2 top edge, #6A7290, #3B4157, #191C27 bottom) with fine hammered grain, a thin black inset line, then a recessed inner face of glossy cyan crystal-metal (#B8FFFF top, #00CEC9, #0984E3 bottom, deep teal lip #065A8C), bright bevel highlight on the top edge of the face and a dark lip on its bottom edge, no rivets, inner face plain and empty with no runes, no icon, no engraving, no text. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Safe area for slicing: every ornament (chamfered corners, rivets, end caps) must fit inside 12 percent of the width from each side and 25 percent of the height from the top and from the bottom; the part between is plain. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_btn_mini`
+
+- Uso: Botão ouro mini (comprar talento): plate(..., { size: "mini" }), sem rebites. Chave nova: falta ligar em skin.ts/ui-skin.css.
+- Arquivo a devolver: `art-source/raw/ui/ui_btn_mini.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 256×128 px · 9-slice: 32, 32, 32, 32
+- Situação: pendente
+
+```text
+Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal riveted iron plate button about 2 to 1 proportion, outer shape is a long rectangle with small 45 degree chamfered corners like a stretched octagon, thick black outline (#0A0B10), a forged dark iron frame band (#8A93B2 top edge, #6A7290, #3B4157, #191C27 bottom) with fine hammered grain, a thin black inset line, then a recessed inner face of hammered polished gold (#FFF0B0 top, #FECA57, #E3A52B, #B87B14 bottom, dark lip #9A6510), bright bevel highlight on the top edge of the face and a dark lip on its bottom edge, no rivets, inner face plain and empty with no runes, no icon, no engraving, no text. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Safe area for slicing: every ornament (chamfered corners, rivets, end caps) must fit inside 12 percent of the width from each side and 25 percent of the height from the top and from the bottom; the part between is plain. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_btn_round`
+
+- Uso: Botão redondo de ícone da tela inicial (som, ajustes, Talentos). Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_btn_round.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 128×128 px · 9-slice: não
+- Situação: pendente
+
+```text
+Generate one square 1:1 image. one empty round icon button seen from the front, domed forged dark iron (#4A5168 top, #2B3040, #191C27 bottom) with fine hammered grain, thick black outline (#0A0B10), a thin dim gold ring (#FECA57 at low brightness) just inside the rim, bevel highlight on the top and dark lip on the bottom, plain empty center with no icon, centered, filling about 90 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_btn_square`
+
+- Uso: Botão quadrado de ícone (pausa, voltar): .rs-btn-icon. Chave nova (hoje usa ui_btn_secondary).
+- Arquivo a devolver: `art-source/raw/ui/ui_btn_square.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 128×128 px · 9-slice: 40, 40, 40, 40
+- Situação: pendente
+
+```text
+Generate one square 1:1 image. one empty square icon button with rounded corners, domed forged dark iron (#4A5168 top, #2B3040, #191C27 bottom) with fine hammered grain, thick black outline (#0A0B10), a thin dim gold line (#FECA57 at low brightness) just inside the rim following the rounded corners, bevel highlight on the top and dark lip on the bottom, plain empty center with no icon. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Safe area for slicing: every ornament (chamfered corners, rivets, end caps) must fit inside 31 percent of the width from each side and 31 percent of the height from the top and from the bottom; the part between is plain. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_panel`
+
+- Uso: Painel de pedra com rebites (linha de talento, placa do fim de run).
+- Arquivo a devolver: `art-source/raw/ui/ui_panel.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 256×256 px · 9-slice: 40, 40, 40, 40
 - Situação: pendente
 
@@ -408,10 +488,11 @@ Guia: `docs/ui-guia.md`. Peça isolada, reta, frontal, sem texto. O 9-slice é `
 Generate one square 1:1 image. one empty square UI panel plate, carved dark grey stone center (#2B3040 to #191C27) with subtle fine grain, thick forged dark iron frame (#3B4157, light edge #6A7290, dark outline #0A0B10), a thin gold inner line (#FECA57 at low brightness), one small round gold rivet stud in each of the four corners (#FFE7A3 to #B87B14), frame thickness about 8 percent of the width, slightly rounded outer corners. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_panel_dark`
+#### `ui_panel_dark`
 
+- Uso: Fundo rebaixado (miolo do painel, placa ONDA, faixa de runas do HUD, atributos iniciais).
 - Arquivo a devolver: `art-source/raw/ui/ui_panel_dark.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 192×192 px · 9-slice: 20, 20, 20, 20
 - Situação: pendente
 
@@ -419,43 +500,11 @@ Generate one square 1:1 image. one empty square UI panel plate, carved dark grey
 Generate one square 1:1 image. one empty square recessed inset panel, very dark smooth stone center (#0C0E16) sunken below the surface with an inner shadow at the top edge, thin dark iron rim (#4A5168, outline #0A0B10), no rivets, no gold, frame thickness about 4 percent of the width, slightly rounded corners. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_btn_primary`
+#### `ui_ribbon`
 
-- Arquivo a devolver: `art-source/raw/ui/ui_btn_primary.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: white · tamanho final 384×96 px · 9-slice: 32, 40, 36, 40
-- Situação: pendente
-
-```text
-Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal game button about 4 to 1 proportion, thick embossed polished gold body (#FFF0B0 top highlight, #FECA57, #E3A52B, #B87B14 bottom), dark brown outline (#3A2606), bright bevel highlight along the top edge and darker lip along the bottom edge giving a raised pressed-in-relief look, thin outer iron ring (#6A7290), rounded corners, plain smooth face with no icon. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
-```
-
-### `ui_btn_secondary`
-
-- Arquivo a devolver: `art-source/raw/ui/ui_btn_secondary.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: white · tamanho final 384×96 px · 9-slice: 30, 36, 34, 36
-- Situação: pendente
-
-```text
-Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal game button about 4 to 1 proportion, embossed dark forged iron body (#4A5168 top to #262A38 bottom), black outline (#0A0B10), thin lighter iron inner rim (#6A7290), soft bevel highlight on the top edge and dark lip on the bottom edge, rounded corners, plain smooth face with no icon. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
-```
-
-### `ui_btn_action`
-
-- Arquivo a devolver: `art-source/raw/ui/ui_btn_action.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: magenta · tamanho final 288×96 px · 9-slice: 30, 34, 34, 34
-- Situação: pendente
-
-```text
-Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal game button about 3 to 1 proportion, embossed glossy cyan crystal-metal body (#88FFFF top highlight, #00CEC9, #0984E3 bottom), deep teal outline (#062838), bright bevel highlight on the top edge and darker lip on the bottom edge, rounded corners, plain smooth face with no icon. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
-```
-
-### `ui_ribbon`
-
+- Uso: Fita de título (RUNAS, TALENTOS, CRIPTA CONQUISTADA, capítulo do mapa).
 - Arquivo a devolver: `art-source/raw/ui/ui_ribbon.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 512×96 px · 9-slice: 0, 80, 0, 80
 - Situação: pendente
 
@@ -463,109 +512,209 @@ Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal 
 Generate one image with a wide landscape 16:9 canvas. one empty horizontal red title ribbon banner about 6 to 1 proportion, crimson cloth band (#B8283A top to #7A1424 bottom) with a thin gold stitched line along the top and bottom edges (#E6B450), both ends folded behind with darker swallow-tail cut tips (#8F1D2C to #5C0F1A), straight and level, perfectly horizontal, not curved, not waving. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Three-slice rules: the ornamented ends stay at the far left and far right, the middle band is a plain uniform horizontal stripe with no ornament so it can stretch horizontally. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_card_lightning`
+#### `ui_ribbon_dark`
 
-- Arquivo a devolver: `art-source/raw/ui/ui_card_lightning.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: magenta · tamanho final 240×336 px · 9-slice: 44, 36, 44, 36
+- Uso: Fita escura da derrota (BARREIRA ROMPIDA). Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_ribbon_dark.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 512×96 px · 9-slice: 0, 80, 0, 80
 - Situação: pendente
 
 ```text
-Generate one image with a tall portrait 3:4 canvas. one empty vertical rune card frame about 2 to 3 proportion (taller than wide), dark carved stone card face (#20242F to #14161F), thick forged dark iron frame (#3B4157, outline #0A0B10) with an inner trim line in cyan (#00CEC9 to #0984E3), small ornamented corner caps tinted cyan (#00CEC9 to #0984E3), a plain empty top center area where a gem will be placed by code, slightly rounded corners, the electric synergy color appears only on the trim and corners. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+Generate one image with a wide landscape 16:9 canvas. one empty horizontal dark wine title ribbon banner about 6 to 1 proportion, very dark crimson cloth band (#4A1520 top to #2A0A12 bottom) with a thin dim gold stitched line along the top and bottom edges (#B8893A), both ends folded behind with darker swallow-tail cut tips (#3A0E18 to #1E060C), straight and level, perfectly horizontal, not curved, not waving. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Three-slice rules: the ornamented ends stay at the far left and far right, the middle band is a plain uniform horizontal stripe with no ornament so it can stretch horizontally. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_card_fire`
+#### `ui_pill`
 
-- Arquivo a devolver: `art-source/raw/ui/ui_card_fire.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: white · tamanho final 240×336 px · 9-slice: 44, 36, 44, 36
+- Uso: Contador de ouro (moeda + número) no topo da tela inicial, Talentos e HUD. Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_pill.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 192×64 px · 9-slice: 0, 32, 0, 32
 - Situação: pendente
 
 ```text
-Generate one image with a tall portrait 3:4 canvas. one empty vertical rune card frame about 2 to 3 proportion (taller than wide), dark carved stone card face (#20242F to #14161F), thick forged dark iron frame (#3B4157, outline #0A0B10) with an inner trim line in magma orange (#FF9F43 to #992D0C), small ornamented corner caps tinted magma orange (#FF9F43 to #992D0C), a plain empty top center area where a gem will be placed by code, slightly rounded corners, the fire synergy color appears only on the trim and corners. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+Generate one image with a wide landscape 16:9 canvas. one empty horizontal capsule counter plate about 3 to 1 proportion with fully round semicircle ends, recessed dark stone face (#20242F to #14161F) with fine grain, thick black outline (#0A0B10), a thin dark iron highlight line along the top inner edge (#4A5168), plain empty face. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Three-slice rules: the ornamented ends stay at the far left and far right, the middle band is a plain uniform horizontal stripe with no ornament so it can stretch horizontally. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_card_spectral`
+#### `ui_hud_bar`
 
-- Arquivo a devolver: `art-source/raw/ui/ui_card_spectral.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: white · tamanho final 240×336 px · 9-slice: 44, 36, 44, 36
-- Situação: pendente
-
-```text
-Generate one image with a tall portrait 3:4 canvas. one empty vertical rune card frame about 2 to 3 proportion (taller than wide), dark carved stone card face (#20242F to #14161F), thick forged dark iron frame (#3B4157, outline #0A0B10) with an inner trim line in violet (#9C6BFF to #3E1F73), small ornamented corner caps tinted violet (#9C6BFF to #3E1F73), a plain empty top center area where a gem will be placed by code, slightly rounded corners, the spectral synergy color appears only on the trim and corners. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
-```
-
-### `ui_card_core`
-
-- Arquivo a devolver: `art-source/raw/ui/ui_card_core.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: white · tamanho final 240×336 px · 9-slice: 44, 36, 44, 36
-- Situação: pendente
-
-```text
-Generate one image with a tall portrait 3:4 canvas. one empty vertical rune card frame about 2 to 3 proportion (taller than wide), dark carved stone card face (#20242F to #14161F), thick forged dark iron frame (#3B4157, outline #0A0B10) with an inner trim line in warm gold and iron (#FECA57 to #B87B14, iron #6A7290), small ornamented corner caps tinted warm gold and iron (#FECA57 to #B87B14, iron #6A7290), a plain empty top center area where a gem will be placed by code, slightly rounded corners, the core synergy color appears only on the trim and corners. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
-```
-
-### `ui_hud_bar`
-
+- Uso: Faixas de pedra do HUD em cima e embaixo da arena (.rs-band), largura da tela.
 - Arquivo a devolver: `art-source/raw/ui/ui_hud_bar.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: white · tamanho final 480×96 px · 9-slice: 28, 32, 28, 32
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 512×128 px · 9-slice: 20, 0, 20, 0
 - Situação: pendente
 
 ```text
-Generate one image with a wide landscape 16:9 canvas. one empty long horizontal HUD bar plate about 5 to 1 proportion, carved dark grey stone center (#2B3040 to #191C27), forged dark iron frame (#3B4157, light edge #6A7290, outline #0A0B10), thin dim gold inner line (#FECA57), one small gold rivet in each corner, slightly rounded corners. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+Generate one image with a wide landscape 16:9 canvas. one empty long horizontal HUD band plate about 4 to 1 proportion, carved grey-blue stone surface (#2B3040 to #191C27) with fine noise grain, along the top edge and along the bottom edge a trim made of a thin black line, a dark iron line (#4A5168), a black line and a thin dim gold line (#FECA57 at half brightness), no rivets, square straight ends with no rounded corners. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Three-slice rules: the trims stay only along the very top and the very bottom edge, the left and right ends are cut straight with no frame, and everything between the trims is a plain uniform stone surface so it can stretch and repeat. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_gem_lightning`
+### 3.3 Mapa e Fim de run
 
+#### `ui_map_bg`
+
+- Uso: Fundo da tela inicial (mapa) e de Talentos; o caminho, a névoa e os nós ficam no código por cima. Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_map_bg.png`
+- Anexar no Gemini: `art-source/raw/tiles/floor_crypt.png`
+- Fundo: nenhum · tamanho final 720×1280 px · 9-slice: não
+- Situação: pendente
+
+```text
+Generate one image with a tall portrait 9:16 canvas. top-down view of a dark obsidian crypt floor seen from directly above, used as a chapter map background, cracked dark stone slabs and scattered rubble (#191C27 to #0C0E16 with blue-grey #2B3040 highlights), faint dark violet mist patches (#3E1F73 at low opacity), a few tiny broken pillars and bones only near the edges, slightly darker toward the edges, no road, no path, no buildings, no nodes, a quiet even middle so the map path and buttons can sit on top. dark fantasy 2D game background art for a portrait mobile game, stylized hand-painted illustration, matte, soft even top lighting, low contrast, fills the whole canvas edge to edge, no border, no frame, no outer glow, no bright spot, no text, no letters, no numbers, no UI, no characters. Use the attached image only as a style reference: match its stone rendering, palette, brush texture and level of detail, but paint the new background described above. Do not copy its layout.
+```
+
+#### `ui_map_node`
+
+- Uso: Nó do capítulo liberado no mapa (em volta do medalhão do chefe) e aro do medalhão da vitória. Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_map_node.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: magenta · tamanho final 256×256 px · 9-slice: não
+- Situação: pendente
+
+```text
+Generate one square 1:1 image. one round chapter map node frame, thick forged dark iron ring (#3B4157 with light edge #6A7290, black outline #0A0B10) with a polished gold outer band (#FFF0B0 to #FECA57 to #B87B14), four tiny gold rivets at the top, bottom, left and right of the ring, the inside of the ring is completely empty: an open round window about 70 percent of the diameter filled with the background color, because a monster medallion is placed inside by code. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_map_node_locked`
+
+- Uso: Nó de capítulo trancado no mapa; o cadeado e a silhueta cinza ficam no código por cima. Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_map_node_locked.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 256×256 px · 9-slice: não
+- Situação: pendente
+
+```text
+Generate one square 1:1 image. one round locked chapter map node, a dull dark iron ring (#3B4157 with light edge #4A5168, black outline #0A0B10) with no gold, the inside is a closed recessed dark stone disc (#2B3040 at the center to #0C0E16 at the edge) with an inner shadow at the top, plain and empty with no lock and no symbol, desaturated. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_defeat_shield`
+
+- Uso: Escudo rachado no medalhão do Fim de run (derrota); aro carmesim e cacos caindo ficam no CSS. Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_defeat_shield.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 256×256 px · 9-slice: não
+- Situação: pendente
+
+```text
+Generate one square 1:1 image. one broken barrier shield, classic heater shield shape with a flat top and a point at the bottom, slightly taller than wide, cyan crystal-metal face (#88FFFF top, #00CEC9, #0984E3 bottom) with a thin dark iron rim (#3B4157) and a black outline (#0A0B10), split by one big jagged black crack from top to bottom with a few smaller branching cracks, two small chips missing from the right edge, no sparks, no light rays, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+### 3.4 Cartas e encaixes de runa
+
+#### `ui_card_lightning`
+
+- Uso: Carta de runa Elétrica no Draft (horizontal, ícone à esquerda, texto à direita).
+- Arquivo a devolver: `art-source/raw/ui/ui_card_lightning.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: magenta · tamanho final 480×192 px · 9-slice: 40, 40, 40, 40
+- Situação: pendente
+
+```text
+Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal rune card about 5 to 2 proportion, outer frame of dark forged iron and carved grey-blue stone (#8A93B2 top edge, #3B4157, #262A38) with a thick black outline (#0A0B10) and rounded corners, a thin black line and a thin cyan (#00CEC9 to #0984E3) trim line framing a recessed dark stone face (#20242F to #14161F) with a soft inner shadow at the top, four small triangular corner caps in cyan (#00CEC9 to #0984E3) with a black outline, one on each corner over the frame, the electric synergy color appears only on the trim and the corner caps, face completely plain and empty because the icon socket and the text are placed by code. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Safe area for slicing: every ornament (chamfered corners, rivets, end caps) must fit inside 8 percent of the width from each side and 21 percent of the height from the top and from the bottom; the part between is plain. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_card_fire`
+
+- Uso: Carta de runa Ígnea no Draft (horizontal, ícone à esquerda, texto à direita).
+- Arquivo a devolver: `art-source/raw/ui/ui_card_fire.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 480×192 px · 9-slice: 40, 40, 40, 40
+- Situação: pendente
+
+```text
+Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal rune card about 5 to 2 proportion, outer frame of dark forged iron and carved grey-blue stone (#8A93B2 top edge, #3B4157, #262A38) with a thick black outline (#0A0B10) and rounded corners, a thin black line and a thin magma orange (#FF9F43 to #992D0C) trim line framing a recessed dark stone face (#20242F to #14161F) with a soft inner shadow at the top, four small triangular corner caps in magma orange (#FF9F43 to #992D0C) with a black outline, one on each corner over the frame, the fire synergy color appears only on the trim and the corner caps, face completely plain and empty because the icon socket and the text are placed by code. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Safe area for slicing: every ornament (chamfered corners, rivets, end caps) must fit inside 8 percent of the width from each side and 21 percent of the height from the top and from the bottom; the part between is plain. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_card_spectral`
+
+- Uso: Carta de runa Espectral no Draft (horizontal, ícone à esquerda, texto à direita).
+- Arquivo a devolver: `art-source/raw/ui/ui_card_spectral.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 480×192 px · 9-slice: 40, 40, 40, 40
+- Situação: pendente
+
+```text
+Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal rune card about 5 to 2 proportion, outer frame of dark forged iron and carved grey-blue stone (#8A93B2 top edge, #3B4157, #262A38) with a thick black outline (#0A0B10) and rounded corners, a thin black line and a thin violet (#9C6BFF to #3E1F73) trim line framing a recessed dark stone face (#20242F to #14161F) with a soft inner shadow at the top, four small triangular corner caps in violet (#9C6BFF to #3E1F73) with a black outline, one on each corner over the frame, the spectral synergy color appears only on the trim and the corner caps, face completely plain and empty because the icon socket and the text are placed by code. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Safe area for slicing: every ornament (chamfered corners, rivets, end caps) must fit inside 8 percent of the width from each side and 21 percent of the height from the top and from the bottom; the part between is plain. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_card_core`
+
+- Uso: Carta de runa Núcleo no Draft (horizontal, ícone à esquerda, texto à direita).
+- Arquivo a devolver: `art-source/raw/ui/ui_card_core.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 480×192 px · 9-slice: 40, 40, 40, 40
+- Situação: pendente
+
+```text
+Generate one image with a wide landscape 16:9 canvas. one empty wide horizontal rune card about 5 to 2 proportion, outer frame of dark forged iron and carved grey-blue stone (#8A93B2 top edge, #3B4157, #262A38) with a thick black outline (#0A0B10) and rounded corners, a thin black line and a thin warm gold (#FECA57 to #B87B14) trim line framing a recessed dark stone face (#20242F to #14161F) with a soft inner shadow at the top, four small triangular corner caps in warm gold (#FECA57 to #B87B14) with a black outline, one on each corner over the frame, the core synergy color appears only on the trim and the corner caps, face completely plain and empty because the icon socket and the text are placed by code. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Nine-slice rules: keep the four corners as the only ornamented parts, make the straight edges between the corners a plain uniform border with no ornament, no rivet and no gem in their middle so they can stretch, and make the center a smooth flat even surface with no pattern focal point so it can stretch or repeat. Safe area for slicing: every ornament (chamfered corners, rivets, end caps) must fit inside 8 percent of the width from each side and 21 percent of the height from the top and from the bottom; the part between is plain. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_gem_lightning`
+
+- Uso: Encaixe redondo do ícone na carta Elétrica (.rs-draft-socket); o ícone da runa fica por cima.
 - Arquivo a devolver: `art-source/raw/ui/ui_gem_lightning.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: magenta · tamanho final 96×96 px · 9-slice: não
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: magenta · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
 ```text
-Generate one square 1:1 image. one single faceted gemstone cut as a diamond shape (a square rotated 45 degrees, pointing up, down, left and right), cyan (#00CEC9 to #0984E3) crystal with a small white highlight on the upper left facet, thin black outline (#0A0B10) and a thin gold setting ring (#E0A42A), centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+Generate one square 1:1 image. one round gem socket seen straight from the front, a smooth polished cyan (#00CEC9 to #0984E3) crystal dome filling the center, lighter at the top and darker at the bottom, with one soft white highlight on the upper left, surrounded by a thin black ring (#0A0B10), a forged dark iron ring (#3B4157 with light edge #6A7290) and a thin black outer outline, no facets pattern, no symbol, centered, filling about 90 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure magenta color (#FF00FF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Do not use magenta anywhere on the subject. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_gem_fire`
+#### `ui_gem_fire`
 
+- Uso: Encaixe redondo do ícone na carta Ígnea (.rs-draft-socket); o ícone da runa fica por cima.
 - Arquivo a devolver: `art-source/raw/ui/ui_gem_fire.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: white · tamanho final 96×96 px · 9-slice: não
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
 ```text
-Generate one square 1:1 image. one single faceted gemstone cut as a diamond shape (a square rotated 45 degrees, pointing up, down, left and right), magma orange (#FF9F43 to #992D0C) crystal with a small white highlight on the upper left facet, thin black outline (#0A0B10) and a thin gold setting ring (#E0A42A), centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+Generate one square 1:1 image. one round gem socket seen straight from the front, a smooth polished magma orange (#FF9F43 to #992D0C) crystal dome filling the center, lighter at the top and darker at the bottom, with one soft white highlight on the upper left, surrounded by a thin black ring (#0A0B10), a forged dark iron ring (#3B4157 with light edge #6A7290) and a thin black outer outline, no facets pattern, no symbol, centered, filling about 90 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_gem_spectral`
+#### `ui_gem_spectral`
 
+- Uso: Encaixe redondo do ícone na carta Espectral (.rs-draft-socket); o ícone da runa fica por cima.
 - Arquivo a devolver: `art-source/raw/ui/ui_gem_spectral.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
-- Fundo: white · tamanho final 96×96 px · 9-slice: não
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
 ```text
-Generate one square 1:1 image. one single faceted gemstone cut as a diamond shape (a square rotated 45 degrees, pointing up, down, left and right), violet (#9C6BFF to #3E1F73) crystal with a small white highlight on the upper left facet, thin black outline (#0A0B10) and a thin gold setting ring (#E0A42A), centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+Generate one square 1:1 image. one round gem socket seen straight from the front, a smooth polished violet (#9C6BFF to #3E1F73) crystal dome filling the center, lighter at the top and darker at the bottom, with one soft white highlight on the upper left, surrounded by a thin black ring (#0A0B10), a forged dark iron ring (#3B4157 with light edge #6A7290) and a thin black outer outline, no facets pattern, no symbol, centered, filling about 90 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_gem_core`
+#### `ui_gem_core`
 
+- Uso: Encaixe redondo do ícone na carta Núcleo (.rs-draft-socket); o ícone da runa fica por cima.
 - Arquivo a devolver: `art-source/raw/ui/ui_gem_core.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 128×128 px · 9-slice: não
+- Situação: pendente
+
+```text
+Generate one square 1:1 image. one round gem socket seen straight from the front, a smooth polished warm gold (#FECA57 to #B87B14) crystal dome filling the center, lighter at the top and darker at the bottom, with one soft white highlight on the upper left, surrounded by a thin black ring (#0A0B10), a forged dark iron ring (#3B4157 with light edge #6A7290) and a thin black outer outline, no facets pattern, no symbol, centered, filling about 90 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_socket`
+
+- Uso: Encaixe de runa da faixa do HUD e do ícone da linha de talento. Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_socket.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 96×96 px · 9-slice: não
 - Situação: pendente
 
 ```text
-Generate one square 1:1 image. one single faceted gemstone cut as a diamond shape (a square rotated 45 degrees, pointing up, down, left and right), warm gold and iron (#FECA57 to #B87B14, iron #6A7290) crystal with a small white highlight on the upper left facet, thin black outline (#0A0B10) and a thin gold setting ring (#E0A42A), centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+Generate one square 1:1 image. one empty round recessed socket seen from the front, dark stone hollow (#2B3040 at the center to #0C0E16 at the edge) with an inner shadow at the top, a thin black ring (#0A0B10) and a thin dark iron rim (#3B4157), plain and empty, centered, filling about 90 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_icon_coin`
+### 3.5 Ícones
 
+#### `ui_icon_coin`
+
+- Uso: Moeda (contador de ouro, compra, fim de run); substitui o SVG.
 - Arquivo a devolver: `art-source/raw/ui/ui_icon_coin.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
@@ -573,10 +722,11 @@ Generate one square 1:1 image. one single faceted gemstone cut as a diamond shap
 Generate one square 1:1 image. one round gold coin seen straight from the front (#FFF3B8 highlight, #FECA57, #D89A22, #8A5A0C edge), embossed rim, plain face with a simple raised diamond in the middle, one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_icon_heart`
+#### `ui_icon_heart`
 
+- Uso: Vida da barreira no HUD.
 - Arquivo a devolver: `art-source/raw/ui/ui_icon_heart.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
@@ -584,10 +734,11 @@ Generate one square 1:1 image. one round gold coin seen straight from the front 
 Generate one square 1:1 image. one solid crimson heart (#FF5E57 to #8F1D2C) with a small top-left highlight and a thin dark outline, one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_icon_pause`
+#### `ui_icon_pause`
 
+- Uso: Pausa no HUD.
 - Arquivo a devolver: `art-source/raw/ui/ui_icon_pause.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
@@ -595,10 +746,11 @@ Generate one square 1:1 image. one solid crimson heart (#FF5E57 to #8F1D2C) with
 Generate one square 1:1 image. one pause symbol made of two thick vertical rounded bars of polished gold (#FFE08A to #B87B14) with a dark brown outline (#3A2606), one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_icon_gear`
+#### `ui_icon_gear`
 
+- Uso: Ajustes na tela inicial.
 - Arquivo a devolver: `art-source/raw/ui/ui_icon_gear.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
@@ -606,10 +758,11 @@ Generate one square 1:1 image. one pause symbol made of two thick vertical round
 Generate one square 1:1 image. one settings gear cog with eight teeth and a round hole in the middle, forged iron (#6A7290 to #262A38) with gold edge highlights (#E9D8A6) and a dark outline, one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_icon_sound`
+#### `ui_icon_sound`
 
+- Uso: Som ligado.
 - Arquivo a devolver: `art-source/raw/ui/ui_icon_sound.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
@@ -617,10 +770,11 @@ Generate one square 1:1 image. one settings gear cog with eight teeth and a roun
 Generate one square 1:1 image. one speaker symbol with three curved sound waves to its right, polished gold (#FFE08A to #B87B14) with a dark brown outline (#3A2606), one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_icon_sound_off`
+#### `ui_icon_sound_off`
 
+- Uso: Som desligado.
 - Arquivo a devolver: `art-source/raw/ui/ui_icon_sound_off.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
@@ -628,10 +782,11 @@ Generate one square 1:1 image. one speaker symbol with three curved sound waves 
 Generate one square 1:1 image. one speaker symbol with a bold crimson X (#FF5E57) to its right instead of sound waves, speaker in polished gold (#FFE08A to #B87B14) with a dark brown outline (#3A2606), one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_icon_star`
+#### `ui_icon_star`
 
+- Uso: Talentos na tela inicial.
 - Arquivo a devolver: `art-source/raw/ui/ui_icon_star.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
@@ -639,13 +794,56 @@ Generate one square 1:1 image. one speaker symbol with a bold crimson X (#FF5E57
 Generate one square 1:1 image. one five-pointed star of polished gold (#FFF0B0 to #B87B14) with beveled facets and a dark brown outline (#3A2606), one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
 
-### `ui_icon_sword`
+#### `ui_icon_lock`
 
-- Arquivo a devolver: `art-source/raw/ui/ui_icon_sword.png`
-- Anexar no Gemini: `art-source/anchors/medallion_anchor.png`
+- Uso: Cadeado do nó trancado no mapa. Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_icon_lock.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
 - Fundo: white · tamanho final 128×128 px · 9-slice: não
 - Situação: pendente
 
 ```text
-Generate one square 1:1 image. one straight sword pointing up diagonally to the upper right, steel blade (#E8ECFF to #6A7290), gold crossguard and pommel (#FECA57 to #B87B14), dark outline, one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+Generate one square 1:1 image. one closed padlock with a round shackle and a keyhole, creamy pale gold (#FFE9B0 to #C9A75A) with a thin dark outline (#0A0B10), one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
 ```
+
+#### `ui_icon_back`
+
+- Uso: Voltar (Talentos). Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_icon_back.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 128×128 px · 9-slice: não
+- Situação: pendente
+
+```text
+Generate one square 1:1 image. one bold left-pointing arrow with a short shaft and a wide triangular head, creamy pale gold (#FFE9B0 to #C9A75A) with a thin dark outline (#0A0B10), one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_icon_check`
+
+- Uso: Selo da vitória e MÁX do talento. Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_icon_check.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 128×128 px · 9-slice: não
+- Situação: pendente
+
+```text
+Generate one square 1:1 image. one bold check mark, thick rounded strokes of dark brown (#3A2606) with a thin pale gold edge (#FFF0B0), one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+#### `ui_icon_recall`
+
+- Uso: Ícone do botão RECOLHER. Chave nova.
+- Arquivo a devolver: `art-source/raw/ui/ui_icon_recall.png`
+- Anexar no Gemini: `art-source/anchors/ui_anchor.png`
+- Fundo: white · tamanho final 128×128 px · 9-slice: não
+- Situação: pendente
+
+```text
+Generate one square 1:1 image. one bold curved arrow turning back down toward the bottom, deep teal (#062838) with a thin light cyan edge (#B8FFFF), one single bold symbol readable at 24 pixels, no frame, no border, no background plate, centered, filling about 80 percent of the canvas. isolated flat game UI element for a dark fantasy mobile game, ornate fantasy style with forged dark iron, carved grey stone and polished gold trim, stylized hand-painted 2D illustration, perfectly straight and axis-aligned, flat front orthographic view, no perspective, no tilt, no rotation, symmetric, crisp clean edges, soft top lighting baked inside the shape, no outer glow, no light bleeding outside the shape, no drop shadow, no cast shadow, no text, no letters, no numbers, no symbols written on it, no characters, no scene. Background: one solid flat pure white color (#FFFFFF) filling the whole canvas, no gradient, no shadow, no floor, no vignette, no texture. Use the attached image only as a style reference for materials: match its forged iron and stone rendering, brush texture, lighting direction, contrast and level of detail, but draw the new UI element described above. Do not copy its subject, do not make it round unless asked.
+```
+
+### 3.6 Não usar
+
+Peças que o estilo validado tornou desnecessárias: não gere. Ficam no manifesto só como registro, fora do pipeline.
+
+- `ui_icon_sword`: Não usar: a UI validada não tem espada (fora do pipeline).

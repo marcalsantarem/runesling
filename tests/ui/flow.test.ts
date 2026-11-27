@@ -26,7 +26,10 @@ describe('fluxo de telas', () => {
     h.bus.emit('app:ready', {});
     expect(h.visible('screen-menu')).toBe(true);
     expect(h.q('menu-gold').textContent).toBe('40');
-    expect(h.q('menu-best').textContent).toBe('0 / 15');
+    // M4-01: sem loja até o M10, o contador de ouro é só placa (sem "+").
+    expect(h.q('menu-gold').parentElement?.textContent).toBe('40');
+    expect(h.root.querySelector('.rs-plus')).toBeNull();
+    expect(h.q('menu-best').textContent).toBe('0/15');
     expect(h.q('menu-atk').textContent).toBe('3');
     expect(h.q('menu-hp').textContent).toBe('12');
     expect(h.q('menu-orbs').textContent).toBe('2');
@@ -37,7 +40,7 @@ describe('fluxo de telas', () => {
     expect(h.visible('screen-menu')).toBe(false);
   });
 
-  it('run:state atualiza HUD; Recolher só no voo; 2× e Recolher emitem', async () => {
+  it('run:state atualiza HUD; Recolher sempre visível e ativo só no voo; 2× e Recolher emitem', async () => {
     await inRun();
     h.bus.emit('run:state', runState({ hp: 7, maxHp: 14, wave: 4, gold: 33, atk: 5, orbs: 3, crit: 0.15 }));
     expect(h.q('hud-hp').textContent).toBe('7/14');
@@ -47,15 +50,46 @@ describe('fluxo de telas', () => {
     expect(h.q('hud-atk').textContent).toBe('5');
     expect(h.q('hud-orbs').textContent).toBe('3');
     expect(h.q('hud-crit').textContent).toBe('15%');
-    expect(h.visible('hud-recall')).toBe(false);
+    expect(h.visible('hud-recall')).toBe(true);
+    expect(h.q<HTMLButtonElement>('hud-recall').disabled).toBe(true);
     expect(h.q('hud-speed').textContent).toBe('1×');
     h.bus.emit('run:state', runState({ phase: 'flight', speed: 2 }));
     expect(h.visible('hud-recall')).toBe(true);
+    expect(h.q<HTMLButtonElement>('hud-recall').disabled).toBe(false);
     expect(h.q('hud-speed').textContent).toBe('1,5×');
     expect(h.q('hud-speed').getAttribute('aria-label')).toBe('Alternar velocidade (atual 1,5×)');
     h.click('hud-recall');
     h.click('hud-speed');
     expect(names()).toEqual(['ui:startRun', 'ui:recall', 'ui:toggleSpeed']);
+  });
+
+  it('Recolher desativado não emite e volta a desativar quando os orbes param', async () => {
+    await inRun();
+    h.bus.emit('run:state', runState({ phase: 'aim' }));
+    h.click('hud-recall');
+    expect(names()).toEqual(['ui:startRun']);
+    h.bus.emit('run:state', runState({ phase: 'flight' }));
+    h.bus.emit('run:state', runState({ phase: 'resolving' }));
+    expect(h.visible('hud-recall')).toBe(true);
+    expect(h.q<HTMLButtonElement>('hud-recall').disabled).toBe(true);
+  });
+
+  it('nova partida zera a faixa de runas e os dados do HUD da anterior', async () => {
+    await inRun();
+    h.bus.emit('run:state', runState({ perks: ['chain_lightning', 'extra_orb'], crit: 0.25, gold: 50, phase: 'flight' }));
+    expect(h.q('hud-runes').querySelectorAll('[data-perk]')).toHaveLength(2);
+    h.click('hud-pause');
+    h.click('pause-quit');
+    h.click('menu-play');
+    expect(h.q('hud-runes').querySelectorAll('[data-perk]')).toHaveLength(0);
+    expect(h.q('hud-runes').classList.contains('is-empty')).toBe(true);
+    expect(h.q('hud-crit').textContent).toBe('');
+    expect(h.q('hud-gold').textContent).toBe('');
+    expect(h.q<HTMLButtonElement>('hud-recall').disabled).toBe(true);
+    // primeiro run:state da nova run (sem runas) mantém a faixa vazia
+    h.bus.emit('run:state', runState());
+    expect(h.q('hud-runes').querySelectorAll('[data-perk]')).toHaveLength(0);
+    expect(h.q('hud-crit').textContent).toBe('5%');
   });
 
   it('faixa de runas agrupa repetidas e usa a cor da sinergia', async () => {
@@ -110,6 +144,9 @@ describe('fluxo de telas', () => {
     h.bus.emit('run:ended', { won: false, wave: 9, goldEarned: 57 });
     expect(h.visible('modal-end')).toBe(true);
     expect(h.q('end-title').textContent).toBe('BARREIRA ROMPIDA');
+    // M4-02: derrota usa a mesma fita/emblema da vitória, sem o destaque dourado.
+    expect(h.q('end-title').closest('.rs-ribbon')?.classList.contains('is-defeat')).toBe(true);
+    expect(h.root.querySelector('.rs-end-emblem')?.classList.contains('is-victory')).toBe(false);
     expect(h.q('end-wave').textContent).toBe('9/15');
     expect(h.q('end-gold').textContent).toBe('+57');
     h.click('end-again');

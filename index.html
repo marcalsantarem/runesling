@@ -18,9 +18,39 @@
       @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 600; font-display: swap; src: url('/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2') format('woff2'); }
       @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url('/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff2') format('woff2'); }
       @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 800; font-display: swap; src: url('/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-800-normal.woff2') format('woff2'); }
-      html, body { margin: 0; height: 100%; background: #0D1020; overflow: hidden; }
-      #app { position: relative; width: 100%; height: 100%; }
-      #game { position: absolute; inset: 0; }
+      /* Comportamento de app (decisão 46): sem rolagem/elástico, sem zoom por toque, sem seleção. */
+      html, body {
+        margin: 0; width: 100%; height: 100%; height: 100dvh; background: #0D1020; overflow: hidden;
+        overscroll-behavior: none; touch-action: manipulation;
+        -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+      }
+      body { position: fixed; inset: 0; }
+      input, textarea, [contenteditable="true"] { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+      /* Palco (T-064): o jogo inteiro (canvas + UI) vive num retângulo de celular em retrato, centrado.
+       * Largura: no máx. 9:16 da altura e 480 px (o maior celular tem ~440 px CSS); altura: no máx. 1000 px.
+       * Em celular (tela mais estreita que 9:16) o palco é a tela toda, como antes; a área segura segue no CSS da UI.
+       * `container-type: size` deixa a UI medir pelo palco (unidades cqw/cqh) em vez da janela. */
+      :root { --rs-stage-max-w: 480px; --rs-stage-max-h: 1000px; }
+      #app {
+        position: absolute; inset: 0; margin: auto;
+        width: min(100%, calc(100vh * 9 / 16), var(--rs-stage-max-w));
+        width: min(100%, calc(100dvh * 9 / 16), var(--rs-stage-max-w));
+        height: min(100%, var(--rs-stage-max-h));
+        overflow: hidden; touch-action: manipulation; container-type: size; isolation: isolate;
+        background: #0D1020;
+      }
+      /* Fora do palco (só em telas mais largas que o palco): fundo decorativo, sem interação. */
+      @media (min-width: 481px), (min-aspect-ratio: 5/8) {
+        body::before {
+          content: ""; position: absolute; inset: -40px; pointer-events: none;
+          background: radial-gradient(ellipse at 50% 40%, rgba(13, 16, 32, .2), rgba(5, 6, 12, .7) 75%), url('/assets/ui/ui_map_bg.webp') center / cover no-repeat, #0D1020;
+          filter: blur(10px) brightness(.75) saturate(.85);
+        }
+        #app { box-shadow: 0 0 0 1px rgba(254, 202, 87, .18), 0 0 0 3px #0a0b10, 0 24px 80px rgba(0, 0, 0, .8); }
+      }
+      #game { position: absolute; inset: 0; touch-action: none; }
+      #game canvas { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
       /* Camada da UI sobre o canvas; o container não captura toque, o AG02 liga `pointer-events` por elemento. */
       #ui-root { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
     </style>

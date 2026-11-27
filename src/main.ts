@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { BattleScene } from './scenes/BattleScene';
 import { BootScene, WORLD_HEIGHT, WORLD_WIDTH } from './scenes/BootScene';
 import { mountUI } from './ui';
+import { installAppBehavior } from './ui/appBehavior';
 import { createReloadGuard, scheduleUpdateChecks } from './core/pwaUpdate';
 
 const BACKGROUND_COLOR = '#0D1020';
@@ -16,6 +17,9 @@ function ensureElement(id: string, parent: HTMLElement): HTMLElement {
   parent.appendChild(el);
   return el;
 }
+
+// Comportamento de app (decisão 46): sem zoom por pinça, menu de contexto nem seleção.
+installAppBehavior(document);
 
 const app = ensureElement('app', document.body);
 const gameParent = ensureElement('game', app);

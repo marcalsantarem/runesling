@@ -50,6 +50,10 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
     onBuy: (id) => {
       void profile?.buyTalent(id);
     },
+    // TEMP T-061: remover antes do M7 (a tela inicial atualiza pelo onChange do perfil).
+    onResetSave: () => {
+      void profile?.reset();
+    },
   });
   const hud = createHud(game, {
     onPause: () => {
@@ -67,6 +71,7 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
   const end = createEnd(
     () => quitToMenu(),
     () => startRun(),
+    game,
   );
   const pause = createPause({
     onResume: () => {
@@ -102,7 +107,10 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
     draft.hide();
     end.hide();
     pause.hide();
-    if (next === 'menu') menu.render(data, profile);
+    if (next === 'menu') {
+      menu.setTab('play');
+      menu.render(data, profile);
+    }
     refreshPause();
   }
 

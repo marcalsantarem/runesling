@@ -163,18 +163,12 @@ export class PlayerProfile {
     await this.commit({ ...this.state, settings: { ...this.state.settings, ...partial } });
   }
 
-  /** Apaga o save e volta tudo (inclusive ajustes) ao padrão. */
+  /**
+   * Volta ao estado inicial (ouro inicial, talentos zerados, melhor onda 0, capítulo não conquistado)
+   * e grava no save. Mantém as configurações de som. Usado pelo botão temporário da T-061.
+   */
   async reset(): Promise<void> {
-    this.state = freeze(defaults(this.game));
-    this.emit();
-    this.writing = this.writing.then(async () => {
-      try {
-        await this.save.reset();
-      } catch (e) {
-        console.warn('[profile] falha ao apagar o save', e);
-      }
-    });
-    await this.writing;
+    await this.commit({ ...defaults(this.game), settings: { ...this.state.settings } });
   }
 
   /** Assina mudanças; devolve a função para cancelar. */

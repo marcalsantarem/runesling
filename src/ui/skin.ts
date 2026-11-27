@@ -5,6 +5,7 @@
  * que liga o `border-image`/`background` da peça. Sem arquivo: nenhuma requisição, só o fallback.
  */
 import { AVAILABLE_ASSETS } from '../core/assetManifest';
+import { assetUrl } from './assetUrl';
 
 export const UI_PIECES = [
   'ui_panel',
@@ -12,16 +13,26 @@ export const UI_PIECES = [
   'ui_btn_primary',
   'ui_btn_secondary',
   'ui_btn_action',
+  'ui_btn_mini',
+  'ui_btn_round',
+  'ui_btn_square',
   'ui_ribbon',
+  'ui_ribbon_dark',
+  'ui_pill',
   'ui_card_lightning',
   'ui_card_fire',
   'ui_card_spectral',
   'ui_card_core',
   'ui_hud_bar',
+  'ui_map_bg',
+  'ui_map_node',
+  'ui_map_node_locked',
+  'ui_defeat_shield',
   'ui_gem_lightning',
   'ui_gem_fire',
   'ui_gem_spectral',
   'ui_gem_core',
+  'ui_socket',
   'ui_icon_coin',
   'ui_icon_heart',
   'ui_icon_pause',
@@ -29,13 +40,18 @@ export const UI_PIECES = [
   'ui_icon_sound',
   'ui_icon_sound_off',
   'ui_icon_star',
+  'ui_icon_lock',
+  'ui_icon_back',
+  'ui_icon_check',
+  'ui_icon_recall',
   'ui_icon_sword',
 ] as const;
 
 export type UiPiece = (typeof UI_PIECES)[number];
 
 export interface SliceInfo {
-  slice: readonly [number, number, number, number];
+  /** `null` = peça inteira (sem 9-slice). */
+  slice: readonly [number, number, number, number] | null;
   width?: number;
   height?: number;
 }
@@ -46,7 +62,7 @@ export function pieceVar(key: UiPiece): string {
 }
 
 export function piecePath(key: UiPiece): string {
-  return `${import.meta.env.BASE_URL}assets/ui/${key}.webp`;
+  return assetUrl(`ui/${key}.webp`);
 }
 
 /** Peças cujo arquivo existe em `public/assets/ui/`. */
@@ -80,7 +96,7 @@ export function applySkin(
 export function mountSkin(root: HTMLElement, available: readonly string[] = AVAILABLE_ASSETS): void {
   const pieces = applySkin(root, available);
   if (pieces.length === 0 || !available.includes('ui/ui.json') || typeof fetch === 'undefined') return;
-  fetch(`${import.meta.env.BASE_URL}assets/ui/ui.json`)
+  fetch(assetUrl('ui/ui.json'))
     .then((r) => (r.ok ? (r.json() as Promise<Record<string, SliceInfo>>) : {}))
     .then((json) => applySkin(root, available, json))
     .catch(() => undefined);

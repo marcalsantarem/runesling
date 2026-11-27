@@ -11,16 +11,26 @@
   --ui-btn-primary: none;      --ui-btn-primary-slice: 32;    --ui-btn-primary-bw: 16px;
   --ui-btn-secondary: none;    --ui-btn-secondary-slice: 32;  --ui-btn-secondary-bw: 16px;
   --ui-btn-action: none;       --ui-btn-action-slice: 32;     --ui-btn-action-bw: 16px;
-  --ui-ribbon: none;           --ui-ribbon-slice: 0 64 0 64;  --ui-ribbon-bw: 0 32px 0 32px;
+  --ui-btn-mini: none;         --ui-btn-mini-slice: 32;       --ui-btn-mini-bw: 16px;
+  --ui-btn-round: none;
+  --ui-btn-square: none;       --ui-btn-square-slice: 40;     --ui-btn-square-bw: 20px;
+  --ui-ribbon: none;           --ui-ribbon-slice: 0 80 0 80;  --ui-ribbon-bw: 0 40px 0 40px;
+  --ui-ribbon-dark: none;      --ui-ribbon-dark-slice: 0 80 0 80; --ui-ribbon-dark-bw: 0 40px 0 40px;
+  --ui-pill: none;             --ui-pill-slice: 0 32 0 32;    --ui-pill-bw: 0 16px 0 16px;
   --ui-card-lightning: none;   --ui-card-lightning-slice: 48; --ui-card-lightning-bw: 24px;
   --ui-card-fire: none;        --ui-card-fire-slice: 48;      --ui-card-fire-bw: 24px;
   --ui-card-spectral: none;    --ui-card-spectral-slice: 48;  --ui-card-spectral-bw: 24px;
   --ui-card-core: none;        --ui-card-core-slice: 48;      --ui-card-core-bw: 24px;
   --ui-hud-bar: none;          --ui-hud-bar-slice: 40;        --ui-hud-bar-bw: 20px;
+  --ui-map-bg: none;
+  --ui-map-node: none;
+  --ui-map-node-locked: none;
+  --ui-defeat-shield: none;
   --ui-gem-lightning: none;
   --ui-gem-fire: none;
   --ui-gem-spectral: none;
   --ui-gem-core: none;
+  --ui-socket: none;
   --ui-icon-coin: none;
   --ui-icon-heart: none;
   --ui-icon-pause: none;
@@ -28,61 +38,154 @@
   --ui-icon-sound: none;
   --ui-icon-sound-off: none;
   --ui-icon-star: none;
+  --ui-icon-lock: none;
+  --ui-icon-back: none;
+  --ui-icon-check: none;
+  --ui-icon-recall: none;
   --ui-icon-sword: none;
 }
 
 /* ---------- 9-slice: a imagem substitui moldura, relevo e rebites do fallback ---------- */
-.rs-ui.skin-ui_panel .rs-frame,
-.rs-ui.skin-ui_panel_dark .rs-inset,
+.rs-ui.skin-ui_panel .rs-talent,
+.rs-ui.skin-ui_panel .rs-summary,
+.rs-ui.skin-ui_panel_dark .rs-talent-in,
+.rs-ui.skin-ui_panel_dark .rs-summary-in,
+.rs-ui.skin-ui_panel_dark .rs-startp,
+.rs-ui.skin-ui_panel_dark .rs-foot-stat,
+.rs-ui.skin-ui_panel_dark .rs-rune-strip,
 .rs-ui.skin-ui_btn_primary .rs-btn-primary,
 .rs-ui.skin-ui_btn_secondary .rs-btn-secondary,
 .rs-ui.skin-ui_btn_secondary .rs-btn-icon,
 .rs-ui.skin-ui_btn_action .rs-btn-action,
-.rs-ui.skin-ui_hud_bar .rs-hud-bar,
+.rs-ui.skin-ui_hud_bar .rs-band,
 .rs-ui.skin-ui_card_lightning .rs-draft-card.rs-syn-lightning,
 .rs-ui.skin-ui_card_fire .rs-draft-card.rs-syn-fire,
 .rs-ui.skin-ui_card_spectral .rs-draft-card.rs-syn-spectral,
 .rs-ui.skin-ui_card_core .rs-draft-card.rs-syn-core {
   background: none;
-  border-color: transparent;
+  border: 0 solid transparent;
   border-image-repeat: stretch;
   border-image-outset: 0;
-  box-shadow: 0 var(--rs-drop, 6px) 14px rgba(0, 0, 0, .5);
+  box-shadow: none;
 }
-.rs-ui.skin-ui_panel .rs-frame { border-image-source: var(--ui-panel); border-image-slice: var(--ui-panel-slice) fill; border-image-width: var(--ui-panel-bw); }
-.rs-ui.skin-ui_panel_dark .rs-inset { border-image-source: var(--ui-panel-dark); border-image-slice: var(--ui-panel-dark-slice) fill; border-image-width: var(--ui-panel-dark-bw); }
+.rs-ui.skin-ui_panel .rs-talent,
+.rs-ui.skin-ui_panel .rs-summary { border-image-source: var(--ui-panel); border-image-slice: var(--ui-panel-slice) fill; border-image-width: var(--ui-panel-bw); }
+.rs-ui.skin-ui_panel_dark .rs-talent-in,
+.rs-ui.skin-ui_panel_dark .rs-summary-in,
+.rs-ui.skin-ui_panel_dark .rs-startp,
+.rs-ui.skin-ui_panel_dark .rs-foot-stat,
+.rs-ui.skin-ui_panel_dark .rs-rune-strip { border-image-source: var(--ui-panel-dark); border-image-slice: var(--ui-panel-dark-slice) fill; border-image-width: var(--ui-panel-dark-bw); }
 .rs-ui.skin-ui_btn_primary .rs-btn-primary { border-image-source: var(--ui-btn-primary); border-image-slice: var(--ui-btn-primary-slice) fill; border-image-width: var(--ui-btn-primary-bw); }
 .rs-ui.skin-ui_btn_secondary .rs-btn-secondary,
 .rs-ui.skin-ui_btn_secondary .rs-btn-icon { border-image-source: var(--ui-btn-secondary); border-image-slice: var(--ui-btn-secondary-slice) fill; border-image-width: var(--ui-btn-secondary-bw); }
 .rs-ui.skin-ui_btn_action .rs-btn-action { border-image-source: var(--ui-btn-action); border-image-slice: var(--ui-btn-action-slice) fill; border-image-width: var(--ui-btn-action-bw); }
-.rs-ui.skin-ui_hud_bar .rs-hud-bar { border-image-source: var(--ui-hud-bar); border-image-slice: var(--ui-hud-bar-slice) fill; border-image-width: var(--ui-hud-bar-bw); }
+.rs-ui.skin-ui_hud_bar .rs-band { border-image-source: var(--ui-hud-bar); border-image-slice: var(--ui-hud-bar-slice) fill; border-image-width: var(--ui-hud-bar-bw); }
 .rs-ui.skin-ui_card_lightning .rs-draft-card.rs-syn-lightning { border-image-source: var(--ui-card-lightning); border-image-slice: var(--ui-card-lightning-slice) fill; border-image-width: var(--ui-card-lightning-bw); }
 .rs-ui.skin-ui_card_fire .rs-draft-card.rs-syn-fire { border-image-source: var(--ui-card-fire); border-image-slice: var(--ui-card-fire-slice) fill; border-image-width: var(--ui-card-fire-bw); }
 .rs-ui.skin-ui_card_spectral .rs-draft-card.rs-syn-spectral { border-image-source: var(--ui-card-spectral); border-image-slice: var(--ui-card-spectral-slice) fill; border-image-width: var(--ui-card-spectral-bw); }
 .rs-ui.skin-ui_card_core .rs-draft-card.rs-syn-core { border-image-source: var(--ui-card-core); border-image-slice: var(--ui-card-core-slice) fill; border-image-width: var(--ui-card-core-bw); }
-.rs-ui.skin-ui_panel .rs-frame::before,
-.rs-ui.skin-ui_hud_bar .rs-hud-bar::before,
-.rs-ui.skin-ui_card_lightning .rs-draft-card.rs-syn-lightning::before,
-.rs-ui.skin-ui_card_fire .rs-draft-card.rs-syn-fire::before,
-.rs-ui.skin-ui_card_spectral .rs-draft-card.rs-syn-spectral::before,
-.rs-ui.skin-ui_card_core .rs-draft-card.rs-syn-core::before { display: none; }
+.rs-ui.skin-ui_panel .rs-summary .rs-rv4,
+.rs-ui.skin-ui_btn_secondary .rs-btn-icon::after,
+.rs-ui[class*="skin-ui_card_"] .rs-draft-card .rs-cap { display: none; }
 
-/* ---------- Fita (3-slice horizontal): pontas e faixa viram uma imagem ---------- */
-.rs-ui.skin-ui_ribbon .rs-ribbon::before,
-.rs-ui.skin-ui_ribbon .rs-ribbon::after { display: none; }
-.rs-ui.skin-ui_ribbon .rs-ribbon-text {
-  background: none;
+/* Placa de ferro (botões): com a peça, somem as camadas de CSS (moldura, miolo, rebites); ficam o texto e as runas SVG */
+.rs-ui.skin-ui_btn_primary .rs-plate.rs-btn-primary :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv),
+.rs-ui.skin-ui_btn_secondary .rs-plate.rs-btn-secondary :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv),
+.rs-ui.skin-ui_btn_action .rs-plate.rs-btn-action :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv) { display: none; }
+.rs-ui.skin-ui_btn_primary .rs-plate.rs-btn-primary .rs-plate-pl,
+.rs-ui.skin-ui_btn_secondary .rs-plate.rs-btn-secondary .rs-plate-pl,
+.rs-ui.skin-ui_btn_action .rs-plate.rs-btn-action .rs-plate-pl { inset: 0; background: none; box-shadow: none; clip-path: none; }
+
+/* ---------- Fita (3-slice horizontal): a imagem substitui faixa, pontas e filetes ----------
+ * O corpo da fita ocupa ~80% da altura do arquivo (as caudas descem abaixo dele): a imagem vai num
+ * ::before que passa da caixa para baixo, e o texto fica centrado no corpo. */
+.rs-ui.skin-ui_ribbon .rs-ribbon { background: none; clip-path: none; }
+.rs-ui.skin-ui_ribbon .rs-ribbon::before {
+  inset: 0 0 -24.7% 0;
   border: 0 solid transparent;
-  box-shadow: none;
-  border-image: var(--ui-ribbon) var(--ui-ribbon-slice) fill / var(--ui-ribbon-bw) / 0 stretch;
-  padding-inline: 34px;
+  border-image: var(--ui-ribbon) var(--ui-ribbon-slice) fill / var(--rs-rib-bw, var(--ui-ribbon-bw)) / 0 stretch;
+  opacity: 1;
+  z-index: 0;
+}
+.rs-ui.skin-ui_ribbon .rs-ribbon:not(.rs-ribbon-big, .rs-banner) { --rs-rib-bw: 0 24px 0 24px; }
+.rs-ui.skin-ui_ribbon_dark .rs-ribbon.is-defeat { background: none; clip-path: none; }
+.rs-ui.skin-ui_ribbon_dark .rs-ribbon.is-defeat::before {
+  inset: 0 0 -24.7% 0;
+  border: 0 solid transparent;
+  border-image: var(--ui-ribbon-dark) var(--ui-ribbon-dark-slice) fill / var(--rs-rib-bw, var(--ui-ribbon-dark-bw)) / 0 stretch;
+  opacity: 1;
+  z-index: 0;
 }
 
-/* ---------- Losango do topo da carta ---------- */
-.rs-ui.skin-ui_gem_lightning .rs-syn-lightning .rs-gem { background: var(--ui-gem-lightning) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
-.rs-ui.skin-ui_gem_fire .rs-syn-fire .rs-gem { background: var(--ui-gem-fire) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
-.rs-ui.skin-ui_gem_spectral .rs-syn-spectral .rs-gem { background: var(--ui-gem-spectral) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
-.rs-ui.skin-ui_gem_core .rs-syn-core .rs-gem { background: var(--ui-gem-core) center / contain no-repeat; border: 0; box-shadow: none; transform: none; }
+/* ---------- Contador de ouro (3-slice horizontal) ---------- */
+.rs-ui.skin-ui_pill .rs-gold-pill {
+  background: none;
+  box-shadow: none;
+  border: 0 solid transparent;
+  border-image: var(--ui-pill) var(--ui-pill-slice) fill / var(--ui-pill-bw) / 0 stretch;
+}
+
+/* ---------- Botões de ícone: redondo (tela inicial) e quadrado (pausa, voltar) ---------- */
+.rs-ui.skin-ui_btn_round .rs-ib:not(.rs-ib-sq) { background: var(--ui-btn-round) center / 100% 100% no-repeat; border: 0; box-shadow: 0 4px 0 -1px rgba(5, 6, 10, .8); }
+.rs-ui.skin-ui_btn_round .rs-ib:not(.rs-ib-sq)::after { display: none; }
+.rs-ui.skin-ui_btn_square .rs-ib-sq {
+  background: none;
+  box-shadow: none;
+  border: 0 solid transparent;
+  border-radius: 0;
+  border-image: var(--ui-btn-square) var(--ui-btn-square-slice) fill / 14px / 0 stretch;
+}
+.rs-ui.skin-ui_btn_square .rs-ib-sq::after { display: none; }
+.rs-ui:is(.skin-ui_btn_round, .skin-ui_btn_square) .rs-ib:active:not(:disabled),
+.rs-ui:is(.skin-ui_btn_round, .skin-ui_btn_square) .rs-ib.is-down:not(:disabled) { box-shadow: none; filter: brightness(1.15); }
+
+/* ---------- Placas mini: 1× na peça quadrada sem rebites, comprar na placa ouro mini ---------- */
+.rs-ui.skin-ui_btn_square .rs-plate.rs-plate-mini.rs-plate-iron { border-image-source: var(--ui-btn-square); border-image-slice: var(--ui-btn-square-slice) fill; border-image-width: 14px; }
+.rs-ui.skin-ui_btn_square .rs-plate.rs-plate-mini.rs-plate-iron :is(.rs-plate-o, .rs-plate-fr) { display: none; }
+.rs-ui.skin-ui_btn_square .rs-plate.rs-plate-mini.rs-plate-iron .rs-plate-pl { inset: 0; background: none; box-shadow: none; clip-path: none; }
+.rs-ui.skin-ui_btn_mini .rs-plate.rs-plate-mini.rs-plate-gold {
+  background: none;
+  box-shadow: none;
+  border: 0 solid transparent;
+  border-image: var(--ui-btn-mini) var(--ui-btn-mini-slice) fill / 12px / 0 stretch;
+}
+.rs-ui.skin-ui_btn_mini .rs-plate.rs-plate-mini.rs-plate-gold :is(.rs-plate-o, .rs-plate-fr) { display: none; }
+.rs-ui.skin-ui_btn_mini .rs-plate.rs-plate-mini.rs-plate-gold .rs-plate-pl { inset: 0; background: none; box-shadow: none; clip-path: none; }
+
+/* ---------- Mapa: fundo, nó atual (aro com miolo vazado) e nó trancado ---------- */
+.rs-ui.skin-ui_map_bg .rs-mapbg { background: var(--ui-map-bg) center / cover no-repeat, #0d1020; }
+.rs-ui.skin-ui_map_node .rs-node-cur { background: var(--ui-map-node) center / 100% 100% no-repeat, radial-gradient(circle at 50% 40%, #3a1a22, #0b0710 60%); box-shadow: 0 8px 0 -2px rgba(5, 6, 10, .7), 0 0 26px rgba(254, 202, 87, .35); }
+.rs-ui.skin-ui_map_node .rs-node-cur .rs-node-pic { inset: 16%; z-index: -1; }
+.rs-ui.skin-ui_map_node .rs-node-cur { isolation: isolate; }
+.rs-ui.skin-ui_map_node_locked .rs-node-lock { background: var(--ui-map-node-locked) center / 100% 100% no-repeat; box-shadow: 0 6px 0 -2px rgba(5, 6, 10, .7); }
+.rs-ui.skin-ui_map_node_locked .rs-node-lock .rs-node-sil { inset: 20%; }
+
+/* ---------- Fim de run: medalhão da vitória no aro do mapa, escudo rachado na derrota ---------- */
+.rs-ui.skin-ui_map_node .rs-end-emblem.is-victory { isolation: isolate; background: var(--ui-map-node) center / 100% 100% no-repeat, radial-gradient(circle at 50% 40%, #3a1a22, #0b0710 60%); box-shadow: 0 10px 0 -2px rgba(5, 6, 10, .7); }
+.rs-ui.skin-ui_map_node .rs-end-emblem.is-victory .rs-end-pic { inset: 16%; z-index: -1; }
+.rs-ui.skin-ui_defeat_shield .rs-end-shield { background: var(--ui-defeat-shield) center / 74% no-repeat; }
+.rs-ui.skin-ui_defeat_shield .rs-end-shield .rs-icon { visibility: hidden; }
+
+/* ---------- Gema da carta: a peça entra no encaixe redondo do ícone ---------- */
+.rs-ui.skin-ui_gem_lightning .rs-syn-lightning .rs-draft-socket { background: var(--ui-gem-lightning) center / contain no-repeat; box-shadow: none; }
+.rs-ui.skin-ui_gem_fire .rs-syn-fire .rs-draft-socket { background: var(--ui-gem-fire) center / contain no-repeat; box-shadow: none; }
+.rs-ui.skin-ui_gem_spectral .rs-syn-spectral .rs-draft-socket { background: var(--ui-gem-spectral) center / contain no-repeat; box-shadow: none; }
+.rs-ui.skin-ui_gem_core .rs-syn-core .rs-draft-socket { background: var(--ui-gem-core) center / contain no-repeat; box-shadow: none; }
+
+/* ---------- Encaixe (ui_socket): aro de ferro da faixa de runas e do ícone do talento ----------
+ * Na carta do draft a gema vai sozinha: ela já traz o próprio aro (encaixe por baixo dobraria o aro). */
+.rs-ui.skin-ui_socket .rs-rune:not(.rs-rune-empty) {
+  background: var(--ui-socket) center / 100% 100% no-repeat;
+  box-shadow: 0 0 6px -1px var(--rs-syn), 0 2px 0 -1px rgba(5, 6, 10, .8);
+}
+.rs-ui.skin-ui_socket .rs-rune .rs-rune-icon { left: 5px; top: 5px; width: 20px; height: 20px; }
+.rs-ui.skin-ui_socket .rs-rune-empty { border: 0; background: var(--ui-socket) center / 100% 100% no-repeat; box-shadow: none; opacity: .42; filter: saturate(.4); }
+.rs-ui.skin-ui_socket .rs-talent-icon {
+  background: var(--ui-socket) center / 100% 100% no-repeat;
+  box-shadow: 0 0 0 1.5px rgba(254, 202, 87, .55), 0 0 12px rgba(254, 202, 87, .18), 0 3px 0 -1px rgba(5, 6, 10, .8);
+}
+.rs-ui.skin-ui_socket .rs-talent-icon .rs-talent-dot { width: 46px; height: 46px; }
+.rs-ui.skin-ui_socket .rs-talent.is-max .rs-talent-icon { box-shadow: 0 0 0 2px var(--rs-gold), 0 0 16px rgba(254, 202, 87, .4), 0 3px 0 -1px rgba(5, 6, 10, .8); }
 
 /* ---------- Ícones: a imagem entra no lugar do SVG ---------- */
 .rs-uicon { width: var(--rs-icon-size, 18px); height: var(--rs-icon-size, 18px); background: center / contain no-repeat; }
@@ -93,6 +196,10 @@
 .rs-ui.skin-ui_icon_sound .rs-uicon-ui_icon_sound { background-image: var(--ui-icon-sound); }
 .rs-ui.skin-ui_icon_sound_off .rs-uicon-ui_icon_sound_off { background-image: var(--ui-icon-sound-off); }
 .rs-ui.skin-ui_icon_star .rs-uicon-ui_icon_star { background-image: var(--ui-icon-star); }
+.rs-ui.skin-ui_icon_lock .rs-uicon-ui_icon_lock { background-image: var(--ui-icon-lock); }
+.rs-ui.skin-ui_icon_back .rs-uicon-ui_icon_back { background-image: var(--ui-icon-back); }
+.rs-ui.skin-ui_icon_check .rs-uicon-ui_icon_check { background-image: var(--ui-icon-check); }
+.rs-ui.skin-ui_icon_recall .rs-uicon-ui_icon_recall { background-image: var(--ui-icon-recall); }
 .rs-ui.skin-ui_icon_sword .rs-uicon-ui_icon_sword { background-image: var(--ui-icon-sword); }
 .rs-ui.skin-ui_icon_coin .rs-uicon-ui_icon_coin svg,
 .rs-ui.skin-ui_icon_heart .rs-uicon-ui_icon_heart svg,
@@ -101,4 +208,36 @@
 .rs-ui.skin-ui_icon_sound .rs-uicon-ui_icon_sound svg,
 .rs-ui.skin-ui_icon_sound_off .rs-uicon-ui_icon_sound_off svg,
 .rs-ui.skin-ui_icon_star .rs-uicon-ui_icon_star svg,
+.rs-ui.skin-ui_icon_lock .rs-uicon-ui_icon_lock svg,
+.rs-ui.skin-ui_icon_back .rs-uicon-ui_icon_back svg,
+.rs-ui.skin-ui_icon_check .rs-uicon-ui_icon_check svg,
+.rs-ui.skin-ui_icon_recall .rs-uicon-ui_icon_recall svg,
 .rs-ui.skin-ui_icon_sword .rs-uicon-ui_icon_sword svg { visibility: hidden; }
+
+/* ---------- Polimento dos ícones de imagem (margem uniforme de 6% nas peças) ---------- */
+.rs-ui .rs-uicon { filter: drop-shadow(0 1.5px 0 rgba(5, 6, 10, .75)); }
+.rs-ui.skin-ui_icon_pause .rs-ib-sq .rs-uicon-ui_icon_pause,
+.rs-ui.skin-ui_icon_back .rs-ib-sq .rs-uicon-ui_icon_back { width: 26px; height: 26px; }
+/* Recolher: seta escura de contorno ciano fino; maior e com halo claro para não sumir na placa ciano */
+.rs-ui.skin-ui_icon_recall .rs-uicon-ui_icon_recall { width: 22px; height: 22px; filter: drop-shadow(0 0 1.5px rgba(220, 255, 255, .95)) drop-shadow(0 1px 0 rgba(6, 40, 56, .6)); }
+/* Cadeado dourado do nó trancado: leve brilho quente */
+.rs-ui.skin-ui_icon_lock .rs-node-lock .rs-uicon-ui_icon_lock { filter: drop-shadow(0 2px 0 #000) drop-shadow(0 0 6px rgba(254, 202, 87, .35)); }
+/* Check marrom-escuro: sempre sobre dourado (selo da vitória já é ouro; no MÁX ganha um disco de ouro) */
+.rs-ui.skin-ui_icon_check .rs-end-seal .rs-uicon-ui_icon_check { width: 62%; height: 62%; filter: drop-shadow(0 1px 0 rgba(255, 240, 176, .6)); }
+.rs-ui.skin-ui_icon_check .rs-maxb .rs-uicon-ui_icon_check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ui-icon-check) center / 72% no-repeat, radial-gradient(circle at 40% 35%, #fff0b0, var(--rs-gold) 45%, var(--rs-gold-dark) 90%);
+  box-shadow: 0 0 0 1.5px var(--rs-ink), 0 0 8px rgba(254, 202, 87, .45);
+  filter: none;
+}
+/* Placa desabilitada (comprar sem ouro): a moeda apaga junto com a placa */
+.rs-ui .rs-plate:disabled .rs-uicon { filter: grayscale(.85) brightness(.75); }
+.rs-ui.skin-ui_icon_recall .rs-btn-recall .rs-plate-lbl { gap: 3px; letter-spacing: .06em; }
+/* Engrenagem de ferro sobre o botão de ferro: um pouco mais clara e com aro de luz para destacar */
+.rs-ui.skin-ui_icon_gear .rs-ib .rs-uicon-ui_icon_gear { filter: brightness(1.25) drop-shadow(0 1.5px 0 rgba(5, 6, 10, .8)) drop-shadow(0 0 3px rgba(255, 240, 200, .25)); }
+@media (max-width: 370px) {
+  .rs-ui.skin-ui_icon_recall .rs-btn-recall .rs-plate-lbl { gap: 2px; letter-spacing: .03em; font-size: 10px; }
+  .rs-ui.skin-ui_icon_recall .rs-uicon-ui_icon_recall { width: 19px; height: 19px; }
+}

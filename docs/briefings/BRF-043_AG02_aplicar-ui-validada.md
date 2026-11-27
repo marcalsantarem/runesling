@@ -1,0 +1,11 @@
+# BRF-043 — AG02 — T-057 Aplicar a UI validada
+**Leia:** `docs/decisoes.md` 44–46; `docs/briefings/_contrato-m5-ui.md` (chaves das peças e fallback CSS continuam valendo); os mockups de referência `docs/mockups/tela-inicial-final.html`, `docs/mockups/botao-jogar.html` (variação **A**) e `docs/mockups/telas-estilo.html`; `src/ui/`, `src/styles/`. **Regra:** respostas curtas; sem commit/push/branches.
+**Fazer:** deixar o jogo igual aos mockups validados, com peças em CSS (fallback) prontas para receber as imagens da T-039:
+- **Tela inicial (Menu):** mapa visto de cima (Capítulo I com o chefe pulsando no nó atual, caminho pintado, II e III trancados com rótulo "Trancado"), título RUNESLING grande centralizado abaixo da linha do ouro, fita do capítulo, recorde "Onda x/15" junto ao nó, JOGAR, Talentos com badge, som e ajustes. Animações leves (pulso, névoa, caminho) com `prefers-reduced-motion`.
+- **Botão placa de ferro (decisão 44):** um componente/classe com as variantes ouro (principal), ferro (secundário), ciano (Recolher) e mini (comprar), estado pressionado afundando com runas acendendo, estado desabilitado. Usar em todas as telas no lugar dos botões atuais. Peças continuam mapeadas em `ui_btn_primary`/`ui_btn_secondary`/`ui_btn_action`.
+- **Partida (HUD):** como em `telas-estilo.html` (pausa, vida, ouro no topo; faixa de runas; placa da onda; barra inferior ATK/Orbes/Crit, 1×, Recolher). Não cobrir a área de mira além do que já cobre hoje.
+- **Runas (Draft), Fim de run (vitória e derrota), Talentos, Pausa:** como nos mockups (Pausa no mesmo estilo, mesmo sem mockup próprio). O escudo rachado da derrota pode ser CSS/SVG por enquanto.
+- Textos sempre por `src/ui/strings.ts`; não quebrar o contrato do `gameBus` nem a regra da decisão 46 (sem seleção, sem rolagem da página; Talentos rola por dentro).
+- Atualizar/adicionar testes em `tests/ui/`.
+**Permitido:** `src/ui/`, `src/styles/`, `tests/ui/`, `src/ui/strings.ts`. **Proibido:** o resto (em especial `src/scenes/`, `src/core/events.ts`, `index.html`).
+**Pronto quando:** `npm test` e `npm run build` passam; capturas 390×844 do jogo real (Menu, Partida, Runas, Vitória, Derrota, Talentos, Pausa) conferidas a olho contra os mockups e salvas no scratchpad indicado. **Entrega:** até 5 linhas, com as diferenças que ficaram em relação aos mockups.

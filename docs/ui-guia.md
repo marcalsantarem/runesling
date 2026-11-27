@@ -1,6 +1,6 @@
 # RuneSling — guia de UI (direção A, fantasia ornamentada)
 
-Fonte: decisões 36–38, contrato `docs/briefings/_contrato-m5-ui.md`, mockup `docs/mockups/ui-direcoes.html` (seção A). Prompts das peças: seção 3 de [`arte-prompts.md`](arte-prompts.md) (preset `ui_piece` em `scripts/assets-manifest.json`). Base de cor e regras de IA: [`arte.md`](arte.md).
+Fonte: decisões 36–38, 44 e 45, contrato `docs/briefings/_contrato-m5-ui.md`, mockups validados `docs/mockups/tela-inicial-final.html`, `telas-estilo.html` e `botao-jogar.html` (variação A). Prompts das peças: seção 3 de [`arte-prompts.md`](arte-prompts.md) (preset `ui_piece` em `scripts/assets-manifest.json`). Base de cor e regras de IA: [`arte.md`](arte.md).
 
 ## Paleta
 - **Fundo:** obsidiana `#0D1020` → `#06070F`; véu do modal `rgba(6,7,15,.92)`.
@@ -18,8 +18,10 @@ Pedra cinza-azulada com grão fino, ferro forjado escuro, ouro polido só em reb
 ## Moldura, cantos e espessura (no tamanho final da peça)
 - Painel: moldura de ferro ~8% da largura (≈20 px em 256), friso de ouro interno, um rebite de ouro por canto, cantos levemente arredondados (raio ≈10 px).
 - Painel rebaixado: aro fino ~4% (≈8 px), sem rebite, sem ouro, sombra interna no topo.
-- Botões: contorno 3 px, bisel claro no topo e lábio escuro embaixo (relevo), cantos raio ≈12 px.
-- Carta: moldura de ferro ~12% da largura com friso e capas de canto na cor da sinergia; topo central livre para a gema (posta pelo código, `ui_gem_*`).
+- Botões (decisão 44): placa de ferro chanfrada (cantos a 45°), contorno preto, moldura de ferro, linha preta e miolo na cor da variante (ouro, ferro, ciano); 2 rebites de ouro em cada ponta (um no canto de cima, um no de baixo), mini sem rebites. Runas Algiz/Othala e texto são HTML por cima.
+- Botões de ícone: redondo (`ui_btn_round`) ou quadrado arredondado (`ui_btn_square`), ferro abaulado com aro fino de ouro.
+- Carta: horizontal (~5:2), moldura de ferro com friso e capas de canto triangulares na cor da sinergia; miolo liso. O encaixe redondo do ícone (`ui_gem_*`) e o texto são postos pelo código.
+- Mapa: fundo `ui_map_bg` visto de cima, sem caminho (o caminho, a névoa e os nós são do código); nó liberado `ui_map_node` (aro ouro e ferro, miolo vazado) e trancado `ui_map_node_locked` (ferro fosco, disco de pedra).
 - Fita: faixa reta, costura de ouro em cima e embaixo, pontas dobradas em rabo de andorinha.
 
 ## Estados de botão (uma peça só, estados no CSS)
@@ -34,10 +36,10 @@ Pedra cinza-azulada com grão fino, ferro forjado escuro, ouro polido só em reb
 - Texto nunca vem na imagem: é HTML sobre a peça.
 
 ## Regras de 9-slice
-- Insets `[topo, direita, baixo, esquerda]` em px no tamanho final, em `nineSlice` de cada item do manifesto (vão para `public/assets/ui/ui.json` na T-039).
+- Insets `[topo, direita, baixo, esquerda]` em px no tamanho final, em `nineSlice` de cada item do manifesto (o prompt também diz a área segura em % para o Gemini) (vão para `public/assets/ui/ui.json` na T-039).
 - **Cantos:** únicas áreas com ornamento (rebite, capa, curva). Ficam dentro do inset.
 - **Bordas:** entre os cantos, faixa uniforme sem rebite, gema ou desenho no meio, pois esticam.
 - **Centro:** liso e uniforme, sem ponto focal nem gradiente forte, pois estica ou repete (`border-image ... round`).
 - **Fita (3-slice):** insets só à esquerda/direita (`[0, 80, 0, 80]`); a faixa do meio estica na horizontal.
 - Gemas e ícones não fatiam (`nineSlice: null`).
-- Proporção de geração: botão, fita e barra em tela 16:9; carta em 3:4 (vertical); painel, gema e ícone em 1:1. O pipeline faz trim e redimensiona para o tamanho do item.
+- Proporção de geração: botão, fita, pílula, barra e carta em tela 16:9; fundo do mapa em 9:16; painel, encaixe, nó e ícone em 1:1. O pipeline faz trim e redimensiona para o tamanho do item.

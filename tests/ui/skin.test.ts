@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { loadGameData } from '../../src/data/types';
 import { synergySeal } from '../../src/ui/modals';
-import { applySkin, availablePieces, pieceVar, UI_PIECES } from '../../src/ui/skin';
+import { applySkin, availablePieces, piecePath, pieceVar, UI_PIECES } from '../../src/ui/skin';
 import { flush, runState, setup, type Harness } from './helpers';
 
 let h: Harness | undefined;
@@ -19,7 +19,7 @@ const css = (f: string) => readFileSync(join(__dirname, '../../src/styles', f), 
 describe('Peças de UI da direção A (contrato M5)', () => {
   it('toda peça do contrato tem variável com fallback none em ui-skin.css', () => {
     const skin = css('ui-skin.css');
-    expect(UI_PIECES).toHaveLength(23);
+    expect(UI_PIECES).toHaveLength(37);
     for (const k of UI_PIECES) {
       expect(skin, k).toMatch(new RegExp(`${pieceVar(k)}:\\s*none`));
       expect(skin, k).toContain(`.skin-${k}`);
@@ -42,6 +42,55 @@ describe('Peças de UI da direção A (contrato M5)', () => {
     expect(availablePieces(['ui/ui_ribbon.webp'])).toEqual(['ui_ribbon']);
   });
 
+  it('T-062: URL da peça na variável é absoluta (WebKit resolve url() de var() pela folha CSS)', () => {
+    const root = document.createElement('div');
+    applySkin(root, UI_PIECES.map((k) => `ui/${k}.webp`));
+    for (const k of UI_PIECES) {
+      const m = /^url\("([^"]+)"\)$/.exec(root.style.getPropertyValue(pieceVar(k)));
+      expect(m, k).not.toBeNull();
+      expect(m![1], k).toMatch(/^(https?:\/\/|\/)/);
+      expect(m![1], k).not.toMatch(/assets\/assets\//);
+    }
+    expect(piecePath('ui_panel')).toMatch(/^(https?:\/\/|\/)/);
+  });
+
+  it('peças novas da T-039 ligadas e runas SVG da placa visíveis por cima da peça', () => {
+    const skin = css('ui-skin.css');
+    const novas = ['ui_btn_mini', 'ui_btn_round', 'ui_btn_square', 'ui_ribbon_dark', 'ui_pill', 'ui_map_bg', 'ui_map_node', 'ui_map_node_locked', 'ui_defeat_shield'] as const;
+    for (const k of novas) {
+      expect(UI_PIECES, k).toContain(k);
+      expect(skin, k).toMatch(new RegExp(`\\.skin-${k}[^{]*\\{[^}]*var\\(${pieceVar(k)}\\)`));
+    }
+    expect(skin).not.toMatch(/rs-plate-rn\)\s*\{\s*display:\s*none/);
+    expect(skin).toMatch(/skin-ui_btn_square \.rs-plate\.rs-plate-mini\.rs-plate-iron \{[^}]*--ui-btn-square/);
+    const root = document.createElement('div');
+    expect(applySkin(root, novas.map((k) => `ui/${k}.webp`), { ui_map_bg: { slice: null } })).toEqual(
+      UI_PIECES.filter((k) => (novas as readonly string[]).includes(k)),
+    );
+    expect(root.style.getPropertyValue('--ui-map-bg-slice')).toBe('');
+  });
+
+  it('T-039 parte 2: encaixe e ícones novos ligados; gema sozinha na carta', () => {
+    const skin = css('ui-skin.css');
+    for (const k of ['ui_socket', 'ui_icon_lock', 'ui_icon_back', 'ui_icon_check', 'ui_icon_recall'] as const) {
+      expect(UI_PIECES, k).toContain(k);
+      expect(skin, k).toMatch(new RegExp(`\\.skin-${k}[^{]*\\{[^}]*var\\(${pieceVar(k)}\\)`));
+    }
+    expect(skin).toMatch(/skin-ui_socket \.rs-rune:not\(\.rs-rune-empty\)/);
+    expect(skin).toMatch(/skin-ui_socket \.rs-talent-icon \{[^}]*--ui-socket/);
+    expect(skin).not.toMatch(/skin-ui_socket[^{]*rs-draft-socket/);
+  });
+
+  it('ícones de imagem: cadeado, voltar, check (MÁX e vitória) e Recolher pedem a peça', async () => {
+    h = await setup();
+    h.bus.emit('app:ready', {});
+    expect(h.q('screen-menu').querySelector('.rs-node-lock .rs-uicon-ui_icon_lock')).not.toBeNull();
+    expect(h.q('talents-back').querySelector('.rs-uicon-ui_icon_back')).not.toBeNull();
+    expect(h.q('modal-end').querySelector('.rs-end-seal .rs-uicon-ui_icon_check')).not.toBeNull();
+    h.click('menu-play');
+    expect(h.q('hud-recall').querySelector('.rs-uicon-ui_icon_recall')).not.toBeNull();
+  });
+
   it('animações respeitam prefers-reduced-motion', () => {
     expect(css('ui.css')).toMatch(/prefers-reduced-motion: reduce[^@]*animation: none/);
   });
@@ -51,8 +100,8 @@ describe('Menu e Talentos na direção A', () => {
   it('medalhão do chefe, barra da melhor onda e selo de talentos compráveis', async () => {
     h = await setup();
     h.bus.emit('app:ready', {});
-    expect(h.q('menu-boss').textContent).toContain('Senhor Obsidiana');
-    expect(h.q('menu-progress').style.width).toBe('0%');
+    expect(h.q('menu-boss').getAttribute('aria-label')).toContain('Senhor Obsidiana');
+    expect(h.q('menu-best').textContent).toBe('0/15');
     const ids = ['atk', 'hp', 'balls', 'crit', 'gold'] as const;
     const affordable = () => ids.filter((id) => h?.profile.canBuy(id)).length;
     expect(affordable()).toBeGreaterThan(0);
@@ -120,5 +169,38 @@ describe('Partida na direção A', () => {
     h.click('end-again');
     h.bus.emit('run:ended', { won: false, wave: 3, goldEarned: 1 });
     expect(rib?.classList.contains('is-defeat')).toBe(true);
+  });
+});
+
+describe('Botão placa de ferro (decisão 44)', () => {
+  it('variantes mapeiam as peças, mini sem rebites/runas, pressionado e rótulo', async () => {
+    const { plate, setPlateLabel } = await import('../../src/ui/dom');
+    const gold = plate('gold', 'JOGAR', () => undefined, { size: 'lg' });
+    expect(gold.classList.contains('rs-btn-primary')).toBe(true);
+    expect(gold.querySelectorAll('.rs-plate-rv')).toHaveLength(4);
+    expect(gold.querySelectorAll('.rs-plate-rn')).toHaveLength(2);
+    expect(gold.textContent).toBe('JOGAR');
+    expect(plate('iron', 'MENU', () => undefined).classList.contains('rs-btn-secondary')).toBe(true);
+    const cyan = plate('cyan', 'RECOLHER', () => undefined, { size: 'mini' });
+    expect(cyan.classList.contains('rs-btn-action')).toBe(true);
+    expect(cyan.querySelector('.rs-plate-rv, .rs-plate-rn')).toBeNull();
+    gold.dispatchEvent(new Event('pointerdown'));
+    expect(gold.classList.contains('is-down')).toBe(true);
+    gold.dispatchEvent(new Event('pointerup'));
+    expect(gold.classList.contains('is-down')).toBe(false);
+    gold.disabled = true;
+    gold.dispatchEvent(new Event('pointerdown'));
+    expect(gold.classList.contains('is-down')).toBe(false);
+    setPlateLabel(gold, 'DE NOVO');
+    expect(gold.textContent).toBe('DE NOVO');
+    expect(gold.querySelector('.rs-plate-fr')).not.toBeNull();
+  });
+
+  it('todos os botões de texto das telas usam a placa', async () => {
+    h = await setup();
+    h.bus.emit('app:ready', {});
+    for (const k of ['menu-play', 'talent-buy-atk', 'settings-sound', 'settings-close', 'hud-speed', 'hud-recall', 'end-again', 'end-menu', 'pause-resume', 'pause-sound', 'pause-quit']) {
+      expect(h.q(k).classList.contains('rs-plate'), k).toBe(true);
+    }
   });
 });

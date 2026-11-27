@@ -1,0 +1,7 @@
+# BRF-048 — AG02 — T-062 Peças de UI não aparecem no Safari (iPhone)
+**Leia:** `src/ui/skin.ts` (`piecePath`, `applySkin`, `mountSkin`); `src/styles/ui-skin.css`; `vite.config.ts` (`base: './'`). **Regra:** respostas curtas; sem commit/push/branches.
+**Problema (dono, iPhone/Safari, dev--runesling.netlify.app):** nenhuma peça de UI aparece (placas, fitas, ícones, fundo do mapa, pausa, moeda); o fallback CSS some porque a classe `skin-*` é aplicada, e fica só o texto. No Chromium funciona.
+**Causa (AG00):** `piecePath` gera `./assets/ui/<chave>.webp` (BASE_URL relativo) e põe em `url()` dentro de variável CSS. O WebKit resolve `url()` de custom property relativo à folha de estilo onde o `var()` é usado (`/assets/index-*.css`) → `/assets/assets/ui/...` (404). O Chromium resolve pelo documento.
+**Fazer:** gerar URL absoluta antes de pôr na variável (ex.: `new URL(\`assets/ui/${key}.webp\`, document.baseURI).href`, com alternativa segura sem `document` nos testes); mesma correção no `fetch` do `ui.json` se fizer sentido e em qualquer outro `url()` montado por JS em `src/ui/`. Teste em `tests/ui/` que falhe se a URL na variável não for absoluta (http(s):// ou começando com `/`). Procurar no resto de `src/ui/` e `src/styles/` outros `url()` relativos dentro de variáveis e corrigir.
+**Permitido:** `src/ui/`, `src/styles/`, `tests/ui/`. **Proibido:** o resto.
+**Pronto quando:** `npm test` e `npm run build` passam; no `vite preview` do build, conferir no Chromium que as variáveis têm URL absoluta e as peças aparecem. **Entrega:** até 4 linhas.

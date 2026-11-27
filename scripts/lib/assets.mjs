@@ -45,7 +45,8 @@ export function parseColor(c) {
 export function loadManifest(paths) {
   if (!existsSync(paths.manifest)) throw new Error(`manifesto não encontrado: ${paths.manifest}`);
   const m = JSON.parse(readFileSync(paths.manifest, 'utf8'));
-  const items = (m.items ?? []).map((it) => {
+  // deprecated = peça marcada "não usar" (T-058): fica no manifesto como registro, fora do pipeline.
+  const items = (m.items ?? []).filter((it) => it.deprecated !== true).map((it) => {
     const preset = m.presets?.[it.preset];
     if (!preset) throw new Error(`item ${it.key}: preset desconhecido "${it.preset}"`);
     let rawFile;
@@ -64,11 +65,16 @@ export function loadManifest(paths) {
       category,
       kind,
       atlas: preset.atlas ?? null,
-      size: preset.size,
+      size: it.size ?? preset.size,
       circularMask: preset.circularMask === true,
       removeBg: preset.removeBg !== false,
       bgColor: bg ?? null,
       removeEnclosedBg: (it.removeEnclosedBg ?? preset.removeEnclosedBg) === true,
+      nineSlice: it.nineSlice !== undefined ? it.nineSlice : (preset.nineSlice ?? null),
+      // Peça inteira de UI: margem transparente (fração do lado) e grupo de trim compartilhado
+      // (mesmo recorte para peças que precisam alinhar, ex.: som liga/desliga).
+      margin: it.margin ?? preset.margin ?? 0,
+      trimGroup: it.trimGroup ?? null,
       raw: resolve(paths.raw, rel),
       cut: resolve(paths.cut, rel),
       standaloneIcon: preset.atlas === 'icons',
@@ -353,6 +359,61 @@ export async function normalizeSprite(input, size, opts = {}) {
   return buf;
 }
 
+/**
+ * Peça de UI (T-039): trim e tamanho final exato w×h. Com 9-slice [top, right, bottom, left]:
+ * escala uniforme pelo lado menor do alvo (cantos sem distorção) e ajuste do outro lado só
+ * esticando/comprimindo bordas e miolo. Sem 9-slice (peça inteira): cabe em w×h, centrada,
+ * com transparência em volta. PNG.
+ */
+export async function normalizeUiPiece(input, w, h, slice = null, opts = {}) {
+  const box = opts.box ?? (await alphaBBox(input));
+  if (!box) throw new Error('imagem sem pixels opacos');
+  const trimmed = await sharp(input).ensureAlpha().extract(box).png().toBuffer();
+  if (!slice) {
+    const m = opts.margin ?? 0;
+    const iw = Math.max(1, Math.round(w * (1 - 2 * m)));
+    const ih = Math.max(1, Math.round(h * (1 - 2 * m)));
+    const fitted = await sharp(trimmed)
+      .resize(iw, ih, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 }, kernel: 'lanczos3' })
+      .png()
+      .toBuffer();
+    return sharp({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+      .composite([{ input: fitted, left: Math.round((w - iw) / 2), top: Math.round((h - ih) / 2) }])
+      .png()
+      .toBuffer();
+  }
+  const s = w >= h ? h / box.height : w / box.width;
+  const W1 = Math.max(1, Math.round(box.width * s));
+  const H1 = Math.max(1, Math.round(box.height * s));
+  const scaled = await sharp(trimmed).resize(W1, H1, { fit: 'fill', kernel: 'lanczos3' }).png().toBuffer();
+  const [t, r, b, l] = slice;
+  // Bandas de origem (no escalado) e de destino; cantos com o mesmo tamanho nos dois.
+  const band = (a, c, total) => {
+    const a1 = Math.min(a, Math.floor(total / 2));
+    const c1 = Math.min(c, total - a1);
+    return [[0, a1], [a1, total - a1 - c1], [total - c1, c1]];
+  };
+  const sx = band(l, r, W1), sy = band(t, b, H1);
+  const dx = band(l, r, w), dy = band(t, b, h);
+  const layers = [];
+  for (let j = 0; j < 3; j++)
+    for (let i = 0; i < 3; i++) {
+      const [x0, ww] = sx[i], [y0, hh] = sy[j];
+      const [X0, WW] = dx[i], [Y0, HH] = dy[j];
+      if (ww <= 0 || hh <= 0 || WW <= 0 || HH <= 0) continue;
+      const part = await sharp(scaled)
+        .extract({ left: x0, top: y0, width: ww, height: hh })
+        .resize(WW, HH, { fit: 'fill', kernel: 'lanczos3' })
+        .png()
+        .toBuffer();
+      layers.push({ input: part, left: X0, top: Y0 });
+    }
+  return sharp({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite(layers)
+    .png()
+    .toBuffer();
+}
+
 /** Atlas Phaser 3 JSON Hash com extrude; frames = [{ key, buffer }] (PNG). */
 export async function packAtlas(frames, name, opts = {}) {
   const extrude = opts.extrude ?? EXTRUDE;
@@ -400,6 +461,21 @@ export async function buildAll(paths, log = console) {
   const atlases = new Map();
   const written = [];
   const missing = [];
+  const uiJson = {};
+  // trimGroup: caixa de recorte = união das caixas das peças do grupo (precisam ter o mesmo tamanho).
+  const groupBox = new Map();
+  for (const it of items) {
+    if (it.kind !== 'ui' || !it.trimGroup || !existsSync(it.cut)) continue;
+    const b = await alphaBBox(it.cut);
+    if (!b) continue;
+    const g = groupBox.get(it.trimGroup);
+    if (!g) groupBox.set(it.trimGroup, b);
+    else {
+      const x0 = Math.min(g.left, b.left), y0 = Math.min(g.top, b.top);
+      const x1 = Math.max(g.left + g.width, b.left + b.width), y1 = Math.max(g.top + g.height, b.top + b.height);
+      groupBox.set(it.trimGroup, { left: x0, top: y0, width: x1 - x0, height: y1 - y0 });
+    }
+  }
   const write = (rel, buf) => {
     const f = outFile(paths, rel);
     ensureDir(f);
@@ -422,12 +498,26 @@ export async function buildAll(paths, log = console) {
         ? await normalizeSprite(it.cut, w)
         : await sharp(it.cut).resize(w, h, { fit: 'cover' }).png().toBuffer();
       write(`app/${it.key}.png`, await sharp(base).resize(w, h).flatten({ background: APP_BG }).removeAlpha().png().toBuffer());
+    } else if (it.kind === 'ui') {
+      // Peças de UI (T-039): public/assets/ui/<chave>.webp + insets em ui.json.
+      const buf = it.removeBg
+        ? await normalizeUiPiece(it.cut, w, h, it.nineSlice, {
+            margin: it.margin,
+            box: it.trimGroup ? groupBox.get(it.trimGroup) : undefined,
+          })
+        : await sharp(it.cut).resize(w, h, { fit: 'cover' }).png().toBuffer();
+      write(`ui/${it.key}.webp`, await sharp(buf).webp({ quality: WEBP_QUALITY, alphaQuality: 100, effort: 6 }).toBuffer());
+      uiJson[it.key] = { slice: it.nineSlice ?? null, width: w, height: h };
     } else {
       const img = it.removeBg
         ? sharp(await sharp(it.cut).extract(await alphaBBox(it.cut)).png().toBuffer()).resize(w, h, { fit: 'inside' })
         : sharp(it.cut).resize(w, h, { fit: 'cover' });
       write(`tiles/${it.key}.webp`, await img.webp({ quality: WEBP_QUALITY, alphaQuality: 100 }).toBuffer());
     }
+  }
+  if (Object.keys(uiJson).length) {
+    const sorted = Object.fromEntries(Object.keys(uiJson).sort().map((k) => [k, uiJson[k]]));
+    write('ui/ui.json', JSON.stringify(sorted, null, 2) + '\n');
   }
   const atlasJson = {};
   for (const [name, frames] of atlases) {
@@ -463,7 +553,7 @@ export function writePreview(paths, items, atlasJson, written) {
       );
     }
   }
-  for (const rel of written.filter((r) => !r.startsWith('atlases/'))) {
+  for (const rel of written.filter((r) => !r.startsWith('atlases/') && !r.endsWith('.json'))) {
     const key = basename(rel, extname(rel));
     cards.push(`<figure data-key="${esc(key)}"><img src="${url(rel)}" alt="${esc(key)}"><figcaption>${esc(key)} <small>${esc(rel)}</small></figcaption></figure>`);
   }
