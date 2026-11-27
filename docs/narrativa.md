@@ -127,11 +127,13 @@ Guardião de Ferro (serve ao Senhor) → Senhor Obsidiana (forjado pelo Titã) �
 
 - **De onde vêm:** são **relíquias** dos mortos da Ordem do Selo, espalhadas pelos capítulos. Os 6 slots (GDD §5.2) são o kit de um mago da Ordem do Selo: Cajado, Orbe, Anel, Amuleto, Capa e Botas.
 - **Por que fundir 3 em 1:** cada relíquia guarda um **eco** do dono. Três ecos do mesmo item lembram juntos uma lição completa. Por isso a fusão destrava um traço passivo (ex.: o Cajado Épico "lembra" *Tabela Letal*).
-- **Raridades (o quanto o item lembra):**
-  - Comum (cinza): ferramenta de aprendiz, sem memória.
-  - Raro (ciano): lembra uma técnica.
-  - Épico (violeta): lembra uma runa (traço passivo de escola).
-  - Lendário (ouro): pertenceu a um mestre da Ordem do Selo com nome próprio [proposta: nomes no M8].
+- **Raridades (o quanto o item lembra; decisões 62 e 66):**
+  - Comum (cinza): ferramenta de aprendiz, sem memória. Só números.
+  - Incomum (esmeralda [proposta de cor]): o eco desperta. Números maiores.
+  - Raro (ciano): lembra uma técnica. Números maiores ainda.
+  - Épico (violeta): lembra uma runa; começa a run com 1 runa da escola do item.
+  - Lendário (ouro): pertenceu a um mestre da Ordem do Selo com nome próprio; efeito único ligado a ele (nomes em §12).
+- **Fusão:** 3 iguais da mesma raridade viram 1 da raridade seguinte.
 - **Como orienta conteúdo:** todo traço passivo de equipamento deve citar uma escola (§3) ou a Arcana. Itens lendários devem ter um dono histórico ligado a um capítulo.
 
 ---
@@ -230,3 +232,40 @@ Guardião de Ferro (serve ao Senhor) → Senhor Obsidiana (forjado pelo Titã) �
 ## 11. Nomes escolhidos (decisões 55, 59 e 60)
 
 Ordem do Selo (a ordem de magos) · o mago, sem título (o herói) · o Inimigo Selado (o inimigo maior) · Visão Espectral (`arcane_sight`) · Forja Rúnica (talento `atk`). Recusados: "Ordem da Funda", "Funda-Runas" e "A Fome Abaixo". O nome próprio do cajado, se o dono quiser, fica para o M8 junto dos lendários.
+
+---
+
+## 12. Itens do M8
+
+6 espaços × 3 escolas (decisão 64: só nome e imagem, sem história por item). O nome muda só no Lendário.
+
+| id | Nome base | Nome do Lendário |
+| :--- | :--- | :--- |
+| `staff_lightning` | Cajado Tempestuoso | Cajado de Vessa |
+| `staff_fire` | Cajado de Brasa | Cajado de Kaldor |
+| `staff_spectral` | Cajado Espectral | Cajado de Morwen |
+| `orb_lightning` | Orbe de Faísca | Orbe de Ozric |
+| `orb_fire` | Orbe de Magma | Orbe de Ignara |
+| `orb_spectral` | Orbe do Além | Orbe de Sileas |
+| `ring_lightning` | Anel Estático | Anel de Vessa |
+| `ring_fire` | Anel de Cinzas | Anel de Kaldor |
+| `ring_spectral` | Anel Errante | Anel de Morwen |
+| `amulet_lightning` | Amuleto Para-raios | Amuleto de Ozric |
+| `amulet_fire` | Amuleto da Forja | Amuleto de Ignara |
+| `amulet_spectral` | Amuleto do Véu | Amuleto de Sileas |
+| `cloak_lightning` | Capa de Tormenta | Capa de Vessa |
+| `cloak_fire` | Capa Chamuscada | Capa de Kaldor |
+| `cloak_spectral` | Capa da Névoa | Capa de Morwen |
+| `boots_lightning` | Botas do Relâmpago | Botas de Ozric |
+| `boots_fire` | Botas de Lava | Botas de Ignara |
+| `boots_spectral` | Botas Silentes | Botas de Sileas |
+
+**Mestres da Ordem do Selo** (2 por escola, ligados ao capítulo da escola; §3 e §5):
+- **Vessa** (Elétrica, Cripta Obsidiana): prendeu as tempestades nos Bumpers Rúnicos.
+- **Ozric** (Elétrica, Cripta Obsidiana): guardião dos para-raios; dizem que nunca parou quieto.
+- **Kaldor** (Ígnea, Forja Abissal): roubou o magma da Forja e pagou com as mãos.
+- **Ignara** (Ígnea, Forja Abissal): domou o magma nas runas; ninguém a viu esfriar.
+- **Morwen** (Espectral, Santuário Espectral): a primeira a aprender com os fantasmas.
+- **Sileas** (Espectral, Santuário Espectral): atravessou paredes até virar uma delas.
+
+**Como orienta conteúdo:** item novo segue o padrão "<Espaço> <adjetivo da escola>" no nome base e "<Espaço> de <Mestre>" no Lendário; mestre novo precisa de escola e capítulo.
