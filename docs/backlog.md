@@ -119,7 +119,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 
 | Id | Descrição | Marco | Agente(s) | Estado |
 |---|---|---|---|---|
-| T-075 | (BRF-066) Catálogo e regras: `items.json` (6 espaços × 3 itens, 5 raridades, números por raridade, runa do Épico, efeito do Lendário), chances de raridade, preço do baú, cor do Incomum; contrato de dados para AG01/AG02 (decisões 62–69) (tam. M) | M8 | AG04 | em andamento |
+| T-075 | (BRF-066) Catálogo e regras: `items.json` (6 espaços × 3 itens, 5 raridades, números por raridade, runa do Épico, efeito do Lendário), chances de raridade, preço do baú, cor do Incomum; contrato de dados para AG01/AG02 (decisões 62–69) (tam. M) | M8 | AG04 | feita |
 | T-076 | (BRF-067) Nomes dos 18 itens (e do mestre de cada Lendário) coerentes com `docs/narrativa.md` (decisões 64 e 66) (tam. P) | M8 | AG06 | feita |
 | T-077 | Lógica de meta: inventário empilhado no save (com migração), equipar/desequipar, fusão 3→1, sorteio de raridade, baú, bônus dos itens na largada da run (tam. M) | M8 | AG04 | a fazer |
 | T-078 | Partida: drop ao vencer onda 7 e chefe, runa inicial do Épico, efeitos dos Lendários (tam. M) | M8 | AG01 | a fazer |

@@ -8,6 +8,7 @@ import talentsJson from './talents.json';
 import arenasJson from './arenas.json';
 import chaptersJson from './chapters.json';
 import rulesJson from './rules.json';
+import itemsJson from './items.json';
 
 // ---------- Inimigos (GDD §3.3) ----------
 export type EnemyBehavior = 'front_shield' | 'shooter' | 'explodes' | 'splits' | 'heals' | 'summoner';
@@ -117,6 +118,60 @@ export interface TalentDef {
   readonly effect: { readonly stat: TalentStat; readonly perLevel: number };
 }
 
+// ---------- Itens (GDD §5.2; decisões 62–69) ----------
+export type ItemSlot = 'staff' | 'orb' | 'ring' | 'amulet' | 'cloak' | 'boots';
+export const ITEM_SLOTS: readonly ItemSlot[] = ['staff', 'orb', 'ring', 'amulet', 'cloak', 'boots'];
+export type ItemSchool = Exclude<Synergy, 'core'>;
+export const ITEM_SCHOOLS: readonly ItemSchool[] = ['lightning', 'fire', 'spectral'];
+/** Decisão 62. Épico e Lendário só por fusão (decisão 65). */
+export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+export const ITEM_RARITIES: readonly ItemRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+/** Raridades com número próprio; Épico e Lendário usam o número do Raro (decisão 66). */
+export type ItemValueRarity = 'common' | 'uncommon' | 'rare';
+export type DropSource = 'miniboss' | 'boss' | 'chest';
+/**
+ * Stat do espaço. atk/maxHp/critChance/goldMult somam como os talentos.
+ * schoolDamage: +fração no dano dos efeitos das runas da escola do item.
+ * shotBlockChance: chance de anular um tiro de atirador na barreira.
+ */
+export type ItemStat = 'atk' | 'maxHp' | 'critChance' | 'goldMult' | 'schoolDamage' | 'shotBlockChance';
+export const ITEM_STATS: readonly ItemStat[] = ['atk', 'maxHp', 'critChance', 'goldMult', 'schoolDamage', 'shotBlockChance'];
+
+export interface ItemLegendaryDef {
+  /** Efeito único; a lógica é do AG01 (T-077 lista os ids). */
+  readonly effectId: string;
+  readonly trigger: PerkTrigger;
+  readonly desc: string;
+  readonly params: { readonly [k: string]: number | string };
+}
+export interface ItemDef {
+  readonly id: string;
+  readonly name: string;
+  readonly slot: ItemSlot;
+  readonly school: ItemSchool;
+  readonly iconKey: string;
+  readonly stat: ItemStat;
+  readonly values: { readonly [R in ItemValueRarity]: number };
+  /** Runa da escola ativa desde o início da run (Épico e Lendário). */
+  readonly epicRune: PerkId;
+  /** Efeito do Lendário (soma ao número e à runa do Épico). */
+  readonly legendary: ItemLegendaryDef;
+}
+export interface ItemRulesDef {
+  readonly slots: readonly ItemSlot[];
+  readonly rarities: readonly { readonly id: ItemRarity; readonly color: string }[];
+  readonly fuseCount: number;
+  /** Chance de cada raridade por fonte (soma 1). Decisão 65. */
+  readonly dropOdds: { readonly [S in DropSource]: { readonly [R in ItemValueRarity]: number } };
+  /** Chefe: base itens + extra com extraChance (decisão 63: 1–2). */
+  readonly bossDrops: { readonly base: number; readonly extra: number; readonly extraChance: number };
+  readonly chest: { readonly priceGold: number };
+}
+export interface ItemsData {
+  readonly rules: ItemRulesDef;
+  readonly items: { readonly [id: string]: ItemDef };
+}
+
 // ---------- Arena ----------
 export interface Point { readonly x: number; readonly y: number }
 export interface Circle { readonly x: number; readonly y: number; readonly r: number }
@@ -206,6 +261,7 @@ export interface GameData {
   readonly arenas: { readonly [id: string]: ArenaDef };
   readonly chapters: { readonly [id: string]: ChapterDef };
   readonly rules: RulesDef;
+  readonly items: ItemsData;
 }
 
 /** Dados crus importados (tipagem aplicada aqui; checagem em runtime por validateGameData). */
@@ -217,6 +273,7 @@ export function rawGameData(): GameData {
     arenas: arenasJson as unknown as GameData['arenas'],
     chapters: chaptersJson as unknown as GameData['chapters'],
     rules: rulesJson as unknown as RulesDef,
+    items: itemsJson as unknown as ItemsData,
   };
 }
 
@@ -340,5 +397,63 @@ export function validateGameData(data: GameData): string[] {
     for (const w of Object.keys(c.waveSize.overrides)) if (!inRange(Number(w))) errs.push(`${p}.waveSize.overrides: onda ${w} inválida`);
   }
 
+  // Itens
+  errs.push(...validateItems(data));
+
+  return errs;
+}
+
+const isHex = (v: unknown): boolean => typeof v === 'string' && /^#[0-9A-Fa-f]{6}$/.test(v);
+
+/** Confere o catálogo de itens: 6 espaços × 3 escolas, números crescentes, runa da escola, efeitos únicos. */
+export function validateItems(data: GameData): string[] {
+  const errs: string[] = [];
+  const { rules, items } = data.items ?? ({} as ItemsData);
+  if (!rules || !items) return ['items: faltam rules/items'];
+  if (rules.slots.join() !== ITEM_SLOTS.join()) errs.push('items.rules.slots difere de ITEM_SLOTS');
+  if (rules.rarities.map((r) => r.id).join() !== ITEM_RARITIES.join()) errs.push('items.rules.rarities fora de ordem');
+  for (const r of rules.rarities) if (!isHex(r.color)) errs.push(`items.rules.rarities.${r.id}: cor inválida`);
+  if (!Number.isInteger(rules.fuseCount) || rules.fuseCount < 2) errs.push('items.rules.fuseCount inválido');
+  for (const src of ['miniboss', 'boss', 'chest'] as const) {
+    const o = rules.dropOdds?.[src];
+    if (!o) { errs.push(`items.rules.dropOdds.${src} ausente`); continue; }
+    const vs = [o.common, o.uncommon, o.rare];
+    if (vs.some((v) => !isNum(v) || v < 0)) errs.push(`items.rules.dropOdds.${src}: chance inválida`);
+    else if (Math.abs(vs.reduce((a, b) => a + b, 0) - 1) > 1e-9) errs.push(`items.rules.dropOdds.${src}: soma ≠ 1`);
+    else if (!(o.common > o.uncommon && o.uncommon > o.rare)) errs.push(`items.rules.dropOdds.${src}: deve ser Comum > Incomum > Raro`);
+  }
+  const b = rules.bossDrops;
+  if (!(Number.isInteger(b?.base) && b.base >= 1 && Number.isInteger(b.extra) && b.extra >= 0 && isNum(b.extraChance) && b.extraChance >= 0 && b.extraChance <= 1)) {
+    errs.push('items.rules.bossDrops inválido');
+  }
+  if (!Number.isInteger(rules.chest?.priceGold) || rules.chest.priceGold <= 0) errs.push('items.rules.chest.priceGold inválido');
+
+  const effectIds = new Set<string>();
+  for (const slot of ITEM_SLOTS) for (const school of ITEM_SCHOOLS) {
+    if (!items[`${slot}_${school}`]) errs.push(`items: falta "${slot}_${school}"`);
+  }
+  for (const [key, it] of Object.entries(items)) {
+    const p = `items.${key}`;
+    if (it.id !== key) errs.push(`${p}: id "${it.id}" difere da chave`);
+    if (!ITEM_SLOTS.includes(it.slot) || !ITEM_SCHOOLS.includes(it.school)) errs.push(`${p}: espaço/escola inválidos`);
+    else if (key !== `${it.slot}_${it.school}`) errs.push(`${p}: id deve ser <espaço>_<escola>`);
+    if (!it.name || !it.iconKey) errs.push(`${p}: name/iconKey vazios`);
+    if (!ITEM_STATS.includes(it.stat)) errs.push(`${p}: stat inválido "${it.stat}"`);
+    const v = it.values;
+    if (!(isPosNum(v?.common) && isPosNum(v.uncommon) && isPosNum(v.rare) && v.common < v.uncommon && v.uncommon < v.rare)) {
+      errs.push(`${p}.values devem ser > 0 e crescentes`);
+    }
+    const rune = data.perks[it.epicRune];
+    if (!rune) errs.push(`${p}.epicRune "${it.epicRune}" inexistente`);
+    else if (rune.synergy !== it.school) errs.push(`${p}.epicRune "${it.epicRune}" não é da escola ${it.school}`);
+    const lg = it.legendary;
+    if (!lg?.effectId || !lg.desc) errs.push(`${p}.legendary: effectId/desc vazios`);
+    else if (effectIds.has(lg.effectId)) errs.push(`${p}.legendary.effectId "${lg.effectId}" repetido`);
+    else effectIds.add(lg.effectId);
+    if (!PERK_TRIGGERS.includes(lg?.trigger)) errs.push(`${p}.legendary: gatilho inválido "${lg?.trigger}"`);
+    for (const [k, pv] of Object.entries(lg?.params ?? {})) {
+      if (typeof pv === 'number' ? !Number.isFinite(pv) : typeof pv !== 'string') errs.push(`${p}.legendary.params.${k} inválido`);
+    }
+  }
   return errs;
 }

@@ -1,0 +1,480 @@
+{
+  "rules": {
+    "slots": [
+      "staff",
+      "orb",
+      "ring",
+      "amulet",
+      "cloak",
+      "boots"
+    ],
+    "rarities": [
+      {
+        "id": "common",
+        "color": "#8B95B5"
+      },
+      {
+        "id": "uncommon",
+        "color": "#1DD1A1"
+      },
+      {
+        "id": "rare",
+        "color": "#00CEC9"
+      },
+      {
+        "id": "epic",
+        "color": "#9C6BFF"
+      },
+      {
+        "id": "legendary",
+        "color": "#FECA57"
+      }
+    ],
+    "fuseCount": 3,
+    "dropOdds": {
+      "miniboss": {
+        "common": 0.85,
+        "uncommon": 0.13,
+        "rare": 0.02
+      },
+      "boss": {
+        "common": 0.75,
+        "uncommon": 0.2,
+        "rare": 0.05
+      },
+      "chest": {
+        "common": 0.8,
+        "uncommon": 0.17,
+        "rare": 0.03
+      }
+    },
+    "bossDrops": {
+      "base": 1,
+      "extra": 1,
+      "extraChance": 0.4
+    },
+    "chest": {
+      "priceGold": 80
+    }
+  },
+  "items": {
+    "staff_lightning": {
+      "id": "staff_lightning",
+      "name": "staff_lightning",
+      "slot": "staff",
+      "school": "lightning",
+      "iconKey": "item_staff_lightning",
+      "stat": "atk",
+      "values": {
+        "common": 1,
+        "uncommon": 2,
+        "rare": 3
+      },
+      "epicRune": "chain_lightning",
+      "legendary": {
+        "effectId": "kill_bolt",
+        "trigger": "onKill",
+        "desc": "Abate tem 40% de chance de lançar um raio (100% ATK, Choque) num inimigo a até 155 px.",
+        "params": {
+          "chance": 0.4,
+          "damageRatio": 1.0,
+          "rangePx": 155,
+          "applyStatus": "shocked"
+        }
+      }
+    },
+    "staff_fire": {
+      "id": "staff_fire",
+      "name": "staff_fire",
+      "slot": "staff",
+      "school": "fire",
+      "iconKey": "item_staff_fire",
+      "stat": "atk",
+      "values": {
+        "common": 1,
+        "uncommon": 2,
+        "rare": 3
+      },
+      "epicRune": "molten_core",
+      "legendary": {
+        "effectId": "first_hit_mult",
+        "trigger": "onDamageCalc",
+        "desc": "O 1º impacto de cada orbe causa 1,5× de dano.",
+        "params": {
+          "hitsPerOrb": 1,
+          "damageMult": 1.5
+        }
+      }
+    },
+    "staff_spectral": {
+      "id": "staff_spectral",
+      "name": "staff_spectral",
+      "slot": "staff",
+      "school": "spectral",
+      "iconKey": "item_staff_spectral",
+      "stat": "atk",
+      "values": {
+        "common": 1,
+        "uncommon": 2,
+        "rare": 3
+      },
+      "epicRune": "ricochet_crit",
+      "legendary": {
+        "effectId": "bounce_mult",
+        "trigger": "onDamageCalc",
+        "desc": "+10% de dano por quique já feito pelo orbe (máx. +50%).",
+        "params": {
+          "perBounce": 0.1,
+          "maxBonus": 0.5
+        }
+      }
+    },
+    "orb_lightning": {
+      "id": "orb_lightning",
+      "name": "orb_lightning",
+      "slot": "orb",
+      "school": "lightning",
+      "iconKey": "item_orb_lightning",
+      "stat": "schoolDamage",
+      "values": {
+        "common": 0.1,
+        "uncommon": 0.15,
+        "rare": 0.2
+      },
+      "epicRune": "storm_orb",
+      "legendary": {
+        "effectId": "first_hit_shock",
+        "trigger": "onEnemyHit",
+        "desc": "O 1º impacto de cada orbe aplica Choque.",
+        "params": {
+          "hitsPerOrb": 1,
+          "applyStatus": "shocked"
+        }
+      }
+    },
+    "orb_fire": {
+      "id": "orb_fire",
+      "name": "orb_fire",
+      "slot": "orb",
+      "school": "fire",
+      "iconKey": "item_orb_fire",
+      "stat": "schoolDamage",
+      "values": {
+        "common": 0.1,
+        "uncommon": 0.15,
+        "rare": 0.2
+      },
+      "epicRune": "fire_splash",
+      "legendary": {
+        "effectId": "hit_burn",
+        "trigger": "onTurnEnd",
+        "desc": "Inimigos atingidos por orbes queimam no fim do turno (50% ATK).",
+        "params": {
+          "damageRatio": 0.5,
+          "applyStatus": "burning"
+        }
+      }
+    },
+    "orb_spectral": {
+      "id": "orb_spectral",
+      "name": "orb_spectral",
+      "slot": "orb",
+      "school": "spectral",
+      "iconKey": "item_orb_spectral",
+      "stat": "schoolDamage",
+      "values": {
+        "common": 0.1,
+        "uncommon": 0.15,
+        "rare": 0.2
+      },
+      "epicRune": "ghost_ball",
+      "legendary": {
+        "effectId": "launch_extra_orb",
+        "trigger": "onLaunch",
+        "desc": "25% de chance de lançar +1 orbe.",
+        "params": {
+          "chance": 0.25,
+          "orbBonus": 1
+        }
+      }
+    },
+    "ring_lightning": {
+      "id": "ring_lightning",
+      "name": "ring_lightning",
+      "slot": "ring",
+      "school": "lightning",
+      "iconKey": "item_ring_lightning",
+      "stat": "critChance",
+      "values": {
+        "common": 0.05,
+        "uncommon": 0.08,
+        "rare": 0.12
+      },
+      "epicRune": "static_crit",
+      "legendary": {
+        "effectId": "shock_crit",
+        "trigger": "onDamageCalc",
+        "desc": "+15% de chance crítica contra inimigos em Choque.",
+        "params": {
+          "critChanceBonus": 0.15,
+          "requiresStatus": "shocked"
+        }
+      }
+    },
+    "ring_fire": {
+      "id": "ring_fire",
+      "name": "ring_fire",
+      "slot": "ring",
+      "school": "fire",
+      "iconKey": "item_ring_fire",
+      "stat": "critChance",
+      "values": {
+        "common": 0.05,
+        "uncommon": 0.08,
+        "rare": 0.12
+      },
+      "epicRune": "supernova",
+      "legendary": {
+        "effectId": "crit_splash",
+        "trigger": "onEnemyHit",
+        "desc": "Acerto crítico explode em área (50% ATK, 60 px).",
+        "params": {
+          "damageRatio": 0.5,
+          "radiusPx": 60
+        }
+      }
+    },
+    "ring_spectral": {
+      "id": "ring_spectral",
+      "name": "ring_spectral",
+      "slot": "ring",
+      "school": "spectral",
+      "iconKey": "item_ring_spectral",
+      "stat": "critChance",
+      "values": {
+        "common": 0.05,
+        "uncommon": 0.08,
+        "rare": 0.12
+      },
+      "epicRune": "arcane_sight",
+      "legendary": {
+        "effectId": "bounce_crit",
+        "trigger": "onDamageCalc",
+        "desc": "Orbes que já quicaram têm +15% de chance crítica.",
+        "params": {
+          "critChanceBonus": 0.15,
+          "minBounces": 1
+        }
+      }
+    },
+    "amulet_lightning": {
+      "id": "amulet_lightning",
+      "name": "amulet_lightning",
+      "slot": "amulet",
+      "school": "lightning",
+      "iconKey": "item_amulet_lightning",
+      "stat": "maxHp",
+      "values": {
+        "common": 3,
+        "uncommon": 5,
+        "rare": 7
+      },
+      "epicRune": "bumper_shock",
+      "legendary": {
+        "effectId": "bumper_heal",
+        "trigger": "onBumperHit",
+        "desc": "Quicar num bumper cura 1 HP da barreira (até 2 por turno).",
+        "params": {
+          "healHp": 1,
+          "maxPerTurn": 2
+        }
+      }
+    },
+    "amulet_fire": {
+      "id": "amulet_fire",
+      "name": "amulet_fire",
+      "slot": "amulet",
+      "school": "fire",
+      "iconKey": "item_amulet_fire",
+      "stat": "maxHp",
+      "values": {
+        "common": 3,
+        "uncommon": 5,
+        "rare": 7
+      },
+      "epicRune": "ignite",
+      "legendary": {
+        "effectId": "combo_heal",
+        "trigger": "onTurnEnd",
+        "desc": "Abater 3+ inimigos no turno cura 1 HP da barreira.",
+        "params": {
+          "minKills": 3,
+          "healHp": 1
+        }
+      }
+    },
+    "amulet_spectral": {
+      "id": "amulet_spectral",
+      "name": "amulet_spectral",
+      "slot": "amulet",
+      "school": "spectral",
+      "iconKey": "item_amulet_spectral",
+      "stat": "maxHp",
+      "values": {
+        "common": 3,
+        "uncommon": 5,
+        "rare": 7
+      },
+      "epicRune": "wall_clone",
+      "legendary": {
+        "effectId": "ceiling_heal",
+        "trigger": "onCeilingHit",
+        "desc": "Quicar no teto cura 1 HP da barreira (até 1 por turno).",
+        "params": {
+          "healHp": 1,
+          "maxPerTurn": 1
+        }
+      }
+    },
+    "cloak_lightning": {
+      "id": "cloak_lightning",
+      "name": "cloak_lightning",
+      "slot": "cloak",
+      "school": "lightning",
+      "iconKey": "item_cloak_lightning",
+      "stat": "shotBlockChance",
+      "values": {
+        "common": 0.15,
+        "uncommon": 0.25,
+        "rare": 0.35
+      },
+      "epicRune": "bumper_shock",
+      "legendary": {
+        "effectId": "turn_end_bolt_shooter",
+        "trigger": "onTurnEnd",
+        "desc": "No fim do turno, um raio atinge 1 atirador (100% ATK, Choque).",
+        "params": {
+          "targets": 1,
+          "damageRatio": 1.0,
+          "targetBehavior": "shooter",
+          "applyStatus": "shocked"
+        }
+      }
+    },
+    "cloak_fire": {
+      "id": "cloak_fire",
+      "name": "cloak_fire",
+      "slot": "cloak",
+      "school": "fire",
+      "iconKey": "item_cloak_fire",
+      "stat": "shotBlockChance",
+      "values": {
+        "common": 0.15,
+        "uncommon": 0.25,
+        "rare": 0.35
+      },
+      "epicRune": "fire_splash",
+      "legendary": {
+        "effectId": "shooter_mult",
+        "trigger": "onDamageCalc",
+        "desc": "Atiradores sofrem 1,5× de dano.",
+        "params": {
+          "damageMult": 1.5,
+          "targetBehavior": "shooter"
+        }
+      }
+    },
+    "cloak_spectral": {
+      "id": "cloak_spectral",
+      "name": "cloak_spectral",
+      "slot": "cloak",
+      "school": "spectral",
+      "iconKey": "item_cloak_spectral",
+      "stat": "shotBlockChance",
+      "values": {
+        "common": 0.15,
+        "uncommon": 0.25,
+        "rare": 0.35
+      },
+      "epicRune": "ghost_ball",
+      "legendary": {
+        "effectId": "shooter_kill_heal",
+        "trigger": "onKill",
+        "desc": "Abater um atirador cura 1 HP da barreira.",
+        "params": {
+          "healHp": 1,
+          "targetBehavior": "shooter"
+        }
+      }
+    },
+    "boots_lightning": {
+      "id": "boots_lightning",
+      "name": "boots_lightning",
+      "slot": "boots",
+      "school": "lightning",
+      "iconKey": "item_boots_lightning",
+      "stat": "goldMult",
+      "values": {
+        "common": 0.15,
+        "uncommon": 0.22,
+        "rare": 0.3
+      },
+      "epicRune": "chain_lightning",
+      "legendary": {
+        "effectId": "shock_kill_gold",
+        "trigger": "onKill",
+        "desc": "Inimigo abatido em Choque dá +1 ouro.",
+        "params": {
+          "goldBonus": 1,
+          "requiresStatus": "shocked"
+        }
+      }
+    },
+    "boots_fire": {
+      "id": "boots_fire",
+      "name": "boots_fire",
+      "slot": "boots",
+      "school": "fire",
+      "iconKey": "item_boots_fire",
+      "stat": "goldMult",
+      "values": {
+        "common": 0.15,
+        "uncommon": 0.22,
+        "rare": 0.3
+      },
+      "epicRune": "supernova",
+      "legendary": {
+        "effectId": "combo_gold",
+        "trigger": "onTurnEnd",
+        "desc": "+1 ouro a cada 5 de combo no turno.",
+        "params": {
+          "goldPer": 1,
+          "comboStep": 5
+        }
+      }
+    },
+    "boots_spectral": {
+      "id": "boots_spectral",
+      "name": "boots_spectral",
+      "slot": "boots",
+      "school": "spectral",
+      "iconKey": "item_boots_spectral",
+      "stat": "goldMult",
+      "values": {
+        "common": 0.15,
+        "uncommon": 0.22,
+        "rare": 0.3
+      },
+      "epicRune": "wall_clone",
+      "legendary": {
+        "effectId": "bounce_kill_gold",
+        "trigger": "onKill",
+        "desc": "Abate por orbe que quicou 3+ vezes dá +1 ouro.",
+        "params": {
+          "goldBonus": 1,
+          "minBounces": 3
+        }
+      }
+    }
+  }
+}
