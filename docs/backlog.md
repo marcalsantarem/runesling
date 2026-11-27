@@ -71,7 +71,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-036 | Guia de UI da direção A e prompts das peças de UI para o Gemini (molduras 9-slice, botões, fitas, cartas por sinergia, ícones do HUD) (tam. P) | M5 | AG08 | feita |
 | T-037 | Menu e Talentos na direção A, primeiro com peças em CSS como no mockup (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
 | T-038 | HUD, Draft, Fim de run e Pausa na direção A, com animações de UI (entrada dos modais, toque nos botões, cartas do Draft) (tam. M) | M5 | AG02 | feita (peças em CSS até a T-039) |
-| T-039 | Processar as peças de UI geradas pelo dono e trocar o CSS provisório por elas (depende das imagens) (tam. M) | M5 | AG08 + AG02 | a fazer |
+| T-039 | Processar as peças de UI geradas pelo dono e trocar o CSS provisório por elas (depende das imagens) (tam. M) | M5 | AG08 + AG02 | em andamento (parte 1: 20 peças) |
 | T-044 | Ressalvas do QA do M4 na UI: "+" do ouro parece botão sem ação (M4-01); capturar e revisar a tela de derrota nova (M4-02) (tam. P) | M5 | AG02 | feita |
 | T-052 | Mockups da nova tela inicial: 3 conceitos (cripta viva, mapa de expedição, lançador em destaque) × 2 variações cada (tam. P) | M5 | AG08 | feita (dono escolhe) |
 | T-053 | Mais mockups da tela inicial em outros estilos: acampamento, grimório, arcano neon × 2 variações (tam. P) | M5 | AG08 | feita (dono escolhe) |
