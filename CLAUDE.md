@@ -22,6 +22,7 @@ dono > [`docs/gdd.md`](docs/gdd.md) (bíblia) > [`docs/decisoes.md`](docs/deciso
 ## Onde fica cada coisa
 - Agentes: `docs/agentes/` (um arquivo por agente) e `.claude/agents/` (tipos de subagent).
 - Briefings: `docs/briefings/BRF-NNN_AGxx_<entrega>.md`.
+- Narrativa (guia para criar conteúdo): `docs/narrativa.md`.
 - Backlog: `docs/backlog.md` · Roadmap: `docs/roadmap.md` · Decisões: `docs/decisoes.md` · QA: `docs/qa/`.
 - Vertical slice v0.1 (referência de comportamento, não é código de produção): `reference/vertical-slice-v0.1.html`.
 

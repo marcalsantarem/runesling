@@ -102,3 +102,13 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-067 | Fecho "COMBO ×N!" aparece sob o banner da onda: reposicionar ou adiar o fecho quando houver banner (tam. P) | M6 | AG09 | feita |
 | T-050 | Versão 0.7.0 (tam. P) | M6 | AG07 | feita |
 | T-051 | Validação do M6 e tag v0.7.0 (tam. P) | M6 | AG03 + AG00 | a fazer |
+
+## M7 (v0.8.0): Lore básica
+
+| Id | Descrição | Marco | Agente(s) | Estado |
+|---|---|---|---|---|
+| T-068 | Bíblia do mundo em `docs/narrativa.md`: premissa, tom, o mago, escolas de magia (sinergias), capítulos 1 a 3, inimigos e chefes, gancho dos equipamentos, glossário e guia de como criar conteúdo novo coerente (decisões 48–51) (tam. M) (BRF-061) | M7 | AG06 | a fazer |
+| T-069 | Ajustes da bíblia após a leitura do dono (tam. P) | M7 | AG06 | a fazer |
+| T-070 | Versão 0.8.0 (tam. P) | M7 | AG07 | a fazer |
+| T-071 | Validação do M7 (coerência da bíblia com GDD e dados; suíte uma vez) e tag v0.8.0 (tam. P) | M7 | AG03 + AG00 | a fazer |
+
