@@ -154,15 +154,27 @@ describe('PlayerProfile', () => {
     expect(seen).toEqual([50, 30]);
   });
 
-  it('reset apaga o save e volta aos padrões', async () => {
+  it('reset volta ao início, mantém o som e grava no save (T-061)', async () => {
     const storage = new MemoryStorage();
     const p = await load(storage);
     await p.recordRun({ wave: 15, won: true, goldEarned: 500 });
+    await p.buyTalent('atk');
+    await p.buyTalent('hp');
     await p.updateSettings({ muted: true });
+    const seen: number[] = [];
+    p.onChange((d) => seen.push(d.gold));
     await p.reset();
-    expect(p.data()).toMatchObject({ gold: 40, bestWave: 0, cleared: false, settings: { muted: false } });
-    expect(storage.items.has(KEY)).toBe(false);
-    expect((await load(storage)).data().gold).toBe(40);
+    const expected = {
+      gold: STARTING_GOLD,
+      bestWave: 0,
+      cleared: false,
+      talents: { atk: 0, hp: 0, balls: 0, crit: 0, gold: 0 },
+      settings: { muted: true },
+    };
+    expect(p.data()).toEqual(expected);
+    expect(Object.isFrozen(p.data())).toBe(true);
+    expect(seen).toEqual([STARTING_GOLD]);
+    expect((await load(storage)).data()).toEqual(expected);
   });
 
   it('getProfile devolve um singleton', async () => {

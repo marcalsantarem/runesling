@@ -425,6 +425,11 @@
 .rs-talents-slot { position: absolute; right: 9.2%; top: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .rs-ib-label { font: 800 9px var(--rs-font-ui); letter-spacing: .16em; color: var(--rs-label); text-shadow: 0 1px 0 #000; }
 .rs-menu-tools { position: absolute; left: 10.2%; top: 82px; display: flex; gap: 10px; }
+/* TEMP T-061: remover antes do M7. Botão "Resetar save" discreto no canto inferior direito. */
+.rs-btn-reset { position: absolute; right: 6%; top: 84px; width: 104px; height: 44px; font: 800 10px var(--rs-font-ui); letter-spacing: .08em; opacity: .75; }
+.rs-btn-reset .rs-plate-pl { inset: 6px 7px; }
+.rs-btn-reset .rs-plate-lbl { color: var(--rs-label); }
+.rs-reset-body { max-width: 300px; text-align: center; }
 
 /* ---------- Talentos ---------- */
 .rs-panel-talents { padding-bottom: max(22px, calc(var(--rs-safe-bottom) + 6px)); }

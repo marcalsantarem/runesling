@@ -50,6 +50,10 @@ export function mountUI(root: HTMLElement, options: MountOptions = {}): UIHandle
     onBuy: (id) => {
       void profile?.buyTalent(id);
     },
+    // TEMP T-061: remover antes do M7 (a tela inicial atualiza pelo onChange do perfil).
+    onResetSave: () => {
+      void profile?.reset();
+    },
   });
   const hud = createHud(game, {
     onPause: () => {

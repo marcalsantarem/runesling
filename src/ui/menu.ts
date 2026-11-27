@@ -7,6 +7,9 @@ import type { PlayerData, PlayerProfile, TalentId } from '../meta/profile';
 import { artIcon, atlasFrame, el, icon, iconButton, ICONS, plate, ribbon, setPlateLabel, show } from './dom';
 import { chapterName, enemyName, t, talentDesc, talentName } from './strings';
 
+// TEMP T-061: remover antes do M7. Flag única do botão "Resetar save" da tela inicial.
+export const TEMP_RESET_SAVE = true;
+
 export type MenuTab = 'play' | 'talents';
 
 export interface MenuView {
@@ -19,6 +22,8 @@ export interface MenuHandlers {
   onPlay(): void;
   onToggleSound(): void;
   onBuy(id: TalentId): void;
+  /** TEMP T-061: remover antes do M7. */
+  onResetSave?(): void;
 }
 
 export interface StartStats {
@@ -211,8 +216,32 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     size: 22,
     className: 'rs-ib-sm',
   });
+  // TEMP T-061: remover antes do M7. Botão discreto + confirmação no estilo do jogo.
+  const resetBtn = TEMP_RESET_SAVE
+    ? plate('iron', t('reset.label'), () => show(resetModal, true), { size: 'mini', className: 'rs-btn-reset', attrs: { 'data-ui': 'menu-reset' } })
+    : null;
+  const resetModal = el(
+    'section',
+    { className: 'rs-modal rs-modal-center', attrs: { 'data-ui': 'modal-reset', role: 'dialog', 'aria-modal': 'true', 'aria-label': t('reset.title') } },
+    [
+      el('div', { className: 'rs-modal-body rs-modal-panel' }, [
+        ribbon(t('reset.title'), 'rs-ribbon-big rs-modal-ribbon').node,
+        el('p', { className: 'rs-modal-sub rs-reset-body', text: t('reset.body') }),
+        el('div', { className: 'rs-modal-stack' }, [
+          plate('iron', t('reset.confirm'), () => {
+            show(resetModal, false);
+            h.onResetSave?.();
+          }, { attrs: { 'data-ui': 'reset-confirm' } }),
+          plate('gold', t('reset.cancel'), () => show(resetModal, false), { attrs: { 'data-ui': 'reset-cancel' } }),
+        ]),
+      ]),
+    ],
+  );
+  show(resetModal, false);
+
   const foot = el('div', { className: 'rs-menu-foot' }, [
     playBtn,
+    resetBtn,
     el('div', { className: 'rs-talents-slot' }, [
       navTalents,
       el('span', { className: 'rs-ib-label', text: t('menu.tab.talents'), attrs: { 'aria-hidden': 'true' } }),
@@ -281,6 +310,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     talentsPanel,
     el('div', { className: 'rs-deco-frame', attrs: { 'aria-hidden': 'true' } }),
     settings,
+    TEMP_RESET_SAVE ? resetModal : null,
   ]);
 
   // Mapa em coordenadas do mockup, escalado para a área livre entre o título e o JOGAR.
@@ -292,6 +322,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     tab = next;
     show(playPanel, tab === 'play');
     show(talentsPanel, tab === 'talents');
+    show(resetModal, false); // TEMP T-061
     if (tab === 'talents') talentList.scrollTop = 0;
   }
   setTab('play');

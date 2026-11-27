@@ -27,6 +27,13 @@ const ptBR = {
   'settings.title': 'CONFIGURAÇÕES',
   'settings.close': 'FECHAR',
 
+  // TEMP T-061: remover antes do M7 (botão de resetar o save).
+  'reset.label': 'Resetar save',
+  'reset.title': 'RESETAR SAVE',
+  'reset.body': 'Apaga o ouro, os talentos e o recorde. O som fica como está. Não dá para desfazer.',
+  'reset.confirm': 'APAGAR',
+  'reset.cancel': 'CANCELAR',
+
   'talents.title': 'TALENTOS',
   'talents.subtitle': 'Melhorias mantidas entre todas as partidas',
   'talents.level': 'Nv. {level}/{max}',
