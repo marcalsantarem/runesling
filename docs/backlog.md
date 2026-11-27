@@ -108,7 +108,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | Id | Descrição | Marco | Agente(s) | Estado |
 |---|---|---|---|---|
 | T-068 | Bíblia do mundo em `docs/narrativa.md`: premissa, tom, o mago, escolas de magia (sinergias), capítulos 1 a 3, inimigos e chefes, gancho dos equipamentos, glossário e guia de como criar conteúdo novo coerente (decisões 48–51) (tam. M) (BRF-061) | M7 | AG06 | feita (falta leitura do dono) |
-| T-069 | Ajustes da bíblia após a leitura do dono: nomes recusados com 3 opções cada, Opção B, corredor aprovado, Arcana (decisões 55–58) (BRF-062) (tam. P) | M7 | AG06 | em andamento |
+| T-069 | Ajustes da bíblia após a leitura do dono: nomes recusados com 3 opções cada, Opção B, corredor aprovado, Arcana (decisões 55–58) (BRF-062) (tam. P) | M7 | AG06 | feita (falta o dono escolher os nomes da §11) |
 | T-072 | Trocar "Núcleo" por "Arcana" no nome da sinergia base na UI (`synergy.core` em `src/ui/strings.ts`) (decisão 58) (BRF-063) (tam. P) | M7 | AG02 | feita |
 | T-070 | Versão 0.8.0 (tam. P) | M7 | AG07 | a fazer |
 | T-071 | Validação do M7 (coerência da bíblia com GDD e dados; suíte uma vez) e tag v0.8.0 (tam. P) | M7 | AG03 + AG00 | a fazer |
