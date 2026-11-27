@@ -660,6 +660,8 @@
   top: calc(var(--rs-field-y) + var(--rs-field-h) * .5);
   width: min(340px, calc(100% - 32px));
   height: 54px;
+  /* Padding fixo: o 7% de .rs-ribbon é da largura do pai (o palco), e cortava o texto ("ON…"). */
+  padding: 0 30px;
   transform: translate(-50%, -50%);
   pointer-events: none;
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .6));
@@ -697,6 +699,7 @@
 .rs-modal-panel { gap: 30px; }
 .rs-modal-ribbon { width: calc(100% - 20px); }
 .rs-modal-head { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; flex: none; margin-top: clamp(0px, 3vh, 24px); }
+.rs-modal-head { margin-top: clamp(0px, 3cqh, 24px); } /* mede pelo palco (#app) */
 .rs-modal-head .rs-ribbon { width: calc(100% - 20px); }
 .rs-modal-sub { font: 600 13px/1.45 var(--rs-font-ui); color: var(--rs-body); }
 .rs-modal-stack { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 18px; }
@@ -815,6 +818,7 @@
   position: relative;
   flex: none;
   width: clamp(112px, 19vh, 160px);
+  width: clamp(112px, 19cqh, 160px); /* mede pelo palco (#app), não pela janela */
   aspect-ratio: 1;
   margin: 18px 0 26px;
   border-radius: 50%;
