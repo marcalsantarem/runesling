@@ -30,6 +30,7 @@
   --ui-gem-fire: none;
   --ui-gem-spectral: none;
   --ui-gem-core: none;
+  --ui-socket: none;
   --ui-icon-coin: none;
   --ui-icon-heart: none;
   --ui-icon-pause: none;
@@ -37,6 +38,10 @@
   --ui-icon-sound: none;
   --ui-icon-sound-off: none;
   --ui-icon-star: none;
+  --ui-icon-lock: none;
+  --ui-icon-back: none;
+  --ui-icon-check: none;
+  --ui-icon-recall: none;
   --ui-icon-sword: none;
 }
 
@@ -167,6 +172,21 @@
 .rs-ui.skin-ui_gem_spectral .rs-syn-spectral .rs-draft-socket { background: var(--ui-gem-spectral) center / contain no-repeat; box-shadow: none; }
 .rs-ui.skin-ui_gem_core .rs-syn-core .rs-draft-socket { background: var(--ui-gem-core) center / contain no-repeat; box-shadow: none; }
 
+/* ---------- Encaixe (ui_socket): aro de ferro da faixa de runas e do ícone do talento ----------
+ * Na carta do draft a gema vai sozinha: ela já traz o próprio aro (encaixe por baixo dobraria o aro). */
+.rs-ui.skin-ui_socket .rs-rune:not(.rs-rune-empty) {
+  background: var(--ui-socket) center / 100% 100% no-repeat;
+  box-shadow: 0 0 6px -1px var(--rs-syn), 0 2px 0 -1px rgba(5, 6, 10, .8);
+}
+.rs-ui.skin-ui_socket .rs-rune .rs-rune-icon { left: 5px; top: 5px; width: 20px; height: 20px; }
+.rs-ui.skin-ui_socket .rs-rune-empty { border: 0; background: var(--ui-socket) center / 100% 100% no-repeat; box-shadow: none; opacity: .42; filter: saturate(.4); }
+.rs-ui.skin-ui_socket .rs-talent-icon {
+  background: var(--ui-socket) center / 100% 100% no-repeat;
+  box-shadow: 0 0 0 1.5px rgba(254, 202, 87, .55), 0 0 12px rgba(254, 202, 87, .18), 0 3px 0 -1px rgba(5, 6, 10, .8);
+}
+.rs-ui.skin-ui_socket .rs-talent-icon .rs-talent-dot { width: 46px; height: 46px; }
+.rs-ui.skin-ui_socket .rs-talent.is-max .rs-talent-icon { box-shadow: 0 0 0 2px var(--rs-gold), 0 0 16px rgba(254, 202, 87, .4), 0 3px 0 -1px rgba(5, 6, 10, .8); }
+
 /* ---------- Ícones: a imagem entra no lugar do SVG ---------- */
 .rs-uicon { width: var(--rs-icon-size, 18px); height: var(--rs-icon-size, 18px); background: center / contain no-repeat; }
 .rs-ui.skin-ui_icon_coin .rs-uicon-ui_icon_coin { background-image: var(--ui-icon-coin); }
@@ -176,6 +196,10 @@
 .rs-ui.skin-ui_icon_sound .rs-uicon-ui_icon_sound { background-image: var(--ui-icon-sound); }
 .rs-ui.skin-ui_icon_sound_off .rs-uicon-ui_icon_sound_off { background-image: var(--ui-icon-sound-off); }
 .rs-ui.skin-ui_icon_star .rs-uicon-ui_icon_star { background-image: var(--ui-icon-star); }
+.rs-ui.skin-ui_icon_lock .rs-uicon-ui_icon_lock { background-image: var(--ui-icon-lock); }
+.rs-ui.skin-ui_icon_back .rs-uicon-ui_icon_back { background-image: var(--ui-icon-back); }
+.rs-ui.skin-ui_icon_check .rs-uicon-ui_icon_check { background-image: var(--ui-icon-check); }
+.rs-ui.skin-ui_icon_recall .rs-uicon-ui_icon_recall { background-image: var(--ui-icon-recall); }
 .rs-ui.skin-ui_icon_sword .rs-uicon-ui_icon_sword { background-image: var(--ui-icon-sword); }
 .rs-ui.skin-ui_icon_coin .rs-uicon-ui_icon_coin svg,
 .rs-ui.skin-ui_icon_heart .rs-uicon-ui_icon_heart svg,
@@ -184,4 +208,36 @@
 .rs-ui.skin-ui_icon_sound .rs-uicon-ui_icon_sound svg,
 .rs-ui.skin-ui_icon_sound_off .rs-uicon-ui_icon_sound_off svg,
 .rs-ui.skin-ui_icon_star .rs-uicon-ui_icon_star svg,
+.rs-ui.skin-ui_icon_lock .rs-uicon-ui_icon_lock svg,
+.rs-ui.skin-ui_icon_back .rs-uicon-ui_icon_back svg,
+.rs-ui.skin-ui_icon_check .rs-uicon-ui_icon_check svg,
+.rs-ui.skin-ui_icon_recall .rs-uicon-ui_icon_recall svg,
 .rs-ui.skin-ui_icon_sword .rs-uicon-ui_icon_sword svg { visibility: hidden; }
+
+/* ---------- Polimento dos ícones de imagem (margem uniforme de 6% nas peças) ---------- */
+.rs-ui .rs-uicon { filter: drop-shadow(0 1.5px 0 rgba(5, 6, 10, .75)); }
+.rs-ui.skin-ui_icon_pause .rs-ib-sq .rs-uicon-ui_icon_pause,
+.rs-ui.skin-ui_icon_back .rs-ib-sq .rs-uicon-ui_icon_back { width: 26px; height: 26px; }
+/* Recolher: seta escura de contorno ciano fino; maior e com halo claro para não sumir na placa ciano */
+.rs-ui.skin-ui_icon_recall .rs-uicon-ui_icon_recall { width: 22px; height: 22px; filter: drop-shadow(0 0 1.5px rgba(220, 255, 255, .95)) drop-shadow(0 1px 0 rgba(6, 40, 56, .6)); }
+/* Cadeado dourado do nó trancado: leve brilho quente */
+.rs-ui.skin-ui_icon_lock .rs-node-lock .rs-uicon-ui_icon_lock { filter: drop-shadow(0 2px 0 #000) drop-shadow(0 0 6px rgba(254, 202, 87, .35)); }
+/* Check marrom-escuro: sempre sobre dourado (selo da vitória já é ouro; no MÁX ganha um disco de ouro) */
+.rs-ui.skin-ui_icon_check .rs-end-seal .rs-uicon-ui_icon_check { width: 62%; height: 62%; filter: drop-shadow(0 1px 0 rgba(255, 240, 176, .6)); }
+.rs-ui.skin-ui_icon_check .rs-maxb .rs-uicon-ui_icon_check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ui-icon-check) center / 72% no-repeat, radial-gradient(circle at 40% 35%, #fff0b0, var(--rs-gold) 45%, var(--rs-gold-dark) 90%);
+  box-shadow: 0 0 0 1.5px var(--rs-ink), 0 0 8px rgba(254, 202, 87, .45);
+  filter: none;
+}
+/* Placa desabilitada (comprar sem ouro): a moeda apaga junto com a placa */
+.rs-ui .rs-plate:disabled .rs-uicon { filter: grayscale(.85) brightness(.75); }
+.rs-ui.skin-ui_icon_recall .rs-btn-recall .rs-plate-lbl { gap: 3px; letter-spacing: .06em; }
+/* Engrenagem de ferro sobre o botão de ferro: um pouco mais clara e com aro de luz para destacar */
+.rs-ui.skin-ui_icon_gear .rs-ib .rs-uicon-ui_icon_gear { filter: brightness(1.25) drop-shadow(0 1.5px 0 rgba(5, 6, 10, .8)) drop-shadow(0 0 3px rgba(255, 240, 200, .25)); }
+@media (max-width: 370px) {
+  .rs-ui.skin-ui_icon_recall .rs-btn-recall .rs-plate-lbl { gap: 2px; letter-spacing: .03em; font-size: 10px; }
+  .rs-ui.skin-ui_icon_recall .rs-uicon-ui_icon_recall { width: 19px; height: 19px; }
+}

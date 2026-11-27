@@ -80,7 +80,7 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
   const recallBtn = plate('cyan', t('hud.recall'), () => h.onRecall(), {
     size: 'mini',
     className: 'rs-btn-recall',
-    icon: icon(ICONS.recall, 18),
+    icon: icon(ICONS.recall, 18, 'ui_icon_recall'),
     attrs: { 'data-ui': 'hud-recall' },
   });
   const speedBtn = plate('iron', t('hud.speed.1'), () => h.onToggleSpeed(), {

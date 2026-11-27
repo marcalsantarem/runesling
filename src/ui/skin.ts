@@ -31,6 +31,7 @@ export const UI_PIECES = [
   'ui_gem_fire',
   'ui_gem_spectral',
   'ui_gem_core',
+  'ui_socket',
   'ui_icon_coin',
   'ui_icon_heart',
   'ui_icon_pause',
@@ -38,6 +39,10 @@ export const UI_PIECES = [
   'ui_icon_sound',
   'ui_icon_sound_off',
   'ui_icon_star',
+  'ui_icon_lock',
+  'ui_icon_back',
+  'ui_icon_check',
+  'ui_icon_recall',
   'ui_icon_sword',
 ] as const;
 

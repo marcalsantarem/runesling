@@ -137,7 +137,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
     at(
       el('div', { className: 'rs-node rs-node-lock', attrs: { 'aria-hidden': 'true' } }, [
         silhouette ? enemyArt(game, silhouette, 'rs-node-sil') : null,
-        icon(ICONS.lock, 34),
+        icon(ICONS.lock, 34, 'ui_icon_lock'),
       ]),
       x,
       y,
@@ -269,7 +269,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
   const crit = startStat(t('menu.stat.crit'), 'menu-crit');
   const talentsPanel = el('div', { className: 'rs-panel rs-panel-talents', attrs: { 'data-ui': 'tab-talents' } }, [
     el('div', { className: 'rs-menu-top' }, [
-      iconButton(ICONS.back, t('talents.back'), () => setTab('play'), { attrs: { 'data-ui': 'talents-back' }, square: true }),
+      iconButton(ICONS.back, t('talents.back'), () => setTab('play'), { attrs: { 'data-ui': 'talents-back' }, piece: 'ui_icon_back', square: true }),
       el('div', { className: 'rs-spacer' }),
       talentsGold.node,
     ]),
@@ -340,7 +340,7 @@ export function createMenu(game: GameData, h: MenuHandlers): MenuView {
         let buy: HTMLButtonElement;
         if (cost === null) {
           buy = el('button', { className: 'rs-btn rs-maxb', attrs: { type: 'button', 'data-ui': `talent-buy-${id}` } }, [
-            icon(ICONS.check, 18),
+            icon(ICONS.check, 18, 'ui_icon_check'),
             el('span', { text: t('talents.max') }),
           ]);
           buy.disabled = true;

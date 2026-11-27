@@ -19,7 +19,7 @@ const css = (f: string) => readFileSync(join(__dirname, '../../src/styles', f), 
 describe('Peças de UI da direção A (contrato M5)', () => {
   it('toda peça do contrato tem variável com fallback none em ui-skin.css', () => {
     const skin = css('ui-skin.css');
-    expect(UI_PIECES).toHaveLength(32);
+    expect(UI_PIECES).toHaveLength(37);
     for (const k of UI_PIECES) {
       expect(skin, k).toMatch(new RegExp(`${pieceVar(k)}:\\s*none`));
       expect(skin, k).toContain(`.skin-${k}`);
@@ -56,6 +56,27 @@ describe('Peças de UI da direção A (contrato M5)', () => {
       UI_PIECES.filter((k) => (novas as readonly string[]).includes(k)),
     );
     expect(root.style.getPropertyValue('--ui-map-bg-slice')).toBe('');
+  });
+
+  it('T-039 parte 2: encaixe e ícones novos ligados; gema sozinha na carta', () => {
+    const skin = css('ui-skin.css');
+    for (const k of ['ui_socket', 'ui_icon_lock', 'ui_icon_back', 'ui_icon_check', 'ui_icon_recall'] as const) {
+      expect(UI_PIECES, k).toContain(k);
+      expect(skin, k).toMatch(new RegExp(`\\.skin-${k}[^{]*\\{[^}]*var\\(${pieceVar(k)}\\)`));
+    }
+    expect(skin).toMatch(/skin-ui_socket \.rs-rune:not\(\.rs-rune-empty\)/);
+    expect(skin).toMatch(/skin-ui_socket \.rs-talent-icon \{[^}]*--ui-socket/);
+    expect(skin).not.toMatch(/skin-ui_socket[^{]*rs-draft-socket/);
+  });
+
+  it('ícones de imagem: cadeado, voltar, check (MÁX e vitória) e Recolher pedem a peça', async () => {
+    h = await setup();
+    h.bus.emit('app:ready', {});
+    expect(h.q('screen-menu').querySelector('.rs-node-lock .rs-uicon-ui_icon_lock')).not.toBeNull();
+    expect(h.q('talents-back').querySelector('.rs-uicon-ui_icon_back')).not.toBeNull();
+    expect(h.q('modal-end').querySelector('.rs-end-seal .rs-uicon-ui_icon_check')).not.toBeNull();
+    h.click('menu-play');
+    expect(h.q('hud-recall').querySelector('.rs-uicon-ui_icon_recall')).not.toBeNull();
   });
 
   it('animações respeitam prefers-reduced-motion', () => {

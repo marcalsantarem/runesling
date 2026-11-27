@@ -143,7 +143,7 @@ export function createEnd(onMenu: () => void, onAgain: () => void, game?: GameDa
   const bossPic = el('span', { className: 'rs-atlas rs-end-pic', attrs: { 'aria-hidden': 'true' } });
   const bossId = game ? Object.values(game.enemies).filter((e) => e.isBoss).pop()?.id : undefined;
   if (game && bossId) atlasFrame(bossPic, 'enemies', game.enemies[bossId]?.spriteKey ?? bossId);
-  const seal = el('span', { className: 'rs-end-seal' }, [icon(ICONS.check, 34)]);
+  const seal = el('span', { className: 'rs-end-seal' }, [icon(ICONS.check, 34, 'ui_icon_check')]);
   const shield = el('span', { className: 'rs-end-shield' }, [
     icon(ICONS.shield, 100),
     ...[0, 1, 2].map((i) => el('i', { className: `rs-shard rs-shard-${i}` })),
