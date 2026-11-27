@@ -5,10 +5,12 @@
  */
 import { CombatResolver, type TurnOutcome } from '../core/CombatResolver';
 import { PhysicsEngine } from '../core/PhysicsEngine';
-import type { ArenaDef, ChapterDef, GameData, PerkId } from '../data/types';
+import type { ArenaDef, ChapterDef, DropSource, GameData, PerkId } from '../data/types';
+import { rollDrop, type ItemRef } from '../meta/items';
+import { emptyRunItems, type RunItems } from './loadout';
 import type { Arena, PhysicsConfig } from './physicsTypes';
 import type { RandomSource } from './rng';
-import { createRunState, type RunState, type TalentBonus } from './RunState';
+import { createRunState, hasPerk, type RunState, type TalentBonus } from './RunState';
 import { isDraftWave, rollDraft, spawnWave } from './waves';
 
 export function physicsConfigFromRules(data: GameData): Partial<PhysicsConfig> {
@@ -47,8 +49,13 @@ export class Match {
   private readonly data: GameData;
   private readonly chapter: ChapterDef;
   private readonly rng: RandomSource;
+  /** Todos os itens que caíram na run (vão para o inventário no fim, decisão 63). */
+  readonly itemDrops: ItemRef[] = [];
+  private readonly pendingDrops: { source: Exclude<DropSource, 'chest'>; items: ItemRef[] }[] = [];
+  private minibossDropped = false;
+  private bossDropped = false;
 
-  constructor(data: GameData, chapterId: string, rng: RandomSource, bonus: TalentBonus = {}) {
+  constructor(data: GameData, chapterId: string, rng: RandomSource, bonus: TalentBonus = {}, items: RunItems = emptyRunItems()) {
     const chapter = data.chapters[chapterId];
     if (!chapter) throw new Error(`Capítulo desconhecido: ${chapterId}`);
     const arenaDef = data.arenas[chapter.arenaId]!;
@@ -64,7 +71,9 @@ export class Match {
       enemies: this.state.enemies,
     };
     this.engine = new PhysicsEngine(arena, rng, physicsConfigFromRules(data));
-    this.combat = new CombatResolver(this.state, data, chapter, rng);
+    this.combat = new CombatResolver(this.state, data, chapter, rng, items);
+    // Runas dos Épicos/Lendários antes da onda 1; não repetíveis saem do draft (rollDraft).
+    for (const id of items.startRunes) if (data.perks[id] && !hasPerk(this.state, id)) this.combat.acquirePerk(id);
     spawnWave(this.state, data, chapter, 1, rng);
   }
 
@@ -73,7 +82,8 @@ export class Match {
     if (this.state.phase !== 'aim') return false;
     this.combat.clearEvents();
     const a = this.arenaDef.launch;
-    this.engine.launch(a.x, a.y, angle, power, this.state.orbs, this.data.rules.launch.multishotSpreadRad);
+    const orbs = this.state.orbs + this.combat.launchBonusOrbs();
+    this.engine.launch(a.x, a.y, angle, power, orbs, this.data.rules.launch.multishotSpreadRad);
     this.combat.beginTurn(this.engine);
     this.state.phase = 'flight';
     return true;
@@ -89,6 +99,32 @@ export class Match {
     this.engine.step(speedMultiplier);
     this.combat.processPhysics(this.engine);
     if (this.engine.isSettled() || !this.hasLiveEnemies()) this.finishTurn();
+    this.checkDrops();
+  }
+
+  /** Drops novos desde a última chamada (para `run:itemDrop`); esvazia a fila. */
+  takeDrops(): { source: Exclude<DropSource, 'chest'>; items: ItemRef[] }[] {
+    return this.pendingDrops.splice(0, this.pendingDrops.length);
+  }
+
+  /** Mini-chefe abatido → 1 drop; vitória sobre o chefe → 1–2 (RNG da run). Cada um uma vez. */
+  private checkDrops(): void {
+    const s = this.state;
+    if (s.minibossDefeated && !this.minibossDropped) {
+      this.minibossDropped = true;
+      this.addDrop('miniboss');
+    }
+    if (s.phase === 'won' && !this.bossDropped) {
+      this.bossDropped = true;
+      this.addDrop('boss');
+    }
+  }
+
+  private addDrop(source: Exclude<DropSource, 'chest'>): void {
+    const items = rollDrop(source, this.rng, this.data);
+    if (items.length === 0) return;
+    this.itemDrops.push(...items);
+    this.pendingDrops.push({ source, items });
   }
 
   /** Há ao menos um inimigo vivo na arena (invocações futuras não contam). */
@@ -107,6 +143,7 @@ export class Match {
     this.combat.clearEvents();
     this.engine.recall();
     this.finishTurn();
+    this.checkDrops();
   }
 
   /** Escolhe uma das runas oferecidas no draft. */

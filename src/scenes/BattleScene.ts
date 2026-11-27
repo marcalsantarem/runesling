@@ -6,6 +6,7 @@ import { getProfile, type PlayerProfile } from '../meta/profile';
 import { aimAngle, aimConfigFromRules, type Aim, type AimConfig } from '../match/aim';
 import { Rng } from '../match/rng';
 import { RunController } from '../match/RunController';
+import { itemStatBonus, mergeBonus, runItemsFrom } from '../match/loadout';
 import { talentBonuses } from '../match/RunState';
 import { BATTLE_SCENE, WORLD_HEIGHT, WORLD_WIDTH } from './BootScene';
 import type { FxTargets } from './fx/FxDirector';
@@ -120,7 +121,7 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
     void this.startRun();
   }
 
-  /** Talentos do perfil entram na criação da run (BRF-016). */
+  /** Talentos (BRF-016) e itens equipados (T-078) do perfil entram na criação da run. */
   private async startRun(): Promise<void> {
     let profile: PlayerProfile | null = null;
     try {
@@ -129,13 +130,22 @@ export class BattleScene extends Phaser.Scene implements FxTargets {
       console.warn('[battle] perfil indisponível; run sem talentos e sem gravar', e);
     }
     if (!this.alive) return;
+    let loadout = null;
+    try {
+      loadout = profile ? profile.runLoadout() : null;
+    } catch (e) {
+      console.warn('[battle] itens indisponíveis; run sem itens', e);
+    }
+    const talents = profile ? talentBonuses(profile.data().talents, this.gameData) : {};
     const run = new RunController({
       data: this.gameData,
       chapterId: CHAPTER_ID,
       rng: new Rng(Date.now() >>> 0),
       bus: gameBus,
-      bonus: profile ? talentBonuses(profile.data().talents, this.gameData) : {},
+      bonus: mergeBonus(talents, itemStatBonus(loadout)),
+      items: runItemsFrom(loadout, profile?.data().items.equipped, this.gameData),
       recordRun: (r) => (profile ? profile.recordRun(r) : Promise.resolve()),
+      addItems: (items) => (profile ? profile.addItems(items) : Promise.resolve()),
     });
     this.run = run;
     this.lastTurn = run.state.turn;

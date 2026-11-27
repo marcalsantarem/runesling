@@ -162,7 +162,7 @@ describe('RunController — fluxo pelo bus', () => {
     expect(run.state.phase).toBe('lost');
     await run.ended;
     expect(records).toEqual([{ wave: run.state.wave, won: false, goldEarned: finalGold(run.state, data) }]);
-    expect(log['run:ended']).toEqual(records);
+    expect(log['run:ended']).toEqual([{ ...records[0]!, items: [] }]);
     expect(log['run:state']!.at(-1)!.phase).toBe('ended');
     run.recall();
     run.frame();
@@ -178,7 +178,8 @@ describe('RunController — fluxo pelo bus', () => {
     expect(run.state.phase).toBe('won');
     await run.ended;
     expect(records).toEqual([{ wave: 15, won: true, goldEarned: data.rules.victoryGoldBonus }]);
-    expect(log['run:ended']).toEqual(records);
+    expect(run.match.itemDrops.length).toBeGreaterThanOrEqual(1); // drop do chefe (T-078)
+    expect(log['run:ended']).toEqual([{ ...records[0]!, items: run.match.itemDrops }]);
   });
 
   it('dispose: remove os ouvintes do bus e não emite mais nada', () => {

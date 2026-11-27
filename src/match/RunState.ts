@@ -19,6 +19,8 @@ export interface EnemyState extends EnemyShape {
   summonCd: number;
   /** Morte já resolvida (sai da lista ao fim da passada). */
   dead: boolean;
+  /** Quiques do orbe que causou o último dano (-1 se o último dano não foi de orbe). */
+  killBounces: number;
 }
 
 export type RunPhase = 'aim' | 'flight' | 'draft' | 'won' | 'lost';
@@ -37,6 +39,10 @@ export interface RunState {
   turn: number;
   turnCombo: number;
   bestCombo: number;
+  /** Abates no turno atual (zerado no lançamento). */
+  turnKills: number;
+  /** Mini-chefe abatido (drop da onda 7). */
+  minibossDefeated: boolean;
   /** Quantas vezes cada perk foi obtido (repetíveis podem passar de 1). */
   perks: Partial<Record<PerkId, number>>;
   /** Ordem de obtenção (para HUD/save). */
@@ -79,6 +85,8 @@ export function createRunState(data: GameData, bonus: TalentBonus = {}): RunStat
     turn: 0,
     turnCombo: 0,
     bestCombo: 0,
+    turnKills: 0,
+    minibossDefeated: false,
     perks: {},
     perkOrder: [],
     chainChanceBonus: 0,
@@ -113,6 +121,7 @@ export function addEnemy(state: RunState, data: GameData, typeId: string, x: num
     shootCd: def.shoot?.cooldown ?? 0,
     summonCd: def.summon?.cooldown ?? 0,
     dead: false,
+    killBounces: -1,
   };
   if (def.shieldArc) en.frontShield = { minNormalY: def.shieldArc.minNormalY };
   state.enemies.push(en);

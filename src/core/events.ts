@@ -42,8 +42,8 @@ export type GameEvents = {
   'draft:open': { choices: PerkId[] };
   // Onda 7 (mini-chefe) e vitória sobre o chefe; emitido pela T-078.
   'run:itemDrop': { items: ItemDrop[]; source: 'miniboss' | 'boss' };
-  // `items`: o que entra no inventário (todos os drops da run). Opcional até a T-078 emitir (ausente = nenhum).
-  'run:ended': { won: boolean; wave: number; goldEarned: number; items?: ItemDrop[] };
+  // `items`: o que entra no inventário (todos os drops da run; vazio = nenhum).
+  'run:ended': { won: boolean; wave: number; goldEarned: number; items: ItemDrop[] };
   // UI → todos (T-049): ajustes efetivos, emitidos no início e a cada mudança. `reducedMotion` já é o valor efetivo.
   'settings:changed': { muted: boolean; sfxVolume: number; reducedMotion: boolean };
   // UI → Jogo

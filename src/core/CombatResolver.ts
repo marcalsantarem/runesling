@@ -3,9 +3,10 @@
  * Consome os PhysicsEvent do step(), aplica dano/perks/mortes e o fim de turno, e escreve
  * eventos de saída num buffer reutilizado (sem alocação em regime).
  */
-import type { ChapterDef, GameData, PerkId, PerkParamsById } from '../data/types';
+import type { ChapterDef, EnemyBehavior, GameData, ItemSchool, PerkId, PerkParamsById } from '../data/types';
 import type { PhysicsEngine } from './PhysicsEngine';
 import type { RandomSource } from '../match/rng';
+import { emptyRunItems, num, str, type LegendaryEffectId, type LegendaryParams, type RunItems } from '../match/loadout';
 import { addEnemy, hasPerk, type EnemyState, type RunState } from '../match/RunState';
 
 export type CombatEventType =
@@ -28,6 +29,7 @@ export type CombatSource = 'orb' | 'splash' | 'chain' | 'shock' | 'golem' | 'sup
  * - kill: enemyId, typeId, x/y.
  * - explosion: x/y, radius, source (golem/supernova/splash/shock).
  * - chain: enemyId (alvo), x/y → x2/y2.
+ * - blocked também com enemyId -1: tiro de atirador anulado na barreira (shotBlockChance), x/y na barreira.
  * - barrierHit: enemyId, amount (dano na barreira), x/y.
  * - shot: enemyId (atirador), amount, x/y → x2/y2 (ponto de lançamento).
  * - heal: enemyId (aliado), amount, x/y (clérigo) → x2/y2 (aliado).
@@ -65,13 +67,59 @@ export class CombatResolver {
   /** Buffer de inimigos gerados durante a cadeia de mortes (reutilizado). */
   private readonly pendingSpawns: { typeId: string; x: number; y: number }[] = [];
   private pendingCount = 0;
+  /** Itens da run (T-078): dano por escola, bloqueio de tiro, Lendários. */
+  readonly items: RunItems;
+  private readonly lg: RunItems['legendary'];
+  /** Tipos de mini-chefe do capítulo (chefes das ondas fixas antes da última). */
+  private readonly minibossIds: ReadonlySet<string>;
+  /** Quiques e impactos por orbe (id) no voo atual; zerados no lançamento. */
+  private readonly orbBounces = new Map<number, number>();
+  private readonly orbHits = new Map<number, number>();
+  /** Contexto do impacto de orbe em resolução (para onDamageCalc/onEnemyHit). */
+  private curBounces = 0;
+  private curHits = 0;
+  private bumperHeals = 0;
+  private ceilingHeals = 0;
 
-  constructor(state: RunState, data: GameData, chapter: ChapterDef, rng: RandomSource) {
+  constructor(state: RunState, data: GameData, chapter: ChapterDef, rng: RandomSource, items: RunItems = emptyRunItems()) {
     this.state = state;
     this.data = data;
     this.chapter = chapter;
     this.rng = rng;
+    this.items = items;
+    this.lg = items.legendary;
+    const mini = new Set<string>();
+    for (const [wave, ids] of Object.entries(chapter.fixedSpawns)) {
+      if (Number(wave) >= chapter.totalWaves) continue;
+      for (const id of ids) if (data.enemies[id]?.isBoss) mini.add(id);
+    }
+    this.minibossIds = mini;
     for (let i = 0; i < INITIAL_EVENTS; i++) this.events.push(makeEvent());
+  }
+
+  /** Params do Lendário ativo (undefined se não equipado). */
+  legendary(id: LegendaryEffectId): LegendaryParams | undefined {
+    return this.lg[id];
+  }
+
+  /** Multiplicador do dano dos efeitos das runas da escola (1 + schoolDamage). */
+  schoolMult(school: ItemSchool): number {
+    return 1 + (this.items.schoolDamage[school] ?? 0);
+  }
+
+  /** Cura a barreira até o máximo; devolve o quanto curou. */
+  private healBarrier(amount: number): number {
+    const s = this.state;
+    const before = s.hp;
+    s.hp = Math.min(s.maxHp, s.hp + amount);
+    return s.hp - before;
+  }
+
+  /** Orbes extras do lançamento (Lendário launch_extra_orb). Consome RNG só se equipado. */
+  launchBonusOrbs(): number {
+    const p = this.lg.launch_extra_orb;
+    if (!p) return 0;
+    return this.rng.next() < num(p, 'chance') ? num(p, 'orbBonus') : 0;
   }
 
   // ---------- Buffer de saída ----------
@@ -161,6 +209,11 @@ export class CombatResolver {
   beginTurn(engine: PhysicsEngine): void {
     const s = this.state;
     s.turnCombo = 0;
+    s.turnKills = 0;
+    this.orbBounces.clear();
+    this.orbHits.clear();
+    this.bumperHeals = 0;
+    this.ceilingHeals = 0;
     for (const en of s.enemies) en.shocked = false;
     if (hasPerk(s, 'ghost_ball')) {
       const p = this.params('ghost_ball');
@@ -179,24 +232,71 @@ export class CombatResolver {
     const dmg = this.data.rules.damage;
     for (let i = 0; i < n; i++) {
       const ev = engine.getEvent(i);
-      if (ev.type === 'enemyHit') {
-        const en = this.findEnemy(ev.enemyId);
-        if (!en || en.hp <= 0) continue;
-        if (ev.blocked) {
-          const b = this.emit('blocked', en.x, en.y);
-          b.enemyId = en.id;
-          continue;
+      switch (ev.type) {
+        case 'enemyHit': {
+          const en = this.findEnemy(ev.enemyId);
+          if (!en || en.hp <= 0) continue;
+          if (ev.blocked) {
+            const b = this.emit('blocked', en.x, en.y);
+            b.enemyId = en.id;
+            continue;
+          }
+          const bounces = Math.max(this.orbBounces.get(ev.ballId) ?? 0, ev.bounced ? 1 : 0);
+          const hits = this.orbHits.get(ev.ballId) ?? 0;
+          this.orbHits.set(ev.ballId, hits + 1);
+          this.curBounces = bounces;
+          this.curHits = hits;
+          const ricochet = hasPerk(this.state, 'ricochet_crit') && ev.bounced;
+          const table = ricochet ? dmg.ricochetMult * this.schoolMult('spectral') : 1;
+          const temp = ev.temp ? dmg.tempCloneMult : 1;
+          let raw = this.state.atk * table * temp;
+          const fh = this.lg.first_hit_mult;
+          if (fh && hits < num(fh, 'hitsPerOrb')) raw *= num(fh, 'damageMult');
+          const bm = this.lg.bounce_mult;
+          if (bm) raw *= 1 + Math.min(num(bm, 'maxBonus'), num(bm, 'perBounce') * bounces);
+          this.applyDamage(en, raw, 'orb');
+          break;
         }
-        const table = hasPerk(this.state, 'ricochet_crit') && ev.bounced ? dmg.ricochetMult : 1;
-        const temp = ev.temp ? dmg.tempCloneMult : 1;
-        this.applyDamage(en, this.state.atk * table * temp, 'orb');
-      } else if (ev.type === 'bumperHit' && hasPerk(this.state, 'bumper_shock')) {
-        const bp = engine.getArena().bumpers[ev.index];
-        if (bp) this.bumperShock(bp.x, bp.y);
+        case 'bumperHit': {
+          this.countBounce(ev.ballId);
+          const bh = this.lg.bumper_heal;
+          if (bh && this.bumperHeals < num(bh, 'maxPerTurn')) {
+            this.bumperHeals++;
+            this.healBarrier(num(bh, 'healHp'));
+          }
+          if (hasPerk(this.state, 'bumper_shock')) {
+            const bp = engine.getArena().bumpers[ev.index];
+            if (bp) this.bumperShock(bp.x, bp.y);
+          }
+          break;
+        }
+        case 'ceilingHit': {
+          const n = this.countBounce(ev.ballId);
+          if (ev.cloneId >= 0) this.orbBounces.set(ev.cloneId, n);
+          const ch = this.lg.ceiling_heal;
+          if (ch && this.ceilingHeals < num(ch, 'maxPerTurn')) {
+            this.ceilingHeals++;
+            this.healBarrier(num(ch, 'healHp'));
+          }
+          break;
+        }
+        case 'wallHit':
+        case 'pillarHit':
+          this.countBounce(ev.ballId);
+          break;
+        default:
+          break;
       }
     }
     this.processDeaths();
     this.syncArena(engine);
+  }
+
+  /** Soma um quique ao orbe; devolve o total. */
+  private countBounce(ballId: number): number {
+    const n = (this.orbBounces.get(ballId) ?? 0) + 1;
+    this.orbBounces.set(ballId, n);
+    return n;
   }
 
   private bumperShock(x: number, y: number): void {
@@ -210,7 +310,7 @@ export class CombatResolver {
       const en = list[i]!;
       if (en.hp > 0 && Math.hypot(en.x - x, en.y - y) < p.radiusPx + en.r) {
         en.shocked = true;
-        this.applyDamage(en, this.state.atk * p.damageRatio, 'shock');
+        this.applyDamage(en, this.state.atk * p.damageRatio * this.schoolMult('lightning'), 'shock');
       }
     }
   }
@@ -224,15 +324,26 @@ export class CombatResolver {
     const s = this.state;
     const R = this.data.rules.damage;
     const fromOrb = source === 'orb';
+    const lg = this.lg;
     let d = raw;
     let crit = false;
-    if (fromOrb && this.rng.next() < s.critChance) {
-      d *= R.critMult;
-      crit = true;
+    if (fromOrb) {
+      let cc = s.critChance;
+      const sc = lg.shock_crit;
+      if (sc && hasStatus(en, str(sc, 'requiresStatus'))) cc += num(sc, 'critChanceBonus');
+      const bc = lg.bounce_crit;
+      if (bc && this.curBounces >= num(bc, 'minBounces')) cc += num(bc, 'critChanceBonus');
+      if (this.rng.next() < cc) {
+        d *= R.critMult;
+        crit = true;
+      }
     }
     if (en.shocked && hasPerk(s, 'static_crit')) d *= R.shockMult;
+    const sm = lg.shooter_mult;
+    if (sm && hasBehavior(en, str(sm, 'targetBehavior'))) d *= num(sm, 'damageMult');
     const dealt = Math.max(R.minDamage, Math.round(d));
     en.hp -= dealt;
+    en.killBounces = fromOrb ? this.curBounces : -1;
     const e = this.emit('damage', en.x, en.y);
     e.enemyId = en.id;
     e.amount = dealt;
@@ -240,9 +351,12 @@ export class CombatResolver {
     e.source = source;
 
     if (!fromOrb) return dealt;
+    const hits = this.curHits;
     s.turnCombo++;
     if (s.turnCombo > s.bestCombo) s.bestCombo = s.turnCombo;
-    if (hasPerk(s, 'ignite')) en.burning = true;
+    if (hasPerk(s, 'ignite') || lg.hit_burn) en.burning = true;
+    const fs = lg.first_hit_shock;
+    if (fs && hits < num(fs, 'hitsPerOrb')) en.shocked = true;
 
     if (hasPerk(s, 'fire_splash')) {
       const p = this.params('fire_splash');
@@ -255,7 +369,7 @@ export class CombatResolver {
       for (let i = 0; i < n; i++) {
         const o = list[i]!;
         if (o !== en && o.hp > 0 && Math.hypot(o.x - en.x, o.y - en.y) < rad + o.r) {
-          this.applyDamage(o, s.atk * p.damageRatio, 'splash');
+          this.applyDamage(o, s.atk * p.damageRatio * this.schoolMult('fire'), 'splash');
         }
       }
     }
@@ -272,12 +386,37 @@ export class CombatResolver {
           c.enemyId = o.id;
           c.x2 = o.x;
           c.y2 = o.y;
-          this.applyDamage(o, s.atk * p.damageRatio, 'chain');
+          this.applyDamage(o, s.atk * p.damageRatio * this.schoolMult('lightning'), 'chain');
           break;
         }
       }
     }
+
+    const cs = lg.crit_splash;
+    if (cs && crit) {
+      const rad = num(cs, 'radiusPx');
+      const fx = this.emit('explosion', en.x, en.y);
+      fx.radius = rad;
+      fx.source = 'splash';
+      const list = s.enemies;
+      for (let i = 0; i < list.length; i++) {
+        const o = list[i]!;
+        if (o !== en && o.hp > 0 && Math.hypot(o.x - en.x, o.y - en.y) < rad + o.r) {
+          this.applyDamage(o, s.atk * num(cs, 'damageRatio'), 'splash');
+        }
+      }
+    }
     return dealt;
+  }
+
+  /** Raio de item (kill_bolt, turn_end_bolt_shooter): feixe de (x, y) até o alvo, Choque e dano. */
+  private itemBolt(x: number, y: number, target: EnemyState, p: LegendaryParams): void {
+    if (str(p, 'applyStatus') === 'shocked') target.shocked = true;
+    const c = this.emit('chain', x, y);
+    c.enemyId = target.id;
+    c.x2 = target.x;
+    c.y2 = target.y;
+    this.applyDamage(target, this.state.atk * num(p, 'damageRatio'), 'chain');
   }
 
   /** Cadeia de mortes: ouro, explosão do Golem / supernova (recursiva) e divisão do Espectro. */
@@ -297,7 +436,13 @@ export class CombatResolver {
         en.dead = true;
         const def = en.def;
         s.kills++;
-        const gold = def.gold;
+        s.turnKills++;
+        const lg = this.lg;
+        let gold = def.gold;
+        const skg = lg.shock_kill_gold;
+        if (skg && hasStatus(en, str(skg, 'requiresStatus'))) gold += num(skg, 'goldBonus');
+        const bkg = lg.bounce_kill_gold;
+        if (bkg && en.killBounces >= num(bkg, 'minBounces')) gold += num(bkg, 'goldBonus');
         s.gold += gold;
         const k = this.emit('kill', en.x, en.y);
         k.enemyId = en.id;
@@ -305,6 +450,25 @@ export class CombatResolver {
         const g = this.emit('goldGain', en.x, en.y);
         g.enemyId = en.id;
         g.amount = gold;
+        if (def.isBoss && this.minibossIds.has(en.typeId)) s.minibossDefeated = true;
+        const skh = lg.shooter_kill_heal;
+        if (skh && hasBehavior(en, str(skh, 'targetBehavior'))) this.healBarrier(num(skh, 'healHp'));
+        const kb = lg.kill_bolt;
+        if (kb && this.rng.next() < num(kb, 'chance')) {
+          const range = num(kb, 'rangePx');
+          let best: EnemyState | null = null;
+          let bestD = Infinity;
+          for (let j = 0; j < list.length; j++) {
+            const o = list[j]!;
+            if (o === en || o.hp <= 0 || o.dead) continue;
+            const dist = Math.hypot(o.x - en.x, o.y - en.y);
+            if (dist < range && dist < bestD) {
+              best = o;
+              bestD = dist;
+            }
+          }
+          if (best) this.itemBolt(en.x, en.y, best, kb);
+        }
 
         const golem = def.explode;
         if (golem || hasPerk(s, 'supernova')) {
@@ -315,9 +479,10 @@ export class CombatResolver {
           const fx = this.emit('explosion', en.x, en.y);
           fx.radius = rad;
           fx.source = src;
+          const school = golem ? 1 : this.schoolMult('fire');
           for (let j = 0; j < list.length; j++) {
             const o = list[j]!;
-            if (o.hp > 0 && Math.hypot(o.x - en.x, o.y - en.y) < rad + o.r) this.applyDamage(o, s.atk * ratio, src);
+            if (o.hp > 0 && Math.hypot(o.x - en.x, o.y - en.y) < rad + o.r) this.applyDamage(o, s.atk * ratio * school, src);
           }
         }
         const sp = def.split;
@@ -370,16 +535,46 @@ export class CombatResolver {
     const list = s.enemies;
     const W = this.data.rules.world.width;
 
-    // 1. Ignite
-    if (hasPerk(s, 'ignite')) {
-      const ratio = this.params('ignite').damageRatio;
+    const lg = this.lg;
+    // 0. Ouro por combo (combo_gold)
+    const cg = lg.combo_gold;
+    if (cg) {
+      const step = num(cg, 'comboStep');
+      if (step > 0) s.gold += Math.floor(s.turnCombo / step) * num(cg, 'goldPer');
+    }
+
+    // 1. Ignite e queimadura do item (hit_burn)
+    const burnRatio =
+      (hasPerk(s, 'ignite') ? this.params('ignite').damageRatio * this.schoolMult('fire') : 0) +
+      (lg.hit_burn ? num(lg.hit_burn, 'damageRatio') : 0);
+    if (burnRatio > 0) {
       for (let i = 0; i < list.length; i++) {
         const en = list[i]!;
-        if (en.burning && en.hp > 0) this.applyDamage(en, s.atk * ratio, 'ignite');
+        if (en.burning && en.hp > 0) this.applyDamage(en, s.atk * burnRatio, 'ignite');
       }
     }
     for (const en of list) en.burning = false;
+    // 1b. Raio no atirador (turn_end_bolt_shooter): os mais próximos da barreira, alvos distintos
+    const tb = lg.turn_end_bolt_shooter;
+    if (tb) {
+      const behavior = str(tb, 'targetBehavior');
+      const hit: EnemyState[] = [];
+      for (let n = num(tb, 'targets'); n > 0; n--) {
+        let best: EnemyState | null = null;
+        for (let i = 0; i < list.length; i++) {
+          const en = list[i]!;
+          if (en.hp <= 0 || !hasBehavior(en, behavior) || hit.includes(en)) continue;
+          if (!best || en.y > best.y) best = en;
+        }
+        if (!best) break;
+        hit.push(best);
+        this.itemBolt(launchX, barrierY, best, tb);
+      }
+    }
     this.processDeaths();
+    // 1c. Cura por combo de abates (combo_heal)
+    const chl = lg.combo_heal;
+    if (chl && s.turnKills >= num(chl, 'minKills')) this.healBarrier(num(chl, 'healHp'));
 
     // 2. Cura do Clérigo
     for (let i = 0; i < list.length; i++) {
@@ -430,6 +625,13 @@ export class CombatResolver {
       en.shootCd--;
       if (en.shootCd <= 0) {
         en.shootCd = sh.cooldown;
+        const block = this.items.shotBlockChance;
+        if (block > 0 && rng.next() < block) {
+          const b = this.emit('blocked', launchX, barrierY);
+          b.x2 = en.x;
+          b.y2 = en.y;
+          continue;
+        }
         s.hp -= sh.damage;
         const e = this.emit('shot', en.x, en.y);
         e.enemyId = en.id;
@@ -471,4 +673,12 @@ export class CombatResolver {
   isFinalWaveCleared(): boolean {
     return this.state.wave >= this.chapter.totalWaves && this.state.enemies.length === 0;
   }
+}
+
+function hasBehavior(en: EnemyState, behavior: string): boolean {
+  return behavior !== '' && en.def.behaviors.includes(behavior as EnemyBehavior);
+}
+
+function hasStatus(en: EnemyState, status: string): boolean {
+  return status === 'shocked' ? en.shocked : status === 'burning' ? en.burning : false;
 }

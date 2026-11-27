@@ -1,13 +1,14 @@
 /**
  * RunController: liga a Match ao `gameBus` (TS puro, sem Phaser). A BattleScene só desenha e repassa a mira.
- * Emite `run:state` (só quando algo do HUD muda), `run:banner`, `draft:open` e `run:ended`;
+ * Emite `run:state` (só quando algo do HUD muda), `run:banner`, `draft:open`, `run:itemDrop` e `run:ended`;
  * ouve `ui:toggleSpeed`, `ui:recall`, `ui:pickPerk` e `ui:pause`.
  */
 import type { EventBus } from '../core/EventBus';
-import type { GameEvents, RunPhase as UiPhase, RunSpeed, RunState as UiRunState } from '../core/events';
+import type { GameEvents, ItemDrop, RunPhase as UiPhase, RunSpeed, RunState as UiRunState } from '../core/events';
 import type { ChapterDef, GameData } from '../data/types';
 import type { RunResult } from '../meta/profile';
 import { t } from '../ui/strings';
+import type { RunItems } from './loadout';
 import { Match } from './Match';
 import type { RandomSource } from './rng';
 import { finalGold, type RunPhase, type RunState, type TalentBonus } from './RunState';
@@ -100,8 +101,12 @@ export interface RunControllerOptions {
   rng: RandomSource;
   bus: EventBus<GameEvents>;
   bonus?: TalentBonus;
+  /** Itens equipados (T-078). */
+  items?: RunItems;
   /** Grava o resultado no perfil (ex.: `profile.recordRun`). */
   recordRun: (result: RunResult) => Promise<void>;
+  /** Soma os drops da run ao inventário (ex.: `profile.addItems`); chamado junto com `recordRun`. */
+  addItems?: (items: ItemDrop[]) => Promise<void>;
 }
 
 export class RunController {
@@ -112,6 +117,7 @@ export class RunController {
   private readonly data: GameData;
   private readonly bus: EventBus<GameEvents>;
   private readonly recordRun: (result: RunResult) => Promise<void>;
+  private readonly addItems: ((items: ItemDrop[]) => Promise<void>) | undefined;
   private readonly hud = new HudTracker();
   private readonly offs: (() => void)[] = [];
   private lastWave = 0;
@@ -125,8 +131,9 @@ export class RunController {
     this.data = opts.data;
     this.bus = opts.bus;
     this.recordRun = opts.recordRun;
+    this.addItems = opts.addItems;
     this.chapter = opts.data.chapters[opts.chapterId]!;
-    this.match = new Match(opts.data, opts.chapterId, opts.rng, opts.bonus ?? {});
+    this.match = new Match(opts.data, opts.chapterId, opts.rng, opts.bonus ?? {}, opts.items);
     const bus = opts.bus;
     this.offs.push(
       bus.on('ui:toggleSpeed', () => this.toggleSpeed()),
@@ -194,6 +201,9 @@ export class RunController {
     if (this.disposed) return;
     const s = this.match.state;
     if (this.hud.update(s, this.speed)) this.bus.emit('run:state', toUiRunState(s, this.chapter.totalWaves, this.speed));
+    for (const d of this.match.takeDrops()) {
+      this.bus.emit('run:itemDrop', { items: d.items.map((it) => ({ itemId: it.itemId, rarity: it.rarity })), source: d.source });
+    }
     if (s.phase === 'draft') {
       if (!this.draftOpened) {
         this.draftOpened = true;
@@ -216,11 +226,19 @@ export class RunController {
     const s = this.match.state;
     const won = s.phase === 'won';
     const result = { wave: s.wave, won, goldEarned: finalGold(s, this.data) };
+    const items: ItemDrop[] = this.match.itemDrops.map((it) => ({ itemId: it.itemId, rarity: it.rarity }));
     try {
       await this.recordRun(result);
     } catch (e) {
       console.warn('[run] falha ao gravar o resultado', e);
     }
-    if (!this.disposed) this.bus.emit('run:ended', result);
+    if (items.length > 0 && this.addItems) {
+      try {
+        await this.addItems(items);
+      } catch (e) {
+        console.warn('[run] falha ao gravar os itens', e);
+      }
+    }
+    if (!this.disposed) this.bus.emit('run:ended', { ...result, items });
   }
 }
