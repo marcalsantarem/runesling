@@ -84,9 +84,10 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-061 | Botão temporário na tela inicial para resetar o save (testar derrota); remover antes do M7 (tam. P) | M5 | AG02 + AG04 | feita (remover antes do M7) |
 | T-062 | Peças de UI não aparecem no Safari/iPhone: URL relativa em variável CSS (tam. P) | M5 | AG02 | feita (falta conferir no iPhone) |
 | T-063 | Recolher sempre visível na barra (desativado quando os orbes estão parados) e faixa de runas zerada ao iniciar nova partida (hoje mostra as da partida anterior até o 1º draft) (tam. P) | M5 | AG02 | feita |
+| T-065 | Ressalvas do QA do M5: fallback CSS da placa se a imagem falhar (M5-01); textos cortados em 360×640 na dica e nos nomes de talentos (M5-02) (tam. P) | M6 | AG02 | a fazer |
 | T-040 | Versão 0.6.0 (tam. P) | M5 | AG07 | feita |
 | T-064 | Limitar o jogo na web a uma moldura de celular (largura/altura máximas, centralizada, fundo decorativo nas laterais) para não esticar HUD e barras em monitores grandes; corrigir a fita de onda cortada ("ON...") (tam. P) | M5 | AG07 + AG02 | feita |
-| T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | em andamento |
+| T-041 | Validação do M5 e tag v0.6.0 (tam. P) | M5 | AG03 + AG00 | feita (passa com ressalvas; falta a tag) |
 
 ## M6 (v0.7.0): Game feel
 
