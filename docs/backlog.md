@@ -81,7 +81,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-057 | Aplicar a UI validada (decisões 44 e 45): tela inicial em mapa, botão placa de ferro, Partida, Runas, Fim de run e Talentos, com peças em CSS (tam. G) | M5 | AG02 | feita (falta conferir no aparelho) |
 | T-058 | Atualizar os prompts das peças de UI para o estilo validado (botão placa de ferro, fundo e nós do mapa, escudo rachado da derrota) antes de o dono gerar (tam. P) | M5 | AG08 | feita |
 | T-060 | Refazer `ui_card_fire`, `ui_card_spectral` e `ui_card_core` no mesmo estilo da `ui_card_lightning` (geradas em IAs diferentes; dono refaz depois) (tam. P) | M5 | AG08 | adiada pelo dono |
-| T-061 | Botão temporário na tela inicial para resetar o save (testar derrota); remover antes do M7 (tam. P) | M5 | AG02 + AG04 | feita (remover antes do M7) |
+| T-061 | Botão temporário na tela inicial para resetar o save (testar derrota); remover antes do MVP Web, M11 (tam. P) | M5 | AG02 + AG04 | feita (remover antes do M11) |
 | T-062 | Peças de UI não aparecem no Safari/iPhone: URL relativa em variável CSS (tam. P) | M5 | AG02 | feita (falta conferir no iPhone) |
 | T-063 | Recolher sempre visível na barra (desativado quando os orbes estão parados) e faixa de runas zerada ao iniciar nova partida (hoje mostra as da partida anterior até o 1º draft) (tam. P) | M5 | AG02 | feita |
 | T-065 | Ressalvas do QA do M5: fallback CSS da placa se a imagem falhar (M5-01); textos cortados em 360×640 na dica e nos nomes de talentos (M5-02) (tam. P) | M6 | AG02 | feita |
