@@ -124,7 +124,7 @@ Regras em [`modo_trabalho/Tasks.md`](../modo_trabalho/Tasks.md). Tamanho: P (≤
 | T-077 | (BRF-068) Lógica de meta: inventário empilhado no save (com migração), equipar/desequipar, fusão 3→1, sorteio de raridade, baú, bônus dos itens na largada da run (tam. M) | M8 | AG04 | feita |
 | T-078 | (BRF-069) Partida: drop ao vencer onda 7 e chefe, runa inicial do Épico, efeitos dos Lendários (tam. M) | M8 | AG01 | feita (falta jogar no navegador) |
 | T-079 | (BRF-070) UI: tela Equipamentos (espaços, inventário ×N, Fundir), baú no menu, itens ganhos no Fim de run, ícones provisórios (tam. M) | M8 | AG02 | feita (ícones provisórios) |
-| T-080 | Prompts dos 18 ícones de item e das molduras de raridade, para o dono gerar no Gemini (tam. P) | M8 | AG08 | a fazer |
+| T-080 | (BRF-071) Prompts dos 18 ícones de item e das molduras de raridade, para o dono gerar no Gemini (tam. P) | M8 | AG08 | em andamento |
 | T-081 | Processar os ícones enviados pelo dono e trocar os provisórios (tam. P) | M8 | AG08 | a fazer (espera imagens) |
 | T-082 | Versão 0.9.0 (tam. P) | M8 | AG07 | a fazer |
 | T-083 | Validação do M8 e tag v0.9.0 (tam. P) | M8 | AG03 + AG00 | a fazer |
