@@ -12,12 +12,21 @@ export const UI_PIECES = [
   'ui_btn_primary',
   'ui_btn_secondary',
   'ui_btn_action',
+  'ui_btn_mini',
+  'ui_btn_round',
+  'ui_btn_square',
   'ui_ribbon',
+  'ui_ribbon_dark',
+  'ui_pill',
   'ui_card_lightning',
   'ui_card_fire',
   'ui_card_spectral',
   'ui_card_core',
   'ui_hud_bar',
+  'ui_map_bg',
+  'ui_map_node',
+  'ui_map_node_locked',
+  'ui_defeat_shield',
   'ui_gem_lightning',
   'ui_gem_fire',
   'ui_gem_spectral',
@@ -35,7 +44,8 @@ export const UI_PIECES = [
 export type UiPiece = (typeof UI_PIECES)[number];
 
 export interface SliceInfo {
-  slice: readonly [number, number, number, number];
+  /** `null` = peça inteira (sem 9-slice). */
+  slice: readonly [number, number, number, number] | null;
   width?: number;
   height?: number;
 }

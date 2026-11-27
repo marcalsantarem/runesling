@@ -11,12 +11,21 @@
   --ui-btn-primary: none;      --ui-btn-primary-slice: 32;    --ui-btn-primary-bw: 16px;
   --ui-btn-secondary: none;    --ui-btn-secondary-slice: 32;  --ui-btn-secondary-bw: 16px;
   --ui-btn-action: none;       --ui-btn-action-slice: 32;     --ui-btn-action-bw: 16px;
-  --ui-ribbon: none;           --ui-ribbon-slice: 0 64 0 64;  --ui-ribbon-bw: 0 32px 0 32px;
+  --ui-btn-mini: none;         --ui-btn-mini-slice: 32;       --ui-btn-mini-bw: 16px;
+  --ui-btn-round: none;
+  --ui-btn-square: none;       --ui-btn-square-slice: 40;     --ui-btn-square-bw: 20px;
+  --ui-ribbon: none;           --ui-ribbon-slice: 0 80 0 80;  --ui-ribbon-bw: 0 40px 0 40px;
+  --ui-ribbon-dark: none;      --ui-ribbon-dark-slice: 0 80 0 80; --ui-ribbon-dark-bw: 0 40px 0 40px;
+  --ui-pill: none;             --ui-pill-slice: 0 32 0 32;    --ui-pill-bw: 0 16px 0 16px;
   --ui-card-lightning: none;   --ui-card-lightning-slice: 48; --ui-card-lightning-bw: 24px;
   --ui-card-fire: none;        --ui-card-fire-slice: 48;      --ui-card-fire-bw: 24px;
   --ui-card-spectral: none;    --ui-card-spectral-slice: 48;  --ui-card-spectral-bw: 24px;
   --ui-card-core: none;        --ui-card-core-slice: 48;      --ui-card-core-bw: 24px;
   --ui-hud-bar: none;          --ui-hud-bar-slice: 40;        --ui-hud-bar-bw: 20px;
+  --ui-map-bg: none;
+  --ui-map-node: none;
+  --ui-map-node-locked: none;
+  --ui-defeat-shield: none;
   --ui-gem-lightning: none;
   --ui-gem-fire: none;
   --ui-gem-spectral: none;
@@ -74,22 +83,83 @@
 .rs-ui.skin-ui_btn_secondary .rs-btn-icon::after,
 .rs-ui[class*="skin-ui_card_"] .rs-draft-card .rs-cap { display: none; }
 
-/* Placa de ferro (botões): com a peça, somem as camadas de CSS (moldura, miolo, rebites, runas) e fica o texto */
-.rs-ui.skin-ui_btn_primary .rs-plate.rs-btn-primary :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv, .rs-plate-rn),
-.rs-ui.skin-ui_btn_secondary .rs-plate.rs-btn-secondary :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv, .rs-plate-rn),
-.rs-ui.skin-ui_btn_action .rs-plate.rs-btn-action :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv, .rs-plate-rn) { display: none; }
+/* Placa de ferro (botões): com a peça, somem as camadas de CSS (moldura, miolo, rebites); ficam o texto e as runas SVG */
+.rs-ui.skin-ui_btn_primary .rs-plate.rs-btn-primary :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv),
+.rs-ui.skin-ui_btn_secondary .rs-plate.rs-btn-secondary :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv),
+.rs-ui.skin-ui_btn_action .rs-plate.rs-btn-action :is(.rs-plate-o, .rs-plate-fr, .rs-plate-rv) { display: none; }
 .rs-ui.skin-ui_btn_primary .rs-plate.rs-btn-primary .rs-plate-pl,
 .rs-ui.skin-ui_btn_secondary .rs-plate.rs-btn-secondary .rs-plate-pl,
 .rs-ui.skin-ui_btn_action .rs-plate.rs-btn-action .rs-plate-pl { inset: 0; background: none; box-shadow: none; clip-path: none; }
 
-/* ---------- Fita (3-slice horizontal): a imagem substitui faixa, pontas e filetes ---------- */
-.rs-ui.skin-ui_ribbon .rs-ribbon {
-  background: none;
-  clip-path: none;
+/* ---------- Fita (3-slice horizontal): a imagem substitui faixa, pontas e filetes ----------
+ * O corpo da fita ocupa ~80% da altura do arquivo (as caudas descem abaixo dele): a imagem vai num
+ * ::before que passa da caixa para baixo, e o texto fica centrado no corpo. */
+.rs-ui.skin-ui_ribbon .rs-ribbon { background: none; clip-path: none; }
+.rs-ui.skin-ui_ribbon .rs-ribbon::before {
+  inset: 0 0 -24.7% 0;
   border: 0 solid transparent;
-  border-image: var(--ui-ribbon) var(--ui-ribbon-slice) fill / var(--ui-ribbon-bw) / 0 stretch;
+  border-image: var(--ui-ribbon) var(--ui-ribbon-slice) fill / var(--rs-rib-bw, var(--ui-ribbon-bw)) / 0 stretch;
+  opacity: 1;
+  z-index: 0;
 }
-.rs-ui.skin-ui_ribbon .rs-ribbon::before { display: none; }
+.rs-ui.skin-ui_ribbon .rs-ribbon:not(.rs-ribbon-big, .rs-banner) { --rs-rib-bw: 0 24px 0 24px; }
+.rs-ui.skin-ui_ribbon_dark .rs-ribbon.is-defeat { background: none; clip-path: none; }
+.rs-ui.skin-ui_ribbon_dark .rs-ribbon.is-defeat::before {
+  inset: 0 0 -24.7% 0;
+  border: 0 solid transparent;
+  border-image: var(--ui-ribbon-dark) var(--ui-ribbon-dark-slice) fill / var(--rs-rib-bw, var(--ui-ribbon-dark-bw)) / 0 stretch;
+  opacity: 1;
+  z-index: 0;
+}
+
+/* ---------- Contador de ouro (3-slice horizontal) ---------- */
+.rs-ui.skin-ui_pill .rs-gold-pill {
+  background: none;
+  box-shadow: none;
+  border: 0 solid transparent;
+  border-image: var(--ui-pill) var(--ui-pill-slice) fill / var(--ui-pill-bw) / 0 stretch;
+}
+
+/* ---------- Botões de ícone: redondo (tela inicial) e quadrado (pausa, voltar) ---------- */
+.rs-ui.skin-ui_btn_round .rs-ib:not(.rs-ib-sq) { background: var(--ui-btn-round) center / 100% 100% no-repeat; border: 0; box-shadow: 0 4px 0 -1px rgba(5, 6, 10, .8); }
+.rs-ui.skin-ui_btn_round .rs-ib:not(.rs-ib-sq)::after { display: none; }
+.rs-ui.skin-ui_btn_square .rs-ib-sq {
+  background: none;
+  box-shadow: none;
+  border: 0 solid transparent;
+  border-radius: 0;
+  border-image: var(--ui-btn-square) var(--ui-btn-square-slice) fill / 14px / 0 stretch;
+}
+.rs-ui.skin-ui_btn_square .rs-ib-sq::after { display: none; }
+.rs-ui:is(.skin-ui_btn_round, .skin-ui_btn_square) .rs-ib:active:not(:disabled),
+.rs-ui:is(.skin-ui_btn_round, .skin-ui_btn_square) .rs-ib.is-down:not(:disabled) { box-shadow: none; filter: brightness(1.15); }
+
+/* ---------- Placas mini: 1× na peça quadrada sem rebites, comprar na placa ouro mini ---------- */
+.rs-ui.skin-ui_btn_square .rs-plate.rs-plate-mini.rs-plate-iron { border-image-source: var(--ui-btn-square); border-image-slice: var(--ui-btn-square-slice) fill; border-image-width: 14px; }
+.rs-ui.skin-ui_btn_square .rs-plate.rs-plate-mini.rs-plate-iron :is(.rs-plate-o, .rs-plate-fr) { display: none; }
+.rs-ui.skin-ui_btn_square .rs-plate.rs-plate-mini.rs-plate-iron .rs-plate-pl { inset: 0; background: none; box-shadow: none; clip-path: none; }
+.rs-ui.skin-ui_btn_mini .rs-plate.rs-plate-mini.rs-plate-gold {
+  background: none;
+  box-shadow: none;
+  border: 0 solid transparent;
+  border-image: var(--ui-btn-mini) var(--ui-btn-mini-slice) fill / 12px / 0 stretch;
+}
+.rs-ui.skin-ui_btn_mini .rs-plate.rs-plate-mini.rs-plate-gold :is(.rs-plate-o, .rs-plate-fr) { display: none; }
+.rs-ui.skin-ui_btn_mini .rs-plate.rs-plate-mini.rs-plate-gold .rs-plate-pl { inset: 0; background: none; box-shadow: none; clip-path: none; }
+
+/* ---------- Mapa: fundo, nó atual (aro com miolo vazado) e nó trancado ---------- */
+.rs-ui.skin-ui_map_bg .rs-mapbg { background: var(--ui-map-bg) center / cover no-repeat, #0d1020; }
+.rs-ui.skin-ui_map_node .rs-node-cur { background: var(--ui-map-node) center / 100% 100% no-repeat, radial-gradient(circle at 50% 40%, #3a1a22, #0b0710 60%); box-shadow: 0 8px 0 -2px rgba(5, 6, 10, .7), 0 0 26px rgba(254, 202, 87, .35); }
+.rs-ui.skin-ui_map_node .rs-node-cur .rs-node-pic { inset: 16%; z-index: -1; }
+.rs-ui.skin-ui_map_node .rs-node-cur { isolation: isolate; }
+.rs-ui.skin-ui_map_node_locked .rs-node-lock { background: var(--ui-map-node-locked) center / 100% 100% no-repeat; box-shadow: 0 6px 0 -2px rgba(5, 6, 10, .7); }
+.rs-ui.skin-ui_map_node_locked .rs-node-lock .rs-node-sil { inset: 20%; }
+
+/* ---------- Fim de run: medalhão da vitória no aro do mapa, escudo rachado na derrota ---------- */
+.rs-ui.skin-ui_map_node .rs-end-emblem.is-victory { isolation: isolate; background: var(--ui-map-node) center / 100% 100% no-repeat, radial-gradient(circle at 50% 40%, #3a1a22, #0b0710 60%); box-shadow: 0 10px 0 -2px rgba(5, 6, 10, .7); }
+.rs-ui.skin-ui_map_node .rs-end-emblem.is-victory .rs-end-pic { inset: 16%; z-index: -1; }
+.rs-ui.skin-ui_defeat_shield .rs-end-shield { background: var(--ui-defeat-shield) center / 74% no-repeat; }
+.rs-ui.skin-ui_defeat_shield .rs-end-shield .rs-icon { visibility: hidden; }
 
 /* ---------- Gema da carta: a peça entra no encaixe redondo do ícone ---------- */
 .rs-ui.skin-ui_gem_lightning .rs-syn-lightning .rs-draft-socket { background: var(--ui-gem-lightning) center / contain no-repeat; box-shadow: none; }

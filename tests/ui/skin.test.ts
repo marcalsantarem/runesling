@@ -19,7 +19,7 @@ const css = (f: string) => readFileSync(join(__dirname, '../../src/styles', f), 
 describe('Peças de UI da direção A (contrato M5)', () => {
   it('toda peça do contrato tem variável com fallback none em ui-skin.css', () => {
     const skin = css('ui-skin.css');
-    expect(UI_PIECES).toHaveLength(23);
+    expect(UI_PIECES).toHaveLength(32);
     for (const k of UI_PIECES) {
       expect(skin, k).toMatch(new RegExp(`${pieceVar(k)}:\\s*none`));
       expect(skin, k).toContain(`.skin-${k}`);
@@ -40,6 +40,22 @@ describe('Peças de UI da direção A (contrato M5)', () => {
     expect(root.style.getPropertyValue('--ui-panel-slice')).toBe('40 40 40 40');
     expect(root.style.getPropertyValue('--ui-panel-bw')).toBe('20px 20px 20px 20px');
     expect(availablePieces(['ui/ui_ribbon.webp'])).toEqual(['ui_ribbon']);
+  });
+
+  it('peças novas da T-039 ligadas e runas SVG da placa visíveis por cima da peça', () => {
+    const skin = css('ui-skin.css');
+    const novas = ['ui_btn_mini', 'ui_btn_round', 'ui_btn_square', 'ui_ribbon_dark', 'ui_pill', 'ui_map_bg', 'ui_map_node', 'ui_map_node_locked', 'ui_defeat_shield'] as const;
+    for (const k of novas) {
+      expect(UI_PIECES, k).toContain(k);
+      expect(skin, k).toMatch(new RegExp(`\\.skin-${k}[^{]*\\{[^}]*var\\(${pieceVar(k)}\\)`));
+    }
+    expect(skin).not.toMatch(/rs-plate-rn\)\s*\{\s*display:\s*none/);
+    expect(skin).toMatch(/skin-ui_btn_square \.rs-plate\.rs-plate-mini\.rs-plate-iron \{[^}]*--ui-btn-square/);
+    const root = document.createElement('div');
+    expect(applySkin(root, novas.map((k) => `ui/${k}.webp`), { ui_map_bg: { slice: null } })).toEqual(
+      UI_PIECES.filter((k) => (novas as readonly string[]).includes(k)),
+    );
+    expect(root.style.getPropertyValue('--ui-map-bg-slice')).toBe('');
   });
 
   it('animações respeitam prefers-reduced-motion', () => {
