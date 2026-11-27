@@ -1,5 +1,11 @@
 import { EventBus } from './EventBus';
-import type { PerkId } from '../data/types';
+import type { ItemRarity, PerkId } from '../data/types';
+
+/** Item ganho na run (contrato M8 de itens). */
+export interface ItemDrop {
+  itemId: string;
+  rarity: ItemRarity;
+}
 
 /** Payload vazio (`{}`). */
 export type Empty = Record<string, never>;
@@ -34,7 +40,10 @@ export type GameEvents = {
   'run:state': RunState;
   'run:banner': { text: string };
   'draft:open': { choices: PerkId[] };
-  'run:ended': { won: boolean; wave: number; goldEarned: number };
+  // Onda 7 (mini-chefe) e vitória sobre o chefe; emitido pela T-078.
+  'run:itemDrop': { items: ItemDrop[]; source: 'miniboss' | 'boss' };
+  // `items`: o que entra no inventário (todos os drops da run). Opcional até a T-078 emitir (ausente = nenhum).
+  'run:ended': { won: boolean; wave: number; goldEarned: number; items?: ItemDrop[] };
   // UI → todos (T-049): ajustes efetivos, emitidos no início e a cada mudança. `reducedMotion` já é o valor efetivo.
   'settings:changed': { muted: boolean; sfxVolume: number; reducedMotion: boolean };
   // UI → Jogo

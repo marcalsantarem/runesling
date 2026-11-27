@@ -2,7 +2,11 @@
 import { SaveManager, type SaveStorage } from '../core/SaveManager';
 import { loadGameData, type GameData } from '../data/types';
 import type talentsJson from '../data/talents.json';
+import type { ItemRarity, ItemSlot } from '../data/types';
+import type { RandomSource } from '../match/rng';
 import { talentCost as talentCostFormula } from './formulas';
+import * as itemsLogic from './items';
+import { emptyItems, sanitizeItems, type ItemRef, type ItemsState } from './items';
 
 export type TalentId = keyof typeof talentsJson;
 
@@ -30,6 +34,8 @@ export interface PlayerData {
   readonly cleared: boolean;
   readonly talents: Readonly<Record<TalentId, number>>;
   readonly settings: PlayerSettings;
+  /** Inventário e equipados (M8; contrato de itens). */
+  readonly items: ItemsState;
 }
 
 export interface RunResult {
@@ -40,8 +46,16 @@ export interface RunResult {
   goldEarned: number;
 }
 
-/** Versão do formato do save. Decisão 26: o save do vertical slice não é migrado. */
-export const PROFILE_SAVE_VERSION = 1;
+/** Versão do formato do save. Decisão 26: o save do vertical slice não é migrado. v2 (M8): itens. */
+export const PROFILE_SAVE_VERSION = 2;
+
+/** v1 → v2: mesmo perfil, inventário vazio. O sanitize completa o resto. */
+export function migrateProfile(raw: unknown, fromVersion: number): unknown {
+  if (fromVersion === 1 && typeof raw === 'object' && raw !== null && !Array.isArray(raw)) {
+    return { ...(raw as Record<string, unknown>), items: emptyItems() };
+  }
+  return null;
+}
 /** Ouro inicial, igual ao do vertical slice v0.1. */
 export const STARTING_GOLD = 40;
 
@@ -58,13 +72,14 @@ function talentIds(data: GameData): TalentId[] {
 function freeze(d: PlayerData): Readonly<PlayerData> {
   Object.freeze(d.talents);
   Object.freeze(d.settings);
+  Object.freeze(d.items);
   return Object.freeze(d);
 }
 
 function defaults(data: GameData): PlayerData {
   const talents = {} as Record<TalentId, number>;
   for (const id of talentIds(data)) talents[id] = 0;
-  return { gold: STARTING_GOLD, bestWave: 0, cleared: false, talents, settings: { ...DEFAULT_SETTINGS } };
+  return { gold: STARTING_GOLD, bestWave: 0, cleared: false, talents, settings: { ...DEFAULT_SETTINGS }, items: emptyItems() };
 }
 
 const isNonNegInt = (v: unknown): v is number =>
@@ -100,6 +115,7 @@ function sanitize(raw: unknown, data: GameData): PlayerData {
         ? (settingsRaw.reducedMotion as ReducedMotionPref)
         : base.settings.reducedMotion,
     },
+    items: sanitizeItems(r.items, data),
   };
 }
 
@@ -122,6 +138,7 @@ export class PlayerProfile {
     const save = new SaveManager<unknown>({
       version: PROFILE_SAVE_VERSION,
       defaults: () => defaults(game),
+      migrate: migrateProfile,
       ...(options.storage ? { storage: options.storage } : {}),
       ...(options.key ? { key: options.key } : {}),
     });
@@ -180,6 +197,50 @@ export class PlayerProfile {
     });
   }
 
+  /** Soma itens ganhos (drops da run) ao inventário e grava. */
+  async addItems(refs: readonly ItemRef[]): Promise<void> {
+    const items = itemsLogic.addItems(this.state.items, refs, this.game);
+    if (items !== this.state.items) await this.commit({ ...this.state, items });
+  }
+
+  /** Equipa 1 unidade do inventário (o anterior volta). Sem a unidade → false. */
+  async equipItem(itemId: string, rarity: ItemRarity): Promise<boolean> {
+    return this.applyItems(itemsLogic.equip(this.state.items, itemId, rarity, this.game));
+  }
+
+  async unequipItem(slot: ItemSlot): Promise<boolean> {
+    if (!this.state.items.equipped[slot]) return false;
+    return this.applyItems(itemsLogic.unequip(this.state.items, slot));
+  }
+
+  canFuseItem(itemId: string, rarity: ItemRarity): boolean {
+    return itemsLogic.canFuse(this.state.items, itemId, rarity, this.game);
+  }
+
+  /** Funde `fuseCount` iguais em 1 da raridade seguinte. Não pode → false. */
+  async fuseItem(itemId: string, rarity: ItemRarity): Promise<boolean> {
+    return this.applyItems(itemsLogic.fuse(this.state.items, itemId, rarity, this.game));
+  }
+
+  /** Compra o baú: debita o ouro e devolve o que saiu. Sem ouro → null. */
+  async openChest(rng: RandomSource = { next: Math.random }): Promise<ItemRef[] | null> {
+    const res = itemsLogic.openChest(this.state, rng, this.game);
+    if (!res) return null;
+    await this.commit({ ...this.state, gold: res.gold, items: res.items });
+    return res.drops;
+  }
+
+  /** Bônus dos equipados para a partida (a T-078 soma aos talentos). */
+  runLoadout(): itemsLogic.RunLoadout {
+    return itemsLogic.runLoadout(this.state.items.equipped, this.game);
+  }
+
+  private async applyItems(items: ItemsState | null): Promise<boolean> {
+    if (!items) return false;
+    await this.commit({ ...this.state, items });
+    return true;
+  }
+
   /** Volume fora de 0–1 é limitado; valor inválido é ignorado. */
   async updateSettings(partial: Partial<PlayerSettings>): Promise<void> {
     const p: { -readonly [K in keyof PlayerSettings]?: PlayerSettings[K] } = { ...partial };
@@ -193,7 +254,7 @@ export class PlayerProfile {
   }
 
   /**
-   * Volta ao estado inicial (ouro inicial, talentos zerados, melhor onda 0, capítulo não conquistado)
+   * Volta ao estado inicial (ouro inicial, talentos e itens zerados, melhor onda 0, capítulo não conquistado)
    * e grava no save. Mantém as configurações (som, volume, movimento). Usado pelo botão temporário da T-061.
    */
   async reset(): Promise<void> {

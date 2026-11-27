@@ -34,10 +34,18 @@ describe('catálogo de itens (GDD §5.2; decisões 62–69)', () => {
     expect(Math.max(...Object.values(count))).toBeLessThanOrEqual(2);
   });
 
-  it('drops: quase sempre Comum; Incomum esmeralda; chefe dá 1–2 (decisões 62, 63, 65)', () => {
+  it('nomes da narrativa §12: base e Lendário (T-076)', () => {
+    expect(data.items.items.staff_lightning?.name).toBe('Cajado Tempestuoso');
+    expect(data.items.items.boots_spectral?.legendaryName).toBe('Botas de Sileas');
+    for (const it of items) expect(it.legendaryName).not.toBe(it.name);
+  });
+
+  it('drops: quase sempre Comum; cores da decisão 70; chefe dá 1–2 (decisões 63, 65, 70)', () => {
     const r = data.items.rules;
     for (const o of Object.values(r.dropOdds)) expect(o.common).toBeGreaterThanOrEqual(0.75);
-    expect(r.rarities.find((x) => x.id === 'uncommon')?.color).toBe('#1DD1A1');
+    expect(Object.fromEntries(r.rarities.map((x) => [x.id, x.color]))).toEqual({
+      common: '#8B95B5', uncommon: '#2ECC71', rare: '#3B82F6', epic: '#FF9F43', legendary: '#FF4D4D',
+    });
     expect(r.bossDrops.base).toBe(1);
     expect(r.bossDrops.base + r.bossDrops.extra).toBe(2);
     expect(r.fuseCount).toBe(3);
@@ -54,6 +62,7 @@ describe('catálogo de itens (GDD §5.2; decisões 62–69)', () => {
           ...raw.items.items,
           staff_fire: { ...it, values: { common: 3, uncommon: 2, rare: 1 }, epicRune: 'chain_lightning' },
           orb_fire: { ...raw.items.items.orb_fire!, legendary: { ...it.legendary } },
+          ring_fire: { ...raw.items.items.ring_fire!, legendaryName: '' },
         },
       },
     };
@@ -62,5 +71,6 @@ describe('catálogo de itens (GDD §5.2; decisões 62–69)', () => {
     expect(errs).toMatch(/staff_fire.values/);
     expect(errs).toMatch(/não é da escola fire/);
     expect(errs).toMatch(/repetido/);
+    expect(errs).toMatch(/ring_fire: name\/legendaryName/);
   });
 });

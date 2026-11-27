@@ -15,19 +15,19 @@
       },
       {
         "id": "uncommon",
-        "color": "#1DD1A1"
+        "color": "#2ECC71"
       },
       {
         "id": "rare",
-        "color": "#00CEC9"
+        "color": "#3B82F6"
       },
       {
         "id": "epic",
-        "color": "#9C6BFF"
+        "color": "#FF9F43"
       },
       {
         "id": "legendary",
-        "color": "#FECA57"
+        "color": "#FF4D4D"
       }
     ],
     "fuseCount": 3,
@@ -60,7 +60,8 @@
   "items": {
     "staff_lightning": {
       "id": "staff_lightning",
-      "name": "staff_lightning",
+      "name": "Cajado Tempestuoso",
+      "legendaryName": "Cajado de Vessa",
       "slot": "staff",
       "school": "lightning",
       "iconKey": "item_staff_lightning",
@@ -85,7 +86,8 @@
     },
     "staff_fire": {
       "id": "staff_fire",
-      "name": "staff_fire",
+      "name": "Cajado de Brasa",
+      "legendaryName": "Cajado de Kaldor",
       "slot": "staff",
       "school": "fire",
       "iconKey": "item_staff_fire",
@@ -108,7 +110,8 @@
     },
     "staff_spectral": {
       "id": "staff_spectral",
-      "name": "staff_spectral",
+      "name": "Cajado Espectral",
+      "legendaryName": "Cajado de Morwen",
       "slot": "staff",
       "school": "spectral",
       "iconKey": "item_staff_spectral",
@@ -131,7 +134,8 @@
     },
     "orb_lightning": {
       "id": "orb_lightning",
-      "name": "orb_lightning",
+      "name": "Orbe de Faísca",
+      "legendaryName": "Orbe de Ozric",
       "slot": "orb",
       "school": "lightning",
       "iconKey": "item_orb_lightning",
@@ -154,7 +158,8 @@
     },
     "orb_fire": {
       "id": "orb_fire",
-      "name": "orb_fire",
+      "name": "Orbe de Magma",
+      "legendaryName": "Orbe de Ignara",
       "slot": "orb",
       "school": "fire",
       "iconKey": "item_orb_fire",
@@ -177,7 +182,8 @@
     },
     "orb_spectral": {
       "id": "orb_spectral",
-      "name": "orb_spectral",
+      "name": "Orbe do Além",
+      "legendaryName": "Orbe de Sileas",
       "slot": "orb",
       "school": "spectral",
       "iconKey": "item_orb_spectral",
@@ -200,7 +206,8 @@
     },
     "ring_lightning": {
       "id": "ring_lightning",
-      "name": "ring_lightning",
+      "name": "Anel Estático",
+      "legendaryName": "Anel de Vessa",
       "slot": "ring",
       "school": "lightning",
       "iconKey": "item_ring_lightning",
@@ -223,7 +230,8 @@
     },
     "ring_fire": {
       "id": "ring_fire",
-      "name": "ring_fire",
+      "name": "Anel de Cinzas",
+      "legendaryName": "Anel de Kaldor",
       "slot": "ring",
       "school": "fire",
       "iconKey": "item_ring_fire",
@@ -246,7 +254,8 @@
     },
     "ring_spectral": {
       "id": "ring_spectral",
-      "name": "ring_spectral",
+      "name": "Anel Errante",
+      "legendaryName": "Anel de Morwen",
       "slot": "ring",
       "school": "spectral",
       "iconKey": "item_ring_spectral",
@@ -269,7 +278,8 @@
     },
     "amulet_lightning": {
       "id": "amulet_lightning",
-      "name": "amulet_lightning",
+      "name": "Amuleto Para-raios",
+      "legendaryName": "Amuleto de Ozric",
       "slot": "amulet",
       "school": "lightning",
       "iconKey": "item_amulet_lightning",
@@ -292,7 +302,8 @@
     },
     "amulet_fire": {
       "id": "amulet_fire",
-      "name": "amulet_fire",
+      "name": "Amuleto da Forja",
+      "legendaryName": "Amuleto de Ignara",
       "slot": "amulet",
       "school": "fire",
       "iconKey": "item_amulet_fire",
@@ -315,7 +326,8 @@
     },
     "amulet_spectral": {
       "id": "amulet_spectral",
-      "name": "amulet_spectral",
+      "name": "Amuleto do Véu",
+      "legendaryName": "Amuleto de Sileas",
       "slot": "amulet",
       "school": "spectral",
       "iconKey": "item_amulet_spectral",
@@ -338,7 +350,8 @@
     },
     "cloak_lightning": {
       "id": "cloak_lightning",
-      "name": "cloak_lightning",
+      "name": "Capa de Tormenta",
+      "legendaryName": "Capa de Vessa",
       "slot": "cloak",
       "school": "lightning",
       "iconKey": "item_cloak_lightning",
@@ -363,7 +376,8 @@
     },
     "cloak_fire": {
       "id": "cloak_fire",
-      "name": "cloak_fire",
+      "name": "Capa Chamuscada",
+      "legendaryName": "Capa de Kaldor",
       "slot": "cloak",
       "school": "fire",
       "iconKey": "item_cloak_fire",
@@ -386,7 +400,8 @@
     },
     "cloak_spectral": {
       "id": "cloak_spectral",
-      "name": "cloak_spectral",
+      "name": "Capa da Névoa",
+      "legendaryName": "Capa de Morwen",
       "slot": "cloak",
       "school": "spectral",
       "iconKey": "item_cloak_spectral",
@@ -409,7 +424,8 @@
     },
     "boots_lightning": {
       "id": "boots_lightning",
-      "name": "boots_lightning",
+      "name": "Botas do Relâmpago",
+      "legendaryName": "Botas de Ozric",
       "slot": "boots",
       "school": "lightning",
       "iconKey": "item_boots_lightning",
@@ -432,7 +448,8 @@
     },
     "boots_fire": {
       "id": "boots_fire",
-      "name": "boots_fire",
+      "name": "Botas de Lava",
+      "legendaryName": "Botas de Ignara",
       "slot": "boots",
       "school": "fire",
       "iconKey": "item_boots_fire",
@@ -455,7 +472,8 @@
     },
     "boots_spectral": {
       "id": "boots_spectral",
-      "name": "boots_spectral",
+      "name": "Botas Silentes",
+      "legendaryName": "Botas de Sileas",
       "slot": "boots",
       "school": "spectral",
       "iconKey": "item_boots_spectral",

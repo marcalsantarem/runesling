@@ -8,6 +8,7 @@ import {
   effectiveReducedMotion,
   resetProfileForTests,
 } from '../../src/meta/profile';
+import { emptyItems } from '../../src/meta/items';
 
 class MemoryStorage implements SaveStorage {
   readonly items = new Map<string, unknown>();
@@ -35,6 +36,7 @@ describe('PlayerProfile', () => {
       cleared: false,
       talents: { atk: 0, hp: 0, balls: 0, crit: 0, gold: 0 },
       settings: { muted: false, sfxVolume: 0.8, reducedMotion: 'system' },
+      items: emptyItems(),
     });
     expect(STARTING_GOLD).toBe(40);
     expect(Object.isFrozen(p.data())).toBe(true);
@@ -126,6 +128,7 @@ describe('PlayerProfile', () => {
       cleared: false,
       talents: { atk: 10, hp: 0, balls: 0, crit: 2, gold: 0 },
       settings: { muted: false, sfxVolume: 0.8, reducedMotion: 'system' },
+      items: emptyItems(),
     });
   });
 
@@ -162,6 +165,8 @@ describe('PlayerProfile', () => {
     await p.buyTalent('atk');
     await p.buyTalent('hp');
     await p.updateSettings({ muted: true });
+    await p.addItems([{ itemId: 'ring_fire', rarity: 'common' }]);
+    await p.equipItem('ring_fire', 'common');
     const seen: number[] = [];
     p.onChange((d) => seen.push(d.gold));
     await p.reset();
@@ -171,6 +176,7 @@ describe('PlayerProfile', () => {
       cleared: false,
       talents: { atk: 0, hp: 0, balls: 0, crit: 0, gold: 0 },
       settings: { muted: true, sfxVolume: 0.8, reducedMotion: 'system' },
+      items: emptyItems(),
     };
     expect(p.data()).toEqual(expected);
     expect(Object.isFrozen(p.data())).toBe(true);
@@ -215,5 +221,41 @@ describe('PlayerProfile', () => {
     const [a, b] = await Promise.all([getProfile(), getProfile()]);
     expect(a).toBe(b);
     resetProfileForTests();
+  });
+
+  it('save v1 migra para v2 com inventário vazio (M8)', async () => {
+    const storage = new MemoryStorage();
+    storage.items.set(KEY, { version: 1, savedAt: 0, data: { gold: 123, bestWave: 4, cleared: false, talents: { atk: 2 }, settings: { muted: true } } });
+    const p = await load(storage);
+    expect(PROFILE_SAVE_VERSION).toBe(2);
+    expect(p.data()).toMatchObject({ gold: 123, bestWave: 4, talents: { atk: 2 }, items: emptyItems() });
+    expect((storage.items.get(KEY) as { version: number }).version).toBe(2);
+  });
+
+  it('itens: soma, equipa, funde, baú e loadout, gravando no save', async () => {
+    const storage = new MemoryStorage();
+    const p = await load(storage);
+    await p.recordRun({ wave: 1, won: false, goldEarned: 100 });
+    await p.addItems([
+      { itemId: 'staff_fire', rarity: 'rare' },
+      { itemId: 'staff_fire', rarity: 'rare' },
+      { itemId: 'staff_fire', rarity: 'rare' },
+      { itemId: 'nao_existe', rarity: 'common' },
+    ]);
+    expect(p.data().items.inventory).toEqual([{ itemId: 'staff_fire', rarity: 'rare', count: 3 }]);
+    expect(p.canFuseItem('staff_fire', 'rare')).toBe(true);
+    expect(await p.fuseItem('staff_fire', 'rare')).toBe(true);
+    expect(await p.equipItem('staff_fire', 'epic')).toBe(true);
+    expect(await p.equipItem('staff_fire', 'epic')).toBe(false);
+    expect(p.runLoadout().startRunes).toHaveLength(1);
+    const drops = await p.openChest({ next: () => 0 });
+    expect(drops).toHaveLength(1);
+    expect(p.data().gold).toBe(140 - 80);
+    expect(await p.openChest({ next: () => 0 })).toBeNull();
+    const again = await load(storage);
+    expect(again.data().items).toEqual(p.data().items);
+    expect(again.data().items.equipped.staff).toEqual({ itemId: 'staff_fire', rarity: 'epic' });
+    expect(await again.unequipItem('staff')).toBe(true);
+    expect(await again.unequipItem('staff')).toBe(false);
   });
 });

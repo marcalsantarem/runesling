@@ -146,7 +146,10 @@ export interface ItemLegendaryDef {
 }
 export interface ItemDef {
   readonly id: string;
+  /** Nome base (Comum a Épico); narrativa §12. */
   readonly name: string;
+  /** Nome no Lendário ("<Espaço> de <Mestre>"); narrativa §12. */
+  readonly legendaryName: string;
   readonly slot: ItemSlot;
   readonly school: ItemSchool;
   readonly iconKey: string;
@@ -437,7 +440,8 @@ export function validateItems(data: GameData): string[] {
     if (it.id !== key) errs.push(`${p}: id "${it.id}" difere da chave`);
     if (!ITEM_SLOTS.includes(it.slot) || !ITEM_SCHOOLS.includes(it.school)) errs.push(`${p}: espaço/escola inválidos`);
     else if (key !== `${it.slot}_${it.school}`) errs.push(`${p}: id deve ser <espaço>_<escola>`);
-    if (!it.name || !it.iconKey) errs.push(`${p}: name/iconKey vazios`);
+    if (!it.name || !it.legendaryName || !it.iconKey) errs.push(`${p}: name/legendaryName/iconKey vazios`);
+    else if (it.name === it.id) errs.push(`${p}: name ainda é o id`);
     if (!ITEM_STATS.includes(it.stat)) errs.push(`${p}: stat inválido "${it.stat}"`);
     const v = it.values;
     if (!(isPosNum(v?.common) && isPosNum(v.uncommon) && isPosNum(v.rare) && v.common < v.uncommon && v.uncommon < v.rare)) {
