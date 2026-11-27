@@ -91,7 +91,7 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
   const bottom = el('div', { className: 'rs-hud-row rs-hud-foot' }, [
     el('div', { className: 'rs-foot-stats' }, [atk.node, orbs.node, crit.node]),
     speedBtn,
-    // O encaixe guarda o lugar do Recolher fora do voo (a barra não pula).
+    // Recolher sempre visível; desativado fora do voo (BRF-049).
     el('div', { className: 'rs-recall-slot' }, [recallBtn]),
   ]);
   const bottomBand = el('div', { className: 'rs-band rs-band-bottom' }, [el('div', { className: 'rs-band-in' }, [bottom])]);
@@ -112,6 +112,7 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
 
   function renderRunes(perks: readonly PerkId[]): void {
     const key = perks.join(',');
+    // Atalho só quando a faixa já mostra estas runas (reset() esvazia a faixa antes).
     if (key === lastPerks && strip.childElementCount > 0) return;
     lastPerks = key;
     const groups = groupPerks(perks);
@@ -156,7 +157,7 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     setPlateLabel(speedBtn, speedText);
     speedBtn.setAttribute('aria-label', t('hud.speedLabel', { speed: speedText }));
     speedBtn.classList.toggle('is-on', s.speed === 2);
-    show(recallBtn, s.phase === 'flight');
+    recallBtn.disabled = s.phase !== 'flight';
     renderRunes(s.perks);
   }
 
@@ -184,7 +185,9 @@ export function createHud(game: GameData, h: HudHandlers): HudView {
     setPlateLabel(speedBtn, t('hud.speed.1'));
     speedBtn.setAttribute('aria-label', t('hud.speedLabel', { speed: t('hud.speed.1') }));
     speedBtn.classList.remove('is-on');
-    show(recallBtn, false);
+    recallBtn.disabled = true;
+    // Limpa a faixa antes de redesenhar: sem isso o atalho de renderRunes manteria as runas da run anterior.
+    strip.replaceChildren();
     renderRunes([]);
   }
 
