@@ -10,16 +10,29 @@ abstract class DensePool {
   readonly capacity: number;
   count = 0;
   private cursor = 0;
+  private cap: number;
 
   constructor(capacity: number) {
     this.capacity = capacity;
+    this.cap = capacity;
+  }
+
+  /** Teto de vivos (≤ capacidade). Baixar o teto descarta os excedentes. */
+  get limit(): number {
+    return this.cap;
+  }
+
+  set limit(n: number) {
+    this.cap = Math.max(1, Math.min(this.capacity, Math.floor(n)));
+    if (this.count > this.cap) this.count = this.cap;
+    if (this.cursor >= this.cap) this.cursor = 0;
   }
 
   /** Índice para um novo efeito. */
   protected alloc(): number {
-    if (this.count < this.capacity) return this.count++;
+    if (this.count < this.cap) return this.count++;
     const i = this.cursor;
-    this.cursor = (this.cursor + 1) % this.capacity;
+    this.cursor = (this.cursor + 1) % this.cap;
     return i;
   }
 
@@ -36,11 +49,37 @@ abstract class DensePool {
   }
 }
 
-// ---------- Partículas (faíscas, explosão, morte) ----------
+// ---------- Partículas (faíscas, fogo, elétrico, espectral, morte) ----------
 /** Vida e alfa do slice: 14..24 frames, alfa = min(1, vida/12). */
 const PART_LIFE_MIN = 14;
 const PART_LIFE_RAND = 10;
 const PART_FADE = 12;
+
+/** Tipo de partícula: muda arrasto, gravidade, tamanho e vida (decisão 41). */
+export const PART = { spark: 0, fire: 1, electric: 2, spectral: 3, death: 4 } as const;
+export type PartKind = (typeof PART)[keyof typeof PART];
+
+interface KindSpec {
+  /** Fração da velocidade mantida por frame. */
+  readonly drag: number;
+  /** px/frame² (negativo sobe). */
+  readonly grav: number;
+  /** Tamanho base (px) e variação aleatória. */
+  readonly size: number;
+  readonly sizeRand: number;
+  /** Multiplicador da vida. */
+  readonly life: number;
+  /** Encolhe com a vida (1) ou mantém (0). */
+  readonly shrink: number;
+}
+
+export const PART_SPEC: readonly KindSpec[] = [
+  { drag: 0.9, grav: 0.05, size: 3, sizeRand: 2, life: 1, shrink: 1 },
+  { drag: 0.9, grav: -0.07, size: 5, sizeRand: 4, life: 1.15, shrink: 0 },
+  { drag: 0.8, grav: 0, size: 2.5, sizeRand: 1.5, life: 0.6, shrink: 1 },
+  { drag: 0.93, grav: -0.04, size: 4, sizeRand: 3, life: 1.3, shrink: 0 },
+  { drag: 0.91, grav: 0.08, size: 3.5, sizeRand: 2.5, life: 1.2, shrink: 1 },
+];
 
 export class ParticlePool extends DensePool {
   readonly x: Float32Array;
@@ -48,7 +87,10 @@ export class ParticlePool extends DensePool {
   readonly vx: Float32Array;
   readonly vy: Float32Array;
   readonly life: Float32Array;
+  readonly life0: Float32Array;
+  readonly size: Float32Array;
   readonly color: Uint32Array;
+  readonly kind: Uint8Array;
 
   constructor(capacity: number) {
     super(capacity);
@@ -57,25 +99,33 @@ export class ParticlePool extends DensePool {
     this.vx = new Float32Array(capacity);
     this.vy = new Float32Array(capacity);
     this.life = new Float32Array(capacity);
+    this.life0 = new Float32Array(capacity);
+    this.size = new Float32Array(capacity);
     this.color = new Uint32Array(capacity);
+    this.kind = new Uint8Array(capacity);
   }
 
-  spawn(x: number, y: number, vx: number, vy: number, life: number, color: number): void {
+  spawn(x: number, y: number, vx: number, vy: number, life: number, color: number, kind: PartKind = PART.spark, size = 3): void {
     const i = this.alloc();
     this.x[i] = x;
     this.y[i] = y;
     this.vx[i] = vx;
     this.vy[i] = vy;
     this.life[i] = life;
+    this.life0[i] = life;
+    this.size[i] = size;
     this.color[i] = color;
+    this.kind[i] = kind;
   }
 
-  /** Rajada radial do slice: ângulo uniforme, velocidade 1..1+speed. */
-  burst(x: number, y: number, color: number, n: number, speed: number, rng: RandomSource): void {
-    for (let k = 0; k < n; k++) {
+  /** Rajada radial do slice: ângulo uniforme, velocidade 1..1+speed; vida e tamanho pelo tipo. */
+  burst(x: number, y: number, color: number, n: number, speed: number, rng: RandomSource, kind: PartKind = PART.spark): void {
+    const k = PART_SPEC[kind]!;
+    for (let j = 0; j < n; j++) {
       const a = rng.next() * Math.PI * 2;
       const v = 1 + rng.next() * speed;
-      this.spawn(x, y, Math.cos(a) * v, Math.sin(a) * v, PART_LIFE_MIN + rng.next() * PART_LIFE_RAND, color);
+      const life = (PART_LIFE_MIN + rng.next() * PART_LIFE_RAND) * k.life;
+      this.spawn(x, y, Math.cos(a) * v, Math.sin(a) * v, life, color, kind, k.size + rng.next() * k.sizeRand);
     }
   }
 
@@ -88,13 +138,34 @@ export class ParticlePool extends DensePool {
         continue;
       }
       this.life[i] = l;
-      this.x[i] = this.x[i]! + this.vx[i]! * frames;
-      this.y[i] = this.y[i]! + this.vy[i]! * frames;
+      const k = PART_SPEC[this.kind[i]!]!;
+      let x = this.x[i]!;
+      let y = this.y[i]!;
+      let vx = this.vx[i]!;
+      let vy = this.vy[i]!;
+      for (let f = 0; f < frames; f++) {
+        x += vx;
+        y += vy;
+        vx *= k.drag;
+        vy = vy * k.drag + k.grav;
+      }
+      this.x[i] = x;
+      this.y[i] = y;
+      this.vx[i] = vx;
+      this.vy[i] = vy;
     }
   }
 
   alpha(i: number): number {
     return Math.min(1, this.life[i]! / PART_FADE);
+  }
+
+  /** Tamanho desenhado: encolhe até 35% com a vida nos tipos que encolhem. */
+  drawSize(i: number): number {
+    const k = PART_SPEC[this.kind[i]!]!;
+    if (!k.shrink) return this.size[i]!;
+    const t = this.life[i]! / (this.life0[i]! || 1);
+    return this.size[i]! * (0.35 + 0.65 * t);
   }
 
   protected move(from: number, to: number): void {
@@ -103,7 +174,10 @@ export class ParticlePool extends DensePool {
     this.vx[to] = this.vx[from]!;
     this.vy[to] = this.vy[from]!;
     this.life[to] = this.life[from]!;
+    this.life0[to] = this.life0[from]!;
+    this.size[to] = this.size[from]!;
     this.color[to] = this.color[from]!;
+    this.kind[to] = this.kind[from]!;
   }
 }
 
