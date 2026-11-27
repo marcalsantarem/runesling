@@ -14,8 +14,9 @@
 6. Inimigos do Capítulo 1: uma linha de lore por id.
 7. Equipamentos e fusão (só gancho para o M8): de onde vêm, por que fundir 3 em 1, raridades.
 8. Glossário oficial (termo, significado, id quando houver).
-9. Guia de expansão: checklist para criar inimigo, capítulo, chefe, escola/magia ou equipamento coerente.
+9. Início do jogo (decisão 54): propor uma progressão inicial mais longa com fundo de RPG. Ex.: uma região antes da Cripta (ou os primeiros níveis dela) com inimigos simples de RPG (slimes, cogumelos, lobos), e os inimigos atuais do Capítulo 1 entrando aos poucos. Para cada inimigo novo: nome, lore de uma linha e papel de mecânica sugerido (com base nos papéis atuais do GDD §3.3). Dar 2 opções de estrutura (ex.: capítulo novo antes do 1 × Capítulo 1 dividido em mais fases), com prós e contras.
+10. Guia de expansão: checklist para criar inimigo, capítulo, chefe, escola/magia ou equipamento coerente.
 
 Manter os nomes atuais do jogo; nome novo ou conflito com o GDD vai como proposta na entrega.
 
-**Entrega:** até 6 linhas, com as propostas para o dono e o que não foi verificado.
+**Entrega:** até 8 linhas, com as propostas para o dono e o que não foi verificado.
